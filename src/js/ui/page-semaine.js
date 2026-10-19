@@ -12,7 +12,7 @@
       App.modifier(function () { s.alertesTraitees.push({ cle: a.cle, statut: statut }); });
     }
     return h('div', { class: 'bandeau bandeau-alertes' },
-      h('span', { class: 'bandeau-titre' }, 'Alertes de présence · manager seulement (jamais imprimées) · ' + liste.length),
+      h('span', { class: 'bandeau-titre' }, 'Alertes de présence · ' + liste.length),
       liste.length ? null : h('span', { class: 'petit' }, 'Aucune alerte.'),
       liste.map(function (a) {
         return h('span', { class: 'alerte' },
@@ -26,21 +26,15 @@
       } }, 'Réafficher les alertes masquées (' + masquees + ')') : null);
   }
 
-  function activites(d, s, parcId) {
+  function activites(s) {
     return h('div', { class: 'bandeau bandeau-activites' },
       h('span', { class: 'bandeau-titre' }, 'Activités de la semaine'),
       s.activites.length ? null : h('span', { class: 'petit' }, 'Aucune.'),
       s.activites.map(function (a) {
-        var duParc = a.participantIds.filter(function (id) {
-          var r = M.resident(d, id); return r && r.parcId === parcId && !r.archive;
-        }).length;
-        var p = M.parc(d, parcId);
         return h('button', { class: 'puce-activite', onclick: function () { R.PageActivites.ouvrirActivite(a.id); } },
-          h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant') +
-          (duParc && p ? ' (' + duParc + ' de ' + p.nom + ' marqué' + (duParc > 1 ? 's' : '') + ' ci-dessous)' : ''));
+          h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
       }),
-      h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'),
-      h('span', { class: 'petit' }, 'La présence reste à 1 : le repas ne change pas, seul le chariot change.'));
+      h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
   }
 
   function grille(d, s, parc) {
@@ -149,15 +143,16 @@
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),
       ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire),
-      ligneNombres('Salariés SODEXO standard', 'hors parcs · cuisiniers', '#e4edf7', so.lire, so.ecrire),
-      ligneNombres('Salariés SODEXO sans porc', 'hors parcs · cuisiniers', '#e4edf7', sp.lire, sp.ecrire),
-      ligneNombres('Direction', 'hors parcs · habituellement lun–ven midi', '#e4edf7', di.lire, di.ecrire),
-      ligneNombres('Nettoyage', 'hors parcs · sans viande', '#e4edf7', ne.lire, ne.ecrire)
+      ligneNombres('Salariés SODEXO standard', 'tous parcs', '#e4edf7', so.lire, so.ecrire),
+      ligneNombres('Salariés SODEXO sans porc', 'tous parcs', '#e4edf7', sp.lire, sp.ecrire),
+      ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
+      ligneNombres('Nettoyage', 'tous parcs · sans viande', '#e4edf7', ne.lire, ne.ecrire)
     ];
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
-      h('div', { class: 'petit' }, 'Régimes en lecture seule (à modifier dans la fiche : crayon à gauche du nom). Cliquer une case de présence : 1 ↔ 0. ' +
-        'Case orangée hachurée = absence enregistrée dans la fiche. Contour bleu = participe à une activité.'),
+      h('div', { class: 'legende' },
+        h('span', { class: 'pc-ex abs-fiche' }), 'Absence (fiche)',
+        h('span', { class: 'pc-ex act' }), 'Activité'),
       h('div', { class: 'defil', 'data-defil': 'grille' },
         h('div', { class: 'grille' }, entete, lignes,
           residents.length ? null : h('div', { class: 'vide-grille' }, 'Aucun résident actif dans ce parc.'),
@@ -187,7 +182,7 @@
           } }, 'Créer la semaine suivante'),
           h('button', { class: 'btn', onclick: function () { App.ui.semaine = s.id; App.ouvrir('imprimer'); } }, 'Imprimer cette semaine')),
         App.ui.manager ? alertes(d, s) : null,
-        activites(d, s, parc ? parc.id : ''),
+        activites(s),
         parc ? [
           h('div', { class: 'onglets-parcs', role: 'tablist' }, parcs.map(function (p) {
             var actif = p.id === parc.id;

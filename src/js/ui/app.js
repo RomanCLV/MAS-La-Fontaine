@@ -172,7 +172,7 @@
     if (App.erreurSauvegarde) {
       etat = h('span', { class: 'etat etat-ko' }, 'Enregistrement impossible dans ce navigateur : exportez le fichier');
     } else {
-      etat = h('span', { class: 'etat' }, 'Copie de travail' + (App.meta.sauveLe ? ' · enregistrée ' + O.heure(App.meta.sauveLe) : ''));
+      etat = h('span', { class: 'etat' }, App.meta.sauveLe ? 'Enregistré à ' + O.heure(App.meta.sauveLe) : 'Enregistré');
     }
     return h('div', { class: 'barre' },
       App.donnees ? h('button', {
@@ -216,8 +216,7 @@
           h('button', { class: 'onglet-titre', role: 'tab', 'aria-selected': actif ? 'true' : 'false', onclick: function () { App.activer(k); } },
             titreOnglet(o) + (App.brouillons[k] && App.brouillons[k].modifie ? ' •' : '')),
           h('button', { class: 'onglet-fermer', 'aria-label': 'Fermer l’onglet ' + titreOnglet(o), onclick: function () { App.fermer(k); } }, '×'));
-      }),
-      h('div', { class: 'onglets-note' }, 'Onglets restaurés à la réouverture'));
+      }));
   }
 
   App.rendreOnglets = function () {

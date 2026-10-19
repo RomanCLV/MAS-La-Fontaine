@@ -45,9 +45,7 @@
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
           h('div', { class: 'rangee' },
             h('button', { class: 'btn btn-grand btn-principal', onclick: chargerDemarrage }, 'Charger les données de démarrage (semaine 42)'),
-            boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire)),
-          h('p', { class: 'petit' }, 'Données de démarrage : 62 résidents aux noms fictifs (aucun vrai nom). ' +
-            'Ensuite, l’application garde une copie de travail dans ce navigateur et la restaure à chaque ouverture.')));
+            boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire))));
     }
   };
 
@@ -67,7 +65,6 @@
             e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
             e.donnees ? h('div', { class: 'encadre' },
               h('div', { class: 'gras' }, e.nom), h('div', null, resume(e.donnees)),
-              h('div', { class: 'petit' }, 'Le fichier original n’est jamais modifié : l’application travaille sur une copie.'),
               h('div', { class: 'rangee' },
                 h('button', { class: 'btn btn-principal', onclick: function () { var d = e.donnees, n = e.nom; App.etat.import = null; App.remplacerDonnees(d, n); } },
                   'Remplacer la copie de travail'),
@@ -77,8 +74,7 @@
             h('span', { class: 'etape' }, '2 · Copie de travail actuelle'),
             h('div', null, resume(App.donnees)),
             h('div', { class: 'petit' }, 'Origine : ' + (m.fichier || 'inconnue') + (m.importeLe ? ' · importée le ' + O.dateCourte(new Date(m.importeLe).toISOString().slice(0, 10)) : '')),
-            h('div', { class: 'petit' }, 'Enregistrée automatiquement dans ce navigateur' + (m.sauveLe ? ' (dernière fois à ' + O.heure(m.sauveLe) + ')' : '') +
-              '. Vider les données du navigateur l’efface : exportez régulièrement.'),
+            h('div', { class: 'petit' }, 'Enregistrée dans ce navigateur' + (m.sauveLe ? ' à ' + O.heure(m.sauveLe) : '') + '. Exportez régulièrement.'),
             h('button', { class: 'btn', onclick: chargerDemarrage }, 'Recharger les données de démarrage (semaine 42)'))));
     }
   };
@@ -98,8 +94,7 @@
           h('div', { class: 'carte carte-etape' },
             h('span', { class: 'etape' }, 'Export (client → prestataire)'),
             h('div', { class: 'grand gras' }, 'Exporter la copie de travail'),
-            h('div', { class: 'petit' }, 'Le fichier contient toutes les semaines, les résidents et les référentiels. Nom suggéré d’après ' + O.titreSemaine(s) + '.'),
-            h('div', { class: 'champ' }, h('label', { for: 'x-nom' }, 'Nom du fichier (suggéré, modifiable)'),
+            h('div', { class: 'champ' }, h('label', { for: 'x-nom' }, 'Nom du fichier'),
               h('input', { id: 'x-nom', value: e.nom, oninput: function (ev) { e.nom = ev.target.value; } })),
             h('button', { class: 'btn btn-grand btn-principal', onclick: function () {
               S.telecharger(App.donnees, e.nom.trim() || S.nomExport(App.donnees, s));
@@ -114,8 +109,7 @@
               } }, 'Enregistrer à nouveau dans ' + S.nomFichierLie()) : null) : null,
             e.message ? h('div', { class: 'message message-ok', role: 'status' }, e.message) : null,
             e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.erreur) : null,
-            h('div', { class: 'encadre' }, 'Envoyer ensuite ce fichier au prestataire (clé USB, dossier partagé ou mail). Rien n’est envoyé automatiquement.'),
-            h('div', { class: 'petit' }, 'Côté prestataire : page « Fichier : importer » → « Ouvrir un fichier… », puis page « Imprimer ».'))));
+            h('div', { class: 'encadre' }, 'Envoyez ensuite ce fichier au prestataire (clé USB, dossier partagé ou mail).'))));
     }
   };
 })(window.Recueil = window.Recueil || {});

@@ -12,7 +12,7 @@
   var PROTEGES = [M.TEXTURE_DEFAUT, M.REGIME_SANS_PORC, M.REGIME_NETTOYAGE];
 
   function effet(g) {
-    if (g.nature === 'texture') return g.id === M.TEXTURE_DEFAUT ? 'Texture par défaut' : 'Texture (même grammage), mise en avant sur les feuilles';
+    if (g.nature === 'texture') return g.id === M.TEXTURE_DEFAUT ? 'Texture par défaut' : 'Texture';
     if (g.nature === 'regime') {
       var t = 'Compté sur tous les convives';
       if (g.id === M.REGIME_SANS_PORC) t += ' ; inclut les salariés « sans porc »';
@@ -94,8 +94,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('h1', null, 'Régimes, textures et options ', h('span', { class: 'pilule' }, liste.length)),
-          h('span', { class: 'petit' }, 'L’ordre est celui des colonnes de la saisie. Supprimer demande confirmation.')),
+          h('h1', null, 'Régimes, textures et options ', h('span', { class: 'pilule' }, liste.length))),
         h('div', { class: 'carte' },
           h('div', { class: 'ligne-reg entete', style: gabarit }, h('span'), h('span', null, 'Nom'), h('span', null, 'Abrégé (grille)'),
             h('span', null, 'Nature'), h('span', null, 'Effet sur la production'), h('span')),
@@ -121,9 +120,7 @@
           ed && !ed.id ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
             App.etat.regimeEdit = { id: null, nom: '', abrege: '', couleur: '#dddddd', nature: 'regime', affecte: '', erreur: '' };
             App.rendre();
-          } }, '+ Ajouter un régime ou une option'),
-          h('div', { class: 'petit note-haut' }, 'Pots gourmands : information seulement, hors feuille chef (pastille sur l’étiquette). ' +
-            '« Normal », « Sans porc » et « Sans viande » servent aux calculs (salariés, nettoyage) : renommables, non supprimables.')));
+          } }, '+ Ajouter un régime ou une option')));
     }
   };
 })(window.Recueil = window.Recueil || {});

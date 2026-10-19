@@ -112,9 +112,9 @@
                   onchange: function () { r.textureId = g.id; b.modifie = true; App.rendre(); } }),
                 g.nom);
             })),
-          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Régimes et options (cocher = « X » sur la feuille de saisie)'),
+          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Régimes et options'),
             coches('regime', 'regimeIds'), coches('option', 'optionIds')),
-          h('div', { class: 'champ' }, h('label', { for: 'f-consigne' }, 'Consigne libre (une ligne, affichée sur l’étiquette du chariot)'),
+          h('div', { class: 'champ' }, h('label', { for: 'f-consigne' }, 'Consigne (étiquette du chariot)'),
             h('input', { id: 'f-consigne', value: r.consigne, oninput: function (e) { r.consigne = e.target.value; modifie(); } })),
           h('div', { class: 'absences' },
             h('div', { class: 'gras grand' }, 'Absences'),
@@ -136,9 +136,7 @@
               h('div', { class: 'champ' }, h('label', { for: 'f-sv' }, 'Services'),
                 h('select', { id: 'f-sv', onchange: function (e) { b.abs.services = e.target.value; } },
                   SERVICES_ABS.map(function (x) { return h('option', { value: x.v, selected: x.v === b.abs.services }, x.nom); }))),
-              h('button', { class: 'btn gras', onclick: ajouterAbsence }, '+ Ajouter l’absence')),
-            h('div', { class: 'petit' }, 'Dates et services seulement, sans motif. Les cases de la feuille de saisie passent à 0 automatiquement. ' +
-              'L’absence est prise en compte après « Enregistrer ».')),
+              h('button', { class: 'btn gras', onclick: ajouterAbsence }, '+ Ajouter l’absence'))),
           h('div', { class: 'rangee boutons' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
             h('button', { class: 'btn', onclick: annuler }, b.nouveau ? 'Annuler' : 'Annuler les modifications'),

@@ -62,8 +62,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('h1', null, 'Parcs ', h('span', { class: 'pilule' }, parcs.length)),
-          h('span', { class: 'petit' }, 'Modifier un nom ou une couleur met à jour tous les écrans et impressions.')),
+          h('h1', null, 'Parcs ', h('span', { class: 'pilule' }, parcs.length))),
         h('div', { class: 'carte', style: 'max-width:820px' },
           parcs.map(function (p, i) {
             if (ed && ed.id === p.id) return formulaire();
@@ -80,9 +79,7 @@
           }),
           ed && !ed.id ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
             App.etat.parcEdit = { id: null, nom: '', couleur: '#cccccc', erreur: '' }; App.rendre();
-          } }, '+ Ajouter un parc'),
-          h('div', { class: 'petit note-haut' }, 'Le Sport n’est pas un parc : c’est une activité (page Activités). ' +
-            'Un parc ne peut être supprimé que s’il n’a plus aucun résident.')));
+          } }, '+ Ajouter un parc')));
     }
   };
 

@@ -61,9 +61,7 @@
             }),
             h('button', { class: 'lien', onclick: function () { c.jours = M.JOURS.map(function (j) { return j.id; }); maj(); } }, 'Tous'),
             h('button', { class: 'lien', onclick: function () { c.jours = []; maj(); } }, 'Aucun')),
-          h('div', { class: 'petit' }, 'A4 paysage, une feuille chef par jour et service, puis un chariot par parc et par activité. ' +
-            'Dans la fenêtre d’impression : orientation paysage, marges « aucune » si proposé, « graphiques d’arrière-plan » cochés pour les couleurs. ' +
-            'Pour un PDF : choisir « Enregistrer au format PDF ».')),
+          h('div', { class: 'petit' }, 'Fenêtre d’impression : orientation paysage, « graphiques d’arrière-plan » cochés pour les couleurs.')),
         h('div', { class: 'petit' }, 'Aperçu (' + O.pluriel(apercu.nombre, 'feuille') + ')'),
         h('div', { class: 'apercu', 'data-defil': 'apercu' }, apercu.fragment));
     }

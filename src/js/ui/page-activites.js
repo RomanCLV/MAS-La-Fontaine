@@ -147,8 +147,6 @@
                   } }, M.nomAffiche(r) + (absent ? ' (absent)' : ''));
               })));
           }),
-          h('div', { class: 'petit note-haut' }, 'Les participants gardent leur repas (présence = 1). Ils sont retirés de leur parc pour ce service et regroupés ' +
-            'dans une colonne « ' + (b.nom || 'activité') + ' » sur la feuille chef, avec un chariot dédié. Rien n’est enregistré avant « Enregistrer ».'),
           h('div', { class: 'rangee boutons' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
             e.selection !== 'nouvelle' ? h('button', { class: 'btn btn-danger', style: 'margin-left:auto', onclick: retirer }, 'Retirer cette activité de la semaine') : null));

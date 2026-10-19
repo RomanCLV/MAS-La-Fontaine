@@ -75,8 +75,7 @@
         h('div', { class: 'liste' },
           h('div', { class: 'gr gr-entete' }, h('span', null, 'Parc'), h('span', null, 'Nom Prénom'), h('span', null, 'Texture'),
             h('span', null, 'Régimes et options'), h('span', null, 'Observation'), h('span')),
-          zone),
-        h('div', { class: 'petit' }, 'Éditer ouvre la fiche dans un nouvel onglet. Archiver = le résident disparaît de la saisie et des feuilles mais reste récupérable (« Voir les archivés »). Boutons visibles au survol de la ligne.'));
+          zone));
     }
   };
 
