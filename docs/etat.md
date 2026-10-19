@@ -15,6 +15,9 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Résidents : vue Tableau (édition texture/régimes/options sans fiche). Textes de debug retirés. JSON de démarrage dans `src/data/`. Selects sans « ▾ ». Activités : jour sans date, parcs centrés. Indicateur « Modifications non enregistrées ».
 - Vérifié dans le navigateur intégré (Chromium) ; 58 tests verts. À revoir par l'utilisateur dans Firefox.
 
+## Retours V1 (2e lot, 2026-10-19, 3 commits)
+- Bandeau « Alertes de présence » masqué sans alerte. Bouton « Supprimer cette semaine » (confirmation). Export : le nom du fichier suit bien la semaine affichée (bug à la fermeture d'un onglet) + choix « Semaine envoyée » sur la page Exporter.
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.

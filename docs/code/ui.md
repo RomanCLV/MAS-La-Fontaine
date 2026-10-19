@@ -8,11 +8,12 @@
 | `page-residents.js` / `page-resident.js` | Bascule Liste / Tableau (mémorisée). Liste type TYPOLOGIE (éditer / archiver / supprimer au survol) ; Tableau : une colonne par texture/régime/option, clic = X, brouillon enregistré d’un coup (cases modifiées entourées) ; fiche + absences |
 | `page-parcs.js` / `page-regimes.js` | Référentiels (nom, couleur, ordre ; nature et effet pour les régimes) |
 | `page-activites.js` | Activités de la semaine, presets (charger, mettre à jour, enregistrer) |
-| `page-fichier.js` | Accueil, page Importer, page Exporter |
+| `page-fichier.js` | Accueil, page Importer, page Exporter (choix de la semaine envoyée → nom du fichier) |
 | `page-imprimer.js` | Choix semaine/jours/services/type, aperçu, impression |
 
 ## Principes
 - Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.
+- Semaine courante (`App.ui.semaine`, utilisée par Exporter, Imprimer, Activités) : toute activation d'un onglet Semaine la met à jour (`definirActif`, y compris quand la fermeture d'un onglet en affiche un autre). Exporter et Imprimer affichent un choix « Semaine » qui la modifie.
 - Chaque page = `Recueil.Pages[type] = { titre(onglet), rendu(onglet) }`. Toute modification passe par `App.modifier(fn)` : applique, sauvegarde, re-rend (option `sansRendu` pour les champs numériques, pour garder le focus).
 - Brouillons (fiche résident, tableau des résidents, activité, édition de parc/régime) : en mémoire jusqu'à « Enregistrer ». Chaque page déclare `modifie(onglet)` / `abandonner(onglet)` ; `App.indicateur()` affiche « Modifications non enregistrées » près du titre et `•` sur l'onglet ; confirmation avant de fermer l'onglet, de changer d'élément édité ou de quitter le navigateur. Pendant la frappe : `App.signalerModif()` (sans re-rendu, garde le focus).
 - Mode manager : bouton de la barre du haut ; seul effet = afficher les alertes de présence au-dessus de la grille (bandeau masqué s’il n’y en a aucune, sauf alertes masquées à réafficher).

@@ -71,8 +71,15 @@
     App.ui.onglets = App.ui.onglets.filter(existe);
     App.ui.fermes = App.ui.fermes.filter(existe);
     if (!App.ui.onglets.length) App.ui.onglets.push({ type: 'semaine', id: App.ui.semaine });
-    if (!App.ui.onglets.some(function (o) { return cle(o) === App.ui.actif; })) App.ui.actif = cle(App.ui.onglets[0]);
+    if (!App.ui.onglets.some(function (o) { return cle(o) === App.ui.actif; })) definirActif(cle(App.ui.onglets[0]));
   };
+
+  // Change l'onglet actif ; un onglet Semaine devient aussi la semaine courante (export, impression, activités).
+  function definirActif(k) {
+    App.ui.actif = k;
+    var o = App.ongletActif();
+    if (o && o.type === 'semaine') App.ui.semaine = o.id;
+  }
 
   // ---------- Onglets ----------
   App.ouvrir = function (type, id) {
@@ -86,9 +93,7 @@
   };
 
   App.activer = function (k) {
-    App.ui.actif = k;
-    var o = App.ongletActif();
-    if (o && o.type === 'semaine') App.ui.semaine = o.id;
+    definirActif(k);
     App.menuOuvert = false;
     App.sauverUi();
     App.rendre(true);
@@ -107,7 +112,7 @@
       App.ui.fermes = [o].concat(App.ui.fermes.filter(function (x) { return cle(x) !== k; })).slice(0, MAX_FERMES);
     }
     if (!App.ui.onglets.length) App.ui.onglets.push({ type: 'semaine', id: App.ui.semaine });
-    if (App.ui.actif === k) App.ui.actif = cle(App.ui.onglets[Math.max(0, i - 1)] || App.ui.onglets[0]);
+    if (App.ui.actif === k) definirActif(cle(App.ui.onglets[Math.max(0, i - 1)] || App.ui.onglets[0]));
     App.sauverUi();
     App.rendre(true);
   };
