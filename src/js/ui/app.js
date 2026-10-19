@@ -52,6 +52,9 @@
       if (e.key === 'Escape' && App.menuOuvert) { App.menuOuvert = false; App.rendre(); }
     });
     window.addEventListener('beforeprint', function () { if (R.Impression) R.Impression.preparer(); });
+    window.addEventListener('beforeunload', function (e) {
+      if (App.donnees && App.ui.onglets.some(function (o) { return App.modifieOnglet(o); })) { e.preventDefault(); e.returnValue = ''; }
+    });
     App.rendre();
   };
 
@@ -90,13 +93,14 @@
   };
 
   App.fermer = function (k) {
-    var b = App.brouillons[k];
-    if (b && b.modifie && !window.confirm('Fermer cet onglet sans enregistrer les modifications ?')) return;
-    delete App.brouillons[k];
     var i = -1;
     App.ui.onglets.forEach(function (o, n) { if (cle(o) === k) i = n; });
-    if (i < 0) return;
-    var o = App.ui.onglets.splice(i, 1)[0];
+    if (i < 0) { delete App.brouillons[k]; return; }
+    var o = App.ui.onglets[i];
+    if (App.modifieOnglet(o) && !window.confirm('Fermer cet onglet sans enregistrer les modifications ?')) return;
+    if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
+    delete App.brouillons[k];
+    App.ui.onglets.splice(i, 1);
     if (o.type !== 'resident' || M.resident(App.donnees, o.id)) {
       App.ui.fermes = [o].concat(App.ui.fermes.filter(function (x) { return cle(x) !== k; })).slice(0, MAX_FERMES);
     }
@@ -124,6 +128,30 @@
     App.ui.semaine = id;
     App.sauverUi();
     App.rendre();
+  };
+
+  // ---------- Modifications non enregistrées (brouillons des pages) ----------
+  // Une page signale un brouillon par modifie(onglet) et sait l'effacer par abandonner(onglet).
+  App.modifieOnglet = function (o) {
+    var p = o && R.Pages[o.type];
+    try { return !!(p && p.modifie && p.modifie(o)); } catch (e) { return false; }
+  };
+  // Avant de remplacer un brouillon : confirmation si besoin. Renvoie true si on peut continuer.
+  App.abandonner = function (o) {
+    o = o || App.ongletActif();
+    if (!App.modifieOnglet(o)) return true;
+    if (!window.confirm('Abandonner les modifications non enregistrées ?')) return false;
+    if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
+    return true;
+  };
+  App.indicateur = function (o) {
+    return h('span', { class: 'non-enregistre', role: 'status', hidden: !App.modifieOnglet(o || App.ongletActif()) }, 'Modifications non enregistrées');
+  };
+  // Mise à jour légère pendant la frappe (sans re-rendu, pour garder le focus).
+  App.signalerModif = function () {
+    App.rendreOnglets();
+    var m = App.modifieOnglet(App.ongletActif());
+    document.querySelectorAll('#app .non-enregistre').forEach(function (el) { el.hidden = !m; });
   };
 
   // ---------- Modifications et sauvegarde ----------
@@ -215,7 +243,7 @@
         var k = cle(o), actif = k === App.ui.actif;
         return h('div', { class: 'onglet' + (actif ? ' actif' : '') },
           h('button', { class: 'onglet-titre', role: 'tab', 'aria-selected': actif ? 'true' : 'false', onclick: function () { App.activer(k); } },
-            titreOnglet(o) + (App.brouillons[k] && App.brouillons[k].modifie ? ' •' : '')),
+            titreOnglet(o) + (App.modifieOnglet(o) ? ' •' : '')),
           h('button', { class: 'onglet-fermer', 'aria-label': 'Fermer l’onglet ' + titreOnglet(o), onclick: function () { App.fermer(k); } }, '×'));
       }));
   }

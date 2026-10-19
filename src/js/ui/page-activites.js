@@ -10,14 +10,27 @@
     e.selection = a ? a.id : 'nouvelle';
     e.b = a ? M.copie(a) : { id: M.nouvelId('a'), nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null };
     e.erreur = '';
+    e.initial = JSON.stringify(e.b);
   }
 
+  // Brouillon différent de l'activité enregistrée (ou du formulaire vide pour une nouvelle).
+  function modifie() {
+    var e = App.etat.activites;
+    if (!e || !e.b) return false;
+    var a = App.semaineCourante().activites.filter(function (x) { return x.id === e.b.id; })[0];
+    return JSON.stringify(e.b) !== (a ? JSON.stringify(a) : e.initial);
+  }
+  function abandonner() { var e = etat(); e.selection = null; e.b = null; e.erreur = ''; }
+  function peutChanger() { return App.abandonner({ type: 'activites' }); }
+
   function ouvrirActivite(id) {
+    if (!peutChanger()) return;
     var s = App.semaineCourante();
     charger(s.activites.filter(function (a) { return a.id === id; })[0] || null);
     App.ouvrir('activites');
   }
   function nouvelle() {
+    if (!peutChanger()) return;
     charger(null);
     App.ouvrir('activites');
   }
@@ -32,6 +45,8 @@
 
   R.Pages.activites = {
     titre: function () { return 'Activités'; },
+    modifie: modifie,
+    abandonner: abandonner,
     rendu: function () {
       var d = App.donnees, s = App.semaineCourante(), e = etat();
       if (e.selection && e.selection !== 'nouvelle' && !s.activites.some(function (a) { return a.id === e.selection; })) { e.selection = null; e.b = null; }
@@ -75,13 +90,16 @@
       // ---- Colonne de gauche ----
       var gauche = h('div', { class: 'carte colonne-gauche' },
         h('div', { class: 'gras grand' }, 'Semaine ' + M.numeroSemaine(s.debut).numero),
-        h('select', { 'aria-label': 'Semaine', onchange: function (ev) { App.ui.semaine = ev.target.value; e.selection = null; e.b = null; App.sauverUi(); App.rendre(); } },
+        h('select', { 'aria-label': 'Semaine', onchange: function (ev) {
+          if (peutChanger()) { App.ui.semaine = ev.target.value; abandonner(); App.sauverUi(); }
+          App.rendre();
+        } },
           d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
         s.activites.map(function (a) {
-          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), onclick: function () { charger(a); App.rendre(); } },
+          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), onclick: function () { if (peutChanger()) { charger(a); App.rendre(); } } },
             h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
         }),
-        h('button', { class: 'btn', onclick: function () { charger(null); App.rendre(); } }, '+ Ajouter une activité'),
+        h('button', { class: 'btn', onclick: function () { if (peutChanger()) { charger(null); App.rendre(); } } }, '+ Ajouter une activité'),
         h('div', { class: 'gras', style: 'margin-top:8px' }, 'Presets enregistrés'),
         d.presetsActivites.length ? null : h('div', { class: 'petit' }, 'Aucun preset.'),
         d.presetsActivites.map(function (p) {
@@ -110,7 +128,7 @@
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.erreur) : null,
           h('div', { class: 'rangee bas' },
             h('div', { class: 'champ', style: 'flex:1 1 180px' }, h('label', { for: 'a-nom' }, 'Nom de l’activité'),
-              h('input', { id: 'a-nom', value: b.nom, oninput: function (ev) { b.nom = ev.target.value; } })),
+              h('input', { id: 'a-nom', value: b.nom, oninput: function (ev) { b.nom = ev.target.value; App.signalerModif(); } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-jour' }, 'Jour'),
               h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; App.rendre(); } },
                 M.JOURS.map(function (j) { return h('option', { value: j.id, selected: j.id === b.jour }, j.nom); }))),
@@ -151,7 +169,7 @@
       }
 
       return h('div', { class: 'page page-large' },
-        h('div', { class: 'page-tete' }, h('h1', null, 'Activités')),
+        h('div', { class: 'page-tete' }, h('div', { class: 'titre-ligne' }, h('h1', null, 'Activités'), App.indicateur())),
         h('div', { class: 'deux-colonnes' }, gauche, droite));
     }
   };

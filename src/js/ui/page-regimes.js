@@ -28,8 +28,17 @@
     }).length;
   }
 
+  function valeurEdition(ed) { return [ed.nom, ed.abrege, ed.couleur, ed.nature, ed.affecte].join('|'); }
+  function edition(id, nom, abrege, couleur, nature, affecte) {
+    var ed = { id: id, nom: nom, abrege: abrege, couleur: couleur, nature: nature, affecte: affecte, erreur: '' };
+    ed.init = valeurEdition(ed);
+    return ed;
+  }
+
   R.Pages.regimes = {
     titre: function () { return 'Régimes'; },
+    modifie: function () { var ed = App.etat.regimeEdit; return !!ed && valeurEdition(ed) !== ed.init; },
+    abandonner: function () { App.etat.regimeEdit = null; },
     rendu: function () {
       var d = App.donnees, liste = d.referentiels.regimes;
       var ed = App.etat.regimeEdit || null;
@@ -75,15 +84,15 @@
       function formulaire() {
         var texture = ed.id && ed.nature === 'texture';
         return h('div', { class: 'ligne-reg edition', style: gabarit },
-          h('input', { type: 'color', value: ed.couleur, 'aria-label': 'Couleur', oninput: function (e) { ed.couleur = e.target.value; } }),
-          h('input', { value: ed.nom, 'aria-label': 'Nom', placeholder: 'Nom', oninput: function (e) { ed.nom = e.target.value; } }),
-          h('input', { value: ed.abrege, 'aria-label': 'Abrégé pour la grille', placeholder: 'Abrégé (grille)', oninput: function (e) { ed.abrege = e.target.value; } }),
+          h('input', { type: 'color', value: ed.couleur, 'aria-label': 'Couleur', oninput: function (e) { ed.couleur = e.target.value; App.signalerModif(); } }),
+          h('input', { value: ed.nom, 'aria-label': 'Nom', placeholder: 'Nom', oninput: function (e) { ed.nom = e.target.value; App.signalerModif(); } }),
+          h('input', { value: ed.abrege, 'aria-label': 'Abrégé pour la grille', placeholder: 'Abrégé (grille)', oninput: function (e) { ed.abrege = e.target.value; App.signalerModif(); } }),
           h('select', { 'aria-label': 'Nature', disabled: texture, onchange: function (e) { ed.nature = e.target.value; App.rendre(); } },
             NATURES.filter(function (n) { return texture || n.v !== 'texture' || !ed.id; }).map(function (n) {
               return h('option', { value: n.v, selected: n.v === ed.nature }, n.nom);
             })),
           ed.nature === 'option'
-            ? h('select', { 'aria-label': 'Effet sur la production', onchange: function (e) { ed.affecte = e.target.value; } },
+            ? h('select', { 'aria-label': 'Effet sur la production', onchange: function (e) { ed.affecte = e.target.value; App.signalerModif(); } },
               EFFETS.map(function (x) { return h('option', { value: x.v, selected: x.v === ed.affecte }, x.nom); }))
             : h('span', { class: 'petit' }, effet({ id: ed.id, nature: ed.nature })),
           h('span', { class: 'actions-visibles' },
@@ -94,7 +103,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('h1', null, 'Régimes, textures et options ', h('span', { class: 'pilule' }, liste.length))),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Régimes, textures et options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur())),
         h('div', { class: 'carte' },
           h('div', { class: 'ligne-reg entete', style: gabarit }, h('span'), h('span', null, 'Nom'), h('span', null, 'Abrégé (grille)'),
             h('span', null, 'Nature'), h('span', null, 'Effet sur la production'), h('span')),
@@ -112,13 +121,15 @@
                 h('button', { class: 'btn btn-icone', 'aria-label': 'Descendre ' + g.nom, disabled: i === liste.length - 1,
                   onclick: function () { App.modifier(function () { R.Referentiel.deplacer(liste, i, 1); }); } }, '↓'),
                 h('button', { class: 'btn', onclick: function () {
-                  App.etat.regimeEdit = { id: g.id, nom: g.nom, abrege: g.abrege || '', couleur: g.couleur, nature: g.nature, affecte: g.affecte || '', erreur: '' };
+                  if (!App.abandonner()) return;
+                  App.etat.regimeEdit = edition(g.id, g.nom, g.abrege || '', g.couleur, g.nature, g.affecte || '');
                   App.rendre();
                 } }, 'Éditer'),
                 h('button', { class: 'btn btn-danger', onclick: function () { supprimer(g); } }, 'Supprimer')));
           }),
           ed && !ed.id ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
-            App.etat.regimeEdit = { id: null, nom: '', abrege: '', couleur: '#dddddd', nature: 'regime', affecte: '', erreur: '' };
+            if (!App.abandonner()) return;
+            App.etat.regimeEdit = edition(null, '', '', '#dddddd', 'regime', '');
             App.rendre();
           } }, '+ Ajouter un régime ou une option')));
     }

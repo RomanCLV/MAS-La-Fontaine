@@ -34,6 +34,8 @@
   }
 
   R.Pages.resident = {
+    modifie: function (o) { var b = App.brouillons[App.cle(o)]; return !!(b && b.modifie); },
+    abandonner: function (o) { delete App.brouillons[App.cle(o)]; },
     titre: function (o) {
       var b = App.brouillons[App.cle(o)];
       var r = b ? b.r : M.resident(App.donnees, o.id);
@@ -45,7 +47,7 @@
       var b = brouillon(o), r = b.r;
       var p = M.parc(d, r.parcId);
       function modifie() {
-        if (!b.modifie) { b.modifie = true; App.rendreOnglets(); }
+        if (!b.modifie) { b.modifie = true; App.signalerModif(); }
       }
       function champ(id, libelle, cleR) {
         return h('div', { class: 'champ' }, h('label', { for: id }, libelle),
@@ -95,7 +97,7 @@
       return h('div', { class: 'page' },
         h('div', { class: 'fiche' },
           h('div', { class: 'fiche-tete' },
-            h('h1', null, b.nouveau ? 'Nouveau résident' : 'Fiche résident'),
+            h('div', { class: 'titre-ligne' }, h('h1', null, b.nouveau ? 'Nouveau résident' : 'Fiche résident'), App.indicateur(o)),
             r.archive ? h('span', { class: 'badge' }, 'Archivé') : null,
             p ? h('span', { class: 'etiquette-parc gras', style: 'background:' + p.couleur + ';color:' + O.texteSur(p.couleur) }, p.nom) : null),
           b.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, b.erreur) : null,

@@ -59,6 +59,11 @@ h1{font-size:22px;margin:0}
 .page{padding:16px;display:flex;flex-direction:column;gap:12px}
 .page-tete{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .page-tete h1{margin-right:auto}
+.titre-ligne{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-right:auto}
+.titre-ligne h1{margin-right:0}
+.non-enregistre{font-size:13px;font-weight:700;background:#fff2cc;color:#6b3f00;border:1px solid #d9b26a;border-radius:6px;padding:4px 10px}
+.non-enregistre::before{content:"● "}
+.non-enregistre[hidden]{display:none}
 .page-tete .sous{font-size:14px;font-weight:400;color:var(--gris)}
 input:not([type]),input[type=search],input[type=date],input[type=text],select{min-height:40px;border:1px solid #666;border-radius:6px;padding:0 10px;background:#fff}
 input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;border-radius:6px;background:#fff}

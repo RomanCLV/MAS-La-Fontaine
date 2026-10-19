@@ -18,8 +18,14 @@
     var x = liste[i]; liste[i] = liste[j]; liste[j] = x;
   }
 
+  function edition(id, nom, couleur) {
+    return { id: id, nom: nom, couleur: couleur, erreur: '', init: nom + '|' + couleur };
+  }
+
   R.Pages.parcs = {
     titre: function () { return 'Parcs'; },
+    modifie: function () { var ed = App.etat.parcEdit; return !!ed && ed.nom + '|' + ed.couleur !== ed.init; },
+    abandonner: function () { App.etat.parcEdit = null; },
     rendu: function () {
       var d = App.donnees, parcs = d.referentiels.parcs;
       var ed = App.etat.parcEdit || null; // { id|null, nom, couleur, erreur }
@@ -52,9 +58,9 @@
 
       function formulaire() {
         return h('div', { class: 'ligne-ref edition' },
-          h('input', { type: 'color', value: ed.couleur, 'aria-label': 'Couleur', oninput: function (e) { ed.couleur = e.target.value; } }),
+          h('input', { type: 'color', value: ed.couleur, 'aria-label': 'Couleur', oninput: function (e) { ed.couleur = e.target.value; App.signalerModif(); } }),
           h('input', { value: ed.nom, 'aria-label': 'Nom du parc', placeholder: 'Nom du parc', style: 'flex-grow:1',
-            oninput: function (e) { ed.nom = e.target.value; } }),
+            oninput: function (e) { ed.nom = e.target.value; App.signalerModif(); } }),
           h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
           h('button', { class: 'btn', onclick: function () { App.etat.parcEdit = null; App.rendre(); } }, 'Annuler'),
           ed.erreur ? h('span', { class: 'erreur' }, ed.erreur) : null);
@@ -62,7 +68,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('h1', null, 'Parcs ', h('span', { class: 'pilule' }, parcs.length))),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Parcs ', h('span', { class: 'pilule' }, parcs.length)), App.indicateur())),
         h('div', { class: 'carte', style: 'max-width:820px' },
           parcs.map(function (p, i) {
             if (ed && ed.id === p.id) return formulaire();
@@ -74,11 +80,11 @@
                 onclick: function () { App.modifier(function () { deplacer(parcs, i, -1); parcs.forEach(function (x, n) { x.ordre = n + 1; }); }); } }, '↑'),
               h('button', { class: 'btn btn-icone', 'aria-label': 'Descendre ' + p.nom, disabled: i === parcs.length - 1,
                 onclick: function () { App.modifier(function () { deplacer(parcs, i, 1); parcs.forEach(function (x, n) { x.ordre = n + 1; }); }); } }, '↓'),
-              h('button', { class: 'btn', onclick: function () { App.etat.parcEdit = { id: p.id, nom: p.nom, couleur: p.couleur, erreur: '' }; App.rendre(); } }, 'Modifier'),
+              h('button', { class: 'btn', onclick: function () { if (App.abandonner()) { App.etat.parcEdit = edition(p.id, p.nom, p.couleur); App.rendre(); } } }, 'Modifier'),
               h('button', { class: 'btn btn-danger', onclick: function () { supprimer(p); } }, 'Supprimer'));
           }),
           ed && !ed.id ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
-            App.etat.parcEdit = { id: null, nom: '', couleur: '#cccccc', erreur: '' }; App.rendre();
+            if (App.abandonner()) { App.etat.parcEdit = edition(null, '', '#cccccc'); App.rendre(); }
           } }, '+ Ajouter un parc')));
     }
   };

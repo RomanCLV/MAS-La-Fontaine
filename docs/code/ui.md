@@ -14,7 +14,7 @@
 ## Principes
 - Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.
 - Chaque page = `Recueil.Pages[type] = { titre(onglet), rendu(onglet) }`. Toute modification passe par `App.modifier(fn)` : applique, sauvegarde, re-rend (option `sansRendu` pour les champs numériques, pour garder le focus).
-- Brouillons (fiche résident, activité, édition de référentiel) : en mémoire jusqu'à « Enregistrer ».
+- Brouillons (fiche résident, tableau des résidents, activité, édition de parc/régime) : en mémoire jusqu'à « Enregistrer ». Chaque page déclare `modifie(onglet)` / `abandonner(onglet)` ; `App.indicateur()` affiche « Modifications non enregistrées » près du titre et `•` sur l'onglet ; confirmation avant de fermer l'onglet, de changer d'élément édité ou de quitter le navigateur. Pendant la frappe : `App.signalerModif()` (sans re-rendu, garde le focus).
 - Mode manager : bouton de la barre du haut ; seul effet = afficher les alertes de présence au-dessus de la grille.
 - Présence : clic sur une case = 1 ↔ 0 ; si la nouvelle valeur égale la valeur par défaut (fiche), la saisie est effacée.
 - Pas de données au démarrage → écran d'accueil : « Charger les données de démarrage (S42) » ou « Ouvrir un fichier ».

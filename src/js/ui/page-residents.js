@@ -156,6 +156,8 @@
 
   R.Pages.residents = {
     titre: function () { return 'Résidents'; },
+    modifie: function () { return !!App.etat.residents && Object.keys(App.etat.residents.modifs).length > 0; },
+    abandonner: function () { if (App.etat.residents) App.etat.residents.modifs = {}; },
     rendu: function () {
       var d = App.donnees, f = etat();
       var vue = App.ui.residentsVue === 'tableau' ? 'tableau' : 'liste';
@@ -166,7 +168,7 @@
       function choisirVue(v) { App.ui.residentsVue = v; App.sauverUi(); App.rendre(); }
       return h('div', { class: 'page page-large' },
         h('div', { class: 'page-tete' },
-          h('h1', null, 'Résidents ', h('span', { class: 'sous' }, '· ' + actifs + ' actifs')),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Résidents ', h('span', { class: 'sous' }, '· ' + actifs + ' actifs')), App.indicateur()),
           h('div', { class: 'segments', role: 'group', 'aria-label': 'Affichage' },
             h('button', { class: 'segment' + (vue === 'liste' ? ' actif' : ''), 'aria-pressed': vue === 'liste' ? 'true' : 'false',
               onclick: function () { choisirVue('liste'); } }, 'Liste'),
