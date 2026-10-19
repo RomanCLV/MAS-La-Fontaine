@@ -126,7 +126,7 @@
                 var p = d.presetsActivites.filter(function (x) { return x.id === ev.target.value; })[0];
                 if (p) { depuisPreset(b, p, d); App.rendre(); }
               } },
-              h('option', { value: '' }, 'Charger un preset ▾'),
+              h('option', { value: '' }, 'Charger un preset'),
               d.presetsActivites.map(function (p) { return h('option', { value: p.id }, p.nom); })),
             preset ? h('button', { class: 'btn', onclick: function () { enregistrerPreset(true); } }, 'Mettre à jour le preset') : null,
             h('button', { class: 'btn', onclick: function () { enregistrerPreset(false); } }, 'Enregistrer comme nouveau preset')),
