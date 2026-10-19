@@ -1,8 +1,72 @@
 # Architecture du code (phase 5)
 
-_Vue globale : composants, interactions, flux de données. À remplir._
+Application locale : `src/index.html` ouvert par double-clic (Firefox, Chrome, Edge). HTML/CSS/JS « vanilla », **scripts classiques** (pas de modules ES, bloqués en `file://`), aucune dépendance.
+Tous les scripts s'enregistrent dans un seul objet global `window.Recueil` (`Recueil.Modele`, `Recueil.Calc`, …).
+
+## Fichiers
+```
+src/index.html            application (charge les scripts dans l'ordre ci-dessous)
+src/tests.html            tests des calculs (ouvrir dans le navigateur)
+src/css/app.css           écrans
+src/css/feuilles.css      feuilles A4 paysage (aperçu écran + impression)
+src/js/data/modele.js     constantes, dates, création d'objets, migration   → data.md
+src/js/data/stockage.js   copie de travail (localStorage), import/export JSON → data.md
+src/js/data/demarrage.js  copie intégrée de data/recueil_base_s42.json        → data.md
+src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
+src/js/print/feuilles.js  feuille chef + feuille chariot (HTML imprimable)   → print.md
+src/js/ui/*.js            outils DOM, application à onglets, une page par fichier → ui.md
+```
+
+## Flux de données
+```
+fichier .json ──import──▶ Modele.migrer ──▶ copie de travail (localStorage, autosauvegarde)
+                                               │
+                     pages ui (saisie) ◀───────┤──── modifications → sauvegarde immédiate
+                                               │
+                     Calc (pur) ──▶ Feuilles (HTML A4) ──▶ window.print()
+                                               │
+copie de travail ──export──▶ fichier .json (téléchargement ; ou fichier lié si File System Access)
+```
+- `Calc` et `Modele` n'accèdent jamais au DOM ni au stockage : testables dans `tests.html`.
+- L'interface ne calcule rien elle-même : elle appelle `Calc`.
+- Alertes : calculées par `Calc.alertes`, affichées uniquement en mode manager, **jamais** dans `Feuilles`.
+
+## Schéma JSON (version 1, repris de `data/recueil_base_s42.json`)
+```
+{
+  app: "recueil-alimentation-mas-la-fontaine", version: 1, exporteLe: "AAAA-MM-JJ",
+  etablissement: "MAS La Fontaine",                       // ajouté par la migration si absent
+  referentiels: {
+    parcs:   [{ id, nom, couleur, ordre }],
+    regimes: [{ id, nom, abrege?, nature: "texture"|"regime"|"option", couleur,
+                affecte?: "plat"|"legumes"|"information" }]   // options seulement
+  },
+  residents: [{ id, nom, prenom, parcId, textureId, regimeIds[], optionIds[], consigne, archive,
+                absences: [{ debut, fin, services: ["midi","soir"] }] }],      // dates incluses
+  presetsActivites: [{ id, nom, jours: ["jeu"], services: ["midi"], participantIds[] }],
+  semaines: [{
+    id: "2026-S42", debut: "2026-10-12",                  // lundi
+    presences:  { <residentId>: { <créneau>: 0|1 } },     // seulement les valeurs saisies ≠ défaut
+    activites:  [{ id, nom, jour, service, participantIds[], presetId|null }],
+    salaries:   { <parcId>: { <créneau>: { standard, sansPorc } } },
+    sodexo:     { <créneau>: { standard, sansPorc } },
+    direction:  { <créneau>: n },  nettoyage: { <créneau>: n },
+    alertesTraitees: [{ cle, statut: "voulu"|"ignore" }]
+  }]
+}
+```
+Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `midi soir` (14 créneaux).
+
+## Règles de calcul (résumé, détail dans `calc.md`)
+- Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1.
+- Volume (plats) = résidents présents + doubles plats + salariés (+ Sodexo, Direction, Nettoyage).
+- Activité : participants présents retirés de leur parc, comptés dans une colonne d'activité.
+- Textures, régimes et options « assiette » comptés **en plats** (double plat = 2) ⇒ Normal + Haché + Mixé = total.
 
 ## Routage vers les docs par module
 | Module | Fichier | Rôle |
 |---|---|---|
-| _aucun_ | | |
+| data | `docs/code/data.md` | Modèle, migration, stockage, import/export |
+| calc | `docs/code/calc.md` | Calculs purs et leurs règles métier |
+| ui | `docs/code/ui.md` | Onglets, pages, alertes, mode manager |
+| print | `docs/code/print.md` | Feuille chef, feuille chariot, impression |

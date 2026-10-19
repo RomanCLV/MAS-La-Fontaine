@@ -1,24 +1,28 @@
 # État du projet
 
-**Phase courante** : 2 terminée (`produit.md` v1 VALIDÉ par l'utilisateur le 2026-10-19) → démarrer la phase 3 Design.
-Questions de suivi ci-dessous : non tranchées → utiliser les hypothèses par défaut, les signaler dans les maquettes.
-**Phase 3 terminée** : maquettes v2.1 VALIDÉES le 2026-10-19 (`design.md`). → démarrer la phase 4 (analyse technique : HTML/JS local, JSON, impression A4, `recueil.ini`, onglets). Points à confirmer : zone du nettoyage, archivage vs suppression, stockage du .ini dans le navigateur.
+**Phase courante** : 5 Code — **V1 écrite, à tester par l'utilisateur** (2026-10-19).
+Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techniques dans `technique.md`).
 **Dernière MAJ** : 2026-10-19
 
-## Fait
-- Architecture + CLAUDE.md ; phase 1 terminée (`analyse.md`, `data/resumes/`).
-- Hotfix Excel livré : `data/source/…- HOTFIX.xlsx` (à tester dans Excel par l'utilisateur).
-- 26 questions répondues (`reponses.md`) → intégrées dans `produit.md` et `decisions.md`.
+## Fait (phase 5)
+- `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
+- `src/index.html` : application complète (onglets restaurés, Semaine, Résidents, fiche, Parcs, Régimes, Activités + presets, Importer, Exporter, Imprimer, alertes manager). Aucune dépendance.
+- `src/tests.html` : 58 tests de calcul, tous verts (totaux, double plat, activité, direction/nettoyage, alertes, chariot, migration, données S42).
+- Vérifié dans le navigateur intégré (Chromium, via un petit serveur local de test) : toutes les pages, aller-retour export/import JSON, rendu d'impression A4 (règles `@page` actives, 297 × 210 mm).
+- Données de démarrage : couleurs et ordre des colonnes alignés sur les maquettes ; copie intégrée `src/js/data/demarrage.js`.
+
+## Non vérifié (à faire par l'utilisateur)
+1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.
+2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.
+3. Export → fichier `.json` ; import du même fichier sur un autre poste/navigateur.
+
+## Questions métier ouvertes (hypothèses appliquées, voir `decisions.md`)
+- Double plat : textures et régimes comptés sur **2 plats** (un haché en double = 2 hachés). Correct ?
+- Équipe Sodexo : saisie **standard + sans porc** (comme les salariés de parc). Correct ?
+- Chariots imprimés pour les **parcs et activités** seulement (pas Sodexo / Direction / Nettoyage). Correct ?
+- Étiquette « Salarié » de la maquette : non produite (les salariés ne sont saisis qu'en nombres standard / sans porc). Faut-il des salariés avec régime individuel ?
+- Questions plus anciennes toujours ouvertes : zone du nettoyage (« Autres »), pots gourmands (pastille sur l'étiquette seulement), étiquettes par repas ou par résident.
 
 ## Prochaines actions
-1. Utilisateur valide / corrige `produit.md` et répond aux questions de suivi.
-2. Phase 3 : maquettes (feuille chef, feuille chariot/étiquettes, écran de saisie client proche de l'Excel, écran référentiels).
-3. Phase 4 : choix techniques (HTML/JS local, lecture/écriture JSON, impression).
-
-## Questions de suivi (voir aussi la fin de la conversation)
-- Étiquettes : une par repas individuel ou par résident à régime ? Format (planche A4 d'étiquettes ou bandeau sur la feuille) ?
-- Sport : le client le saisit comment (case par résident pour le jeudi midi) ? Les salariés présents au Sport viennent de quels parcs ?
-- Direction/nettoyage : régime de la direction (standard) ? Nombres fixes ou modifiables par semaine ?
-- Poste client : Chrome/Edge ? Fichier JSON sur le serveur de l'entreprise (accès réseau) ou clé USB/mail ?
-- Pots gourmands : où afficher l'information (quantité par zone) ?
-- Hôpital/retour : une absence "motif" est-elle utile ou juste dates ?
+1. Utilisateur : tests ci-dessus + réponses aux questions → corrections.
+2. Commit de la phase 5 (après accord).

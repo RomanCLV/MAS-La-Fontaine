@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recueil Alimentation · MAS La Fontaine</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/feuilles.css">
+</head>
+<body>
+<div id="app"></div>
+<!-- Feuilles à imprimer : remplies juste avant l'impression, invisibles à l'écran. -->
+<div id="impression"></div>
+<noscript>Cette application a besoin de JavaScript (Firefox, Chrome ou Edge).</noscript>
+
+<!-- Scripts classiques (pas de modules ES : bloqués en ouverture par double-clic). L'ordre compte. -->
+<script src="js/data/modele.js"></script>
+<script src="js/data/stockage.js"></script>
+<script src="js/data/demarrage.js"></script>
+<script src="js/calc/calc.js"></script>
+<script src="js/ui/outils.js"></script>
+<script src="js/print/feuilles.js"></script>
+<script src="js/ui/app.js"></script>
+<script src="js/ui/page-semaine.js"></script>
+<script src="js/ui/page-residents.js"></script>
+<script src="js/ui/page-resident.js"></script>
+<script src="js/ui/page-parcs.js"></script>
+<script src="js/ui/page-regimes.js"></script>
+<script src="js/ui/page-activites.js"></script>
+<script src="js/ui/page-fichier.js"></script>
+<script src="js/ui/page-imprimer.js"></script>
+<script>Recueil.App.demarrer();</script>
+</body>
+</html>

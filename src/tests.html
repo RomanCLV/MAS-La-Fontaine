@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Tests des calculs · Recueil Alimentation</title>
+<style>
+body{font-family:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;margin:24px;color:#1c1c1c;background:#f3f1ec}
+h1{font-size:22px;margin:0 0 4px}
+#resume{font-size:18px;font-weight:700;padding:8px 12px;border-radius:6px;display:inline-block;margin:8px 0 16px}
+.ok{background:#e3f2e1;color:#1b5e20}.ko{background:#fbe3e3;color:#8a1c1c}
+section{background:#fff;border:1px solid #888;border-radius:8px;padding:10px 14px;margin-bottom:10px}
+h2{font-size:16px;margin:0 0 6px}
+li{font-size:14px;line-height:1.6}
+li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
+</style>
+</head>
+<body>
+<h1>Tests des calculs</h1>
+<div>Ouvrir ce fichier dans le navigateur : tous les tests doivent être verts.</div>
+<div id="resume"></div>
+<div id="sortie"></div>
+
+<script src="js/data/modele.js"></script>
+<script src="js/data/demarrage.js"></script>
+<script src="js/calc/calc.js"></script>
+<script>
+(function () {
+  'use strict';
+  var M = Recueil.Modele, C = Recueil.Calc;
+  var nbOk = 0, nbKo = 0, liste = null;
+  var sortie = document.getElementById('sortie');
+
+  function groupe(titre, fn) {
+    var s = document.createElement('section');
+    var h = document.createElement('h2'); h.textContent = titre; s.appendChild(h);
+    liste = document.createElement('ul'); s.appendChild(liste);
+    sortie.appendChild(s);
+    try { fn(); } catch (e) { note(false, 'Erreur : ' + e.message); }
+  }
+  function note(ok, texte) {
+    var li = document.createElement('li'); li.className = ok ? 'ok' : 'ko'; li.textContent = texte;
+    liste.appendChild(li);
+    if (ok) nbOk++; else nbKo++;
+  }
+  function egal(obtenu, attendu, texte) {
+    var ok = JSON.stringify(obtenu) === JSON.stringify(attendu);
+    note(ok, texte + (ok ? ' (' + JSON.stringify(obtenu) + ')' : ' : obtenu ' + JSON.stringify(obtenu) + ', attendu ' + JSON.stringify(attendu)));
+  }
+  function col(f, id) { return f.colonnes.filter(function (c) { return c.id === id; })[0]; }
+
+  // Jeu d'essai minimal : 2 parcs, référentiel réduit.
+  function jeu() {
+    return M.migrer({
+      app: M.APP, version: 1,
+      referentiels: {
+        parcs: [{ id: 'p1', nom: 'Parc 1', couleur: '#fff', ordre: 1 }, { id: 'p2', nom: 'Parc 2', couleur: '#fff', ordre: 2 }],
+        regimes: [
+          { id: 'normal', nom: 'Normal', nature: 'texture' }, { id: 'hache', nom: 'Haché', nature: 'texture' },
+          { id: 'mixe', nom: 'Mixé', nature: 'texture' },
+          { id: 'sans_porc', nom: 'Sans porc', nature: 'regime' }, { id: 'sans_viande', nom: 'Sans viande', nature: 'regime' },
+          { id: 'diabetique', nom: 'Diabétique', nature: 'regime' },
+          { id: 'double_plat', nom: 'Double plat', nature: 'option', affecte: 'plat' },
+          { id: 'double_legumes_vert', nom: 'Double légumes', nature: 'option', affecte: 'legumes' },
+          { id: 'enrichi', nom: 'Enrichi', nature: 'option' }
+        ]
+      },
+      residents: [
+        { id: 'A', nom: 'A', parcId: 'p1', textureId: 'normal' },
+        { id: 'B', nom: 'B', parcId: 'p1', textureId: 'hache', regimeIds: ['diabetique'], optionIds: ['double_plat', 'enrichi'] },
+        { id: 'C', nom: 'C', parcId: 'p1', textureId: 'normal', regimeIds: ['sans_porc'] },
+        { id: 'D', nom: 'D', parcId: 'p2', textureId: 'mixe', optionIds: ['double_legumes_vert'] },
+        { id: 'E', nom: 'E', parcId: 'p2', textureId: 'normal', archive: true }
+      ],
+      semaines: [{ id: '2026-S42', debut: '2026-10-12',
+        salaries: { p1: { lun_midi: { standard: 2, sansPorc: 1 } } },
+        sodexo: { lun_midi: { standard: 3, sansPorc: 1 } },
+        direction: { lun_midi: 3 }, nettoyage: { lun_midi: 5 } }]
+    });
+  }
+
+  groupe('Dates et créneaux', function () {
+    egal(M.CRENEAUX.length, 14, '14 créneaux par semaine');
+    egal(M.idSemaine('2026-10-12'), '2026-S42', 'Semaine ISO du 12/10/2026');
+    egal(M.idSemaine('2027-01-01'), '2026-S53', '1er janvier 2027 = semaine 53 de 2026');
+    egal(M.lundiDe('2026-10-18'), '2026-10-12', 'Lundi de la semaine du dimanche 18/10');
+    egal(M.dateDuCreneau({ debut: '2026-10-12' }, 'jeu_midi'), '2026-10-15', 'Date du jeudi midi');
+    egal(M.ajouterJours('2026-10-24', 2), '2026-10-26', 'Passage à l\'heure d\'hiver sans décalage');
+  });
+
+  groupe('Totaux par zone', function () {
+    var d = jeu(), s = d.semaines[0];
+    var f = C.feuilleJour(d, s, 'lun_midi');
+    var p1 = col(f, 'p1').c, p2 = col(f, 'p2').c;
+    egal([p1.residents, p1.doublesPlats, p1.salStd, p1.salSansPorc, p1.total], [3, 1, 2, 1, 7], 'Parc 1 : 3 résidents + 1 double + 2 std + 1 sans porc = 7');
+    egal(p2.total, 1, 'Parc 2 : résident archivé non compté');
+    egal(col(f, 'totalParcs').c.total, 8, 'Total parcs = 7 + 1');
+    egal(col(f, 'sodexo').c.total, 4, 'Sodexo 3 std + 1 sans porc');
+    egal(col(f, 'direction').c.total, 3, 'Direction 3');
+    egal(col(f, 'nettoyage').c.total, 5, 'Nettoyage 5 (zone Autres)');
+    egal(f.total.total, 20, 'Total à produire = 8 + 4 + 3 + 5');
+    egal(C.feuilleJour(d, s, 'lun_soir').total.total, 5, 'Lundi soir : résidents seulement (4 + 1 double)');
+  });
+
+  groupe('Double plat', function () {
+    var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_soir');
+    var p1 = col(f, 'p1').c;
+    egal(p1.tex.hache, 2, 'Haché avec double plat = 2 plats hachés');
+    egal(p1.reg.diabetique, 2, 'Régime diabétique compté sur les 2 plats');
+    egal(p1.opt.double_plat, 1, 'Ligne double plat = 1 personne');
+    egal(p1.opt.enrichi, 2, 'Enrichi compté sur les 2 plats');
+    egal(col(f, 'p2').c.opt.double_legumes_vert, 1, 'Double légumes = 1 portion à part');
+    var t = f.total;
+    egal((t.tex.normal || 0) + (t.tex.hache || 0) + (t.tex.mixe || 0), t.total, 'Normal + Haché + Mixé = total');
+  });
+
+  groupe('Activité retirée du parc', function () {
+    var d = jeu(), s = d.semaines[0];
+    s.activites.push({ id: 'act', nom: 'Sport', jour: 'lun', service: 'midi', participantIds: ['B', 'D'], presetId: null });
+    var f = C.feuilleJour(d, s, 'lun_midi');
+    egal(col(f, 'p1').c.residents, 2, 'B retiré du parc 1');
+    egal(col(f, 'p1').c.doublesPlats, 0, 'Son double plat part avec lui');
+    egal(col(f, 'p1').partis.length, 1, 'Parc 1 : 1 résident parti en activité');
+    egal(col(f, 'act').c.total, 3, 'Colonne Sport = B (2 plats) + D');
+    egal(col(f, 'act').c.tex.hache, 2, 'La texture suit le résident');
+    egal(col(f, 'totalParcs').c.total, 8, 'Total parcs inchangé');
+    egal(f.total.total, 20, 'Total à produire inchangé (pas de double compte)');
+    egal(col(C.feuilleJour(d, s, 'lun_soir'), 'act'), undefined, 'Pas de colonne Sport le soir');
+    s.presences.B = { lun_midi: 0 };
+    egal(C.feuilleJour(d, s, 'lun_midi').total.total, 18, 'Participant absent : compté nulle part');
+  });
+
+  groupe('Direction et nettoyage', function () {
+    var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_midi');
+    egal(col(f, 'nettoyage').c.reg.sans_viande, 5, 'Nettoyage = 5 sans viande');
+    egal(col(f, 'nettoyage').c.salStd, 5, 'Nettoyage en ligne salariés standard');
+    egal(col(f, 'direction').c.tex.normal, 3, 'Direction en texture normale');
+    egal(col(f, 'totalParcs').c.reg.sans_viande, undefined, 'Nettoyage hors total parcs');
+    egal(f.total.reg.sans_porc, 1 + 1 + 1, 'Sans porc = résident C + salarié parc + Sodexo');
+    egal(C.feuilleJour(d, d.semaines[0], 'sam_midi').total.total, 5, 'Samedi : ni direction ni nettoyage');
+  });
+
+  groupe('Présences et alertes', function () {
+    var d = jeu(), s = d.semaines[0], A = d.residents[0];
+    A.absences.push({ debut: '2026-10-13', fin: '2026-10-14', services: ['midi'] });
+    egal(C.presence(s, A, 'mar_midi'), { valeur: 0, source: 'absence' }, 'Absence de la fiche → 0');
+    egal(C.presence(s, A, 'mar_soir').valeur, 1, 'Service non coché → présent');
+    egal(C.presence(s, A, 'jeu_midi').valeur, 1, 'Hors période → présent');
+    egal(C.alertes(d, s).length, 0, 'Aucune alerte au départ');
+    s.presences.A = { mar_midi: 1 };
+    var al = C.alertes(d, s);
+    egal(al.map(function (a) { return a.type; }), ['presentAbsent'], 'Présent saisi pendant une absence → alerte');
+    s.alertesTraitees.push({ cle: al[0].cle, statut: 'voulu' });
+    egal(C.alertesVisibles(d, s).length, 0, '« C\'est voulu » masque l\'alerte');
+    s.presences.A.mer_midi = 1;
+    egal(C.alertesVisibles(d, s).length, 1, 'Nouvelle contradiction → l\'alerte revient');
+    var Cr = d.residents[2];
+    s.presences.C = {};
+    M.CRENEAUX.forEach(function (c) { s.presences.C[c] = 0; });
+    egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence' && a.residentId === 'C'; }), true, 'Aucune présence sans absence → alerte');
+    Cr.absences.push({ debut: '2026-10-01', fin: '2026-10-30', services: ['midi', 'soir'] });
+    egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence'; }), false, 'Absence enregistrée → pas d\'alerte');
+  });
+
+  groupe('Feuille chariot', function () {
+    var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_midi');
+    var ch = C.chariot(d, d.semaines[0], 'lun_midi', col(f, 'p1'));
+    egal(ch.normauxSimples, 1, 'A = normal simple (collectif)');
+    egal(ch.sansPorcSeuls, 1, 'C = sans porc seul (bac sans porc)');
+    egal(ch.etiquettes.map(function (e) { return e.nom; }), ['B'], 'B a une étiquette');
+    egal(ch.etiquettes[0].eq, 2, 'Étiquette de B : EQ 2');
+    egal(ch.doubles, ['B'], 'Double plat signalé');
+    egal(ch.volume, 7, 'Volume du chariot = total du parc');
+  });
+
+  groupe('Migration et données de démarrage', function () {
+    var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: 4 } }] });
+    egal(m.semaines[0].debut, '2026-10-12', 'Début ramené au lundi');
+    egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo nombre → {standard, sansPorc}');
+    egal(Array.isArray(m.residents) && Array.isArray(m.presetsActivites), true, 'Tableaux manquants créés');
+    var refus = 0;
+    try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
+    try { M.migrer({ app: M.APP, version: 99 }); } catch (e) { refus++; }
+    egal(refus, 2, 'Fichier étranger ou trop récent refusé');
+    var d = M.migrer(Recueil.DONNEES_DEMARRAGE), s = d.semaines[0];
+    egal(d.residents.length, 62, '62 résidents');
+    var f = C.feuilleJour(d, s, 'lun_midi');
+    egal(col(f, 'totalParcs').c.total, 61 + 12 + 4, 'S42 lundi midi : total parcs = 61 résidents + 12 doubles + 4 salariés');
+    egal(f.total.total, 77 + 3 + 5, 'S42 lundi midi : total à produire = 85');
+    egal(C.feuilleJour(d, s, 'lun_soir').total.total, 74, 'S42 lundi soir : 62 + 12 = 74');
+  });
+
+  var r = document.getElementById('resume');
+  r.textContent = nbKo ? nbKo + ' test(s) en échec sur ' + (nbOk + nbKo) : 'Tous les tests passent (' + nbOk + ')';
+  r.className = nbKo ? 'ko' : 'ok';
+  document.title = (nbKo ? '✗ ' : '✓ ') + document.title;
+})();
+</script>
+</body>
+</html>
