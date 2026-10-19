@@ -11,6 +11,10 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Vérifié dans le navigateur intégré (Chromium, via un petit serveur local de test) : toutes les pages, aller-retour export/import JSON, rendu d'impression A4 (règles `@page` actives, 297 × 210 mm).
 - Données de démarrage : couleurs et ordre des colonnes alignés sur les maquettes ; copie intégrée `src/js/data/demarrage.js`.
 
+## Retours V1 traités (2026-10-19, 7 commits)
+- Résidents : vue Tableau (édition texture/régimes/options sans fiche). Textes de debug retirés. JSON de démarrage dans `src/data/`. Selects sans « ▾ ». Activités : jour sans date, parcs centrés. Indicateur « Modifications non enregistrées ».
+- Vérifié dans le navigateur intégré (Chromium) ; 58 tests verts. À revoir par l'utilisateur dans Firefox.
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.
