@@ -9,8 +9,29 @@
     var e = etat();
     e.selection = a ? a.id : 'nouvelle';
     e.b = a ? M.copie(a) : { id: M.nouvelId('a'), nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null, couleur: M.COULEUR_ACTIVITE };
-    e.erreur = '';
+    e.erreur = ''; e.info = '';
     e.initial = JSON.stringify(e.b);
+  }
+
+  // Participants du brouillon b déjà inscrits à une autre activité sur le même créneau : [{ r, autre }].
+  function conflits(d, s, b) {
+    var autres = C.activitesDuCreneau(s, M.creneau(b.jour, b.service)).filter(function (a) { return a.id !== b.id; });
+    return b.participantIds.map(function (id) {
+      var autre = autres.filter(function (a) { return a.participantIds.indexOf(id) >= 0; })[0];
+      return autre ? { r: M.resident(d, id), autre: autre } : null;
+    }).filter(function (x) { return x && x.r; });
+  }
+  function libelleConflits(liste) {
+    return liste.map(function (x) { return M.nomAffiche(x.r) + ' (« ' + x.autre.nom + ' »)'; }).join(', ');
+  }
+  // Après un changement de jour, de service ou de preset : retire les participants déjà pris ailleurs.
+  function retirerConflits(d, s, e) {
+    var liste = conflits(d, s, e.b);
+    if (!liste.length) return;
+    var ids = liste.map(function (x) { return x.r.id; });
+    e.b.participantIds = e.b.participantIds.filter(function (id) { return ids.indexOf(id) < 0; });
+    e.info = 'Déjà inscrits à une autre activité ' + M.jour(e.b.jour).nom.toLowerCase() + ' ' + e.b.service +
+      ', donc retirés de celle-ci : ' + libelleConflits(liste) + '.';
   }
 
   // Brouillon différent de l'activité enregistrée (ou du formulaire vide pour une nouvelle).
@@ -20,7 +41,7 @@
     var a = App.semaineCourante().activites.filter(function (x) { return x.id === e.b.id; })[0];
     return JSON.stringify(e.b) !== (a ? JSON.stringify(a) : e.initial);
   }
-  function abandonner() { var e = etat(); e.selection = null; e.b = null; e.erreur = ''; }
+  function abandonner() { var e = etat(); e.selection = null; e.b = null; e.erreur = ''; e.info = ''; }
   function peutChanger() { return App.abandonner({ type: 'activites' }); }
 
   function ouvrirActivite(id) {
@@ -55,12 +76,17 @@
 
       function enregistrer() {
         if (!b.nom.trim()) { e.erreur = 'Donnez un nom à l’activité.'; App.rendre(); return; }
+        var doublons = conflits(d, s, b);
+        if (doublons.length) {
+          e.erreur = 'Un résident ne peut faire qu’une activité par service. Décochez : ' + libelleConflits(doublons) + '.';
+          App.rendre(); return;
+        }
         b.nom = b.nom.trim();
         App.modifier(function () {
           var i = -1;
           s.activites.forEach(function (a, n) { if (a.id === b.id) i = n; });
           if (i >= 0) s.activites[i] = M.copie(b); else s.activites.push(M.copie(b));
-          e.selection = b.id; e.erreur = '';
+          e.selection = b.id; e.erreur = ''; e.info = '';
         });
       }
       function retirer() {
@@ -127,23 +153,24 @@
 
         droite = h('div', { class: 'carte formulaire-activite' },
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.erreur) : null,
+          e.info ? h('div', { class: 'message message-attention', role: 'status' }, e.info) : null,
           h('div', { class: 'rangee bas' },
             h('div', { class: 'champ', style: 'flex:1 1 180px' }, h('label', { for: 'a-nom' }, 'Nom de l’activité'),
               h('input', { id: 'a-nom', value: b.nom, oninput: function (ev) { b.nom = ev.target.value; App.signalerModif(); } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-couleur' }, 'Couleur'),
               h('input', { id: 'a-couleur', type: 'color', value: b.couleur, oninput: function (ev) { b.couleur = ev.target.value; App.signalerModif(); } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-jour' }, 'Jour'),
-              h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; App.rendre(); } },
+              h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; e.info = ''; retirerConflits(d, s, e); App.rendre(); } },
                 M.JOURS.map(function (j) { return h('option', { value: j.id, selected: j.id === b.jour }, j.nom); }))),
             h('div', { class: 'champ' }, h('label', { for: 'a-svc' }, 'Service impacté'),
-              h('select', { id: 'a-svc', onchange: function (ev) { b.service = ev.target.value; App.rendre(); } },
+              h('select', { id: 'a-svc', onchange: function (ev) { b.service = ev.target.value; e.info = ''; retirerConflits(d, s, e); App.rendre(); } },
                 M.SERVICES.map(function (x) { return h('option', { value: x.id, selected: x.id === b.service }, x.nom); })))),
           h('div', { class: 'bandeau bandeau-activites' },
             h('span', null, preset ? [h('b', null, 'Preset :'), ' « ' + preset.nom + ' » chargé'] : h('span', { class: 'petit' }, 'Aucun preset chargé.')),
             h('select', { 'aria-label': 'Charger un preset', style: 'margin-left:auto', disabled: !d.presetsActivites.length,
               onchange: function (ev) {
                 var p = d.presetsActivites.filter(function (x) { return x.id === ev.target.value; })[0];
-                if (p) { depuisPreset(b, p, d); App.rendre(); }
+                if (p) { depuisPreset(b, p, d); e.info = ''; retirerConflits(d, s, e); App.rendre(); }
               } },
               h('option', { value: '' }, 'Charger un preset'),
               d.presetsActivites.map(function (p) { return h('option', { value: p.id }, p.nom); })),
@@ -157,8 +184,8 @@
                 var on = b.participantIds.indexOf(r.id) >= 0;
                 var autre = C.activitesDuCreneau(s, c).filter(function (a) { return a.id !== b.id && a.participantIds.indexOf(r.id) >= 0; })[0];
                 var absent = C.presence(s, r, c).valeur === 0;
-                var titre = autre ? 'Déjà inscrit à « ' + autre.nom + ' » sur ce service' : (absent ? 'Absent ce jour-là : ne sera compté nulle part' : '');
-                return h('button', { class: 'participant' + (on ? ' on' : '') + (absent ? ' absent' : ''), 'aria-pressed': on ? 'true' : 'false',
+                var titre = autre ? 'Déjà inscrit à « ' + autre.nom + ' » sur ce service' + (on ? ' : à décocher' : '') : (absent ? 'Absent ce jour-là : ne sera compté nulle part' : '');
+                return h('button', { class: 'participant' + (on ? ' on' : '') + (absent ? ' absent' : '') + (autre && on ? ' conflit' : ''), 'aria-pressed': on ? 'true' : 'false',
                   disabled: !!autre && !on, title: titre,
                   onclick: function () {
                     if (on) b.participantIds = b.participantIds.filter(function (x) { return x !== r.id; }); else b.participantIds.push(r.id);

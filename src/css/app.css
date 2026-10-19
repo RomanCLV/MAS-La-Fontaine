@@ -198,6 +198,7 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .participant{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--trait);border-radius:999px;font-size:14px;background:#fff;margin:0 6px 6px 0;cursor:pointer}
 .participant.on{background:var(--bleu);color:#fff;border-color:var(--bleu);font-weight:700}
 .participant.absent{text-decoration:line-through}
+.participant.conflit{background:var(--rouge);border-color:var(--rouge)}
 .participant:disabled{opacity:.4;cursor:not-allowed}
 
 /* Impression : aperçu */
