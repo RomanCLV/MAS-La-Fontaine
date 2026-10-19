@@ -119,14 +119,16 @@
   }
 
   function vueTableau(d, f) {
-    var cols = d.referentiels.regimes;
+    var groupes = O.colonnesGroupees(M.groupesRegimes(d));
+    var cols = groupes.colonnes;
     var gabarit = 'grid-template-columns:110px 200px repeat(' + cols.length + ',40px) minmax(160px,1fr)';
     var liste = filtrer(d, f);
+    var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' })]);
     var entete = h('div', { class: 'g g-entete', style: gabarit },
       h('div', { class: 'gh gauche colle0' }, 'Parc'),
       h('div', { class: 'gh gauche colle1' }, 'NOM Prénom'),
       cols.map(function (g) {
-        return h('div', { class: 'gh' + (g.nature === 'texture' ? ' texture' : ''), style: 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), title: g.nom },
+        return h('div', { class: 'gh' + (g.nature === 'texture' ? ' texture' : '') + (groupes.debut(g) ? ' debut-groupe' : ''), style: 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), title: g.nom },
           h('span', { class: 'v' }, (g.abrege || g.nom).toUpperCase()));
       }),
       h('div', { class: 'gh gauche' }, 'OBSERVATION'));
@@ -141,7 +143,7 @@
         cols.map(function (g) {
           var on = coche(v, g), avant = coche(r, g);
           return h('button', {
-            class: 'tc' + (g.nature === 'texture' ? ' texture' : '') + (on ? ' on' : '') + (on !== avant ? ' modif' : ''),
+            class: 'tc' + (g.nature === 'texture' ? ' texture' : '') + (groupes.debut(g) ? ' debut-groupe' : '') + (on ? ' on' : '') + (on !== avant ? ' modif' : ''),
             style: on ? 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur) : '',
             'aria-pressed': on ? 'true' : 'false', 'aria-label': M.nomAffiche(r) + ' · ' + g.nom, title: g.nom,
             onclick: function () { basculer(f, r, g); }
@@ -151,7 +153,7 @@
     });
     return h('div', { class: 'carte-grille tableau-res' },
       h('div', { class: 'defil', 'data-defil': 'tableau-res' },
-        h('div', { class: 'grille' }, entete, liste.length ? corps : aucun(f))));
+        h('div', { class: 'grille' }, bandeaux, entete, liste.length ? corps : aucun(f))));
   }
 
   R.Pages.residents = {

@@ -111,6 +111,8 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .gh{display:flex;align-items:flex-end;justify-content:center;font-size:11px;font-weight:700;border-bottom:2px solid var(--gris);border-left:1px solid #bbb;padding:2px 0;background:var(--clair)}
 .gh.gauche{justify-content:flex-start;padding-left:6px}
 .gh.jour,.gc.jour{border-left:2px solid var(--gris)}
+.gg{font-size:11px;font-weight:700;letter-spacing:.04em;text-align:center;padding:4px 2px;background:var(--clair);color:var(--gris);border:1px solid #bbb;border-left:2px solid var(--gris);border-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.debut-groupe{border-left:2px solid var(--gris)!important}
 .v{writing-mode:vertical-rl;transform:rotate(180deg);height:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gc{display:flex;align-items:center;justify-content:center;font-size:13px;border-left:1px solid #ccc;border-bottom:1px solid #ccc;height:30px;min-width:0}
 .gc.gauche{justify-content:flex-start;padding-left:4px;gap:4px}

@@ -194,6 +194,14 @@
   function parNature(donnees, nature) {
     return donnees.referentiels.regimes.filter(function (g) { return g.nature === nature; });
   }
+  // Régimes rangés par nature (textures, régimes, options), ordre du référentiel dans chaque groupe.
+  // filtre(g) facultatif. Renvoie les groupes non vides : [{ nature, nom, regimes }].
+  var GROUPES = [{ nature: 'texture', nom: 'Textures' }, { nature: 'regime', nom: 'Régimes' }, { nature: 'option', nom: 'Options' }];
+  function groupesRegimes(donnees, filtre) {
+    return GROUPES.map(function (gr) {
+      return { nature: gr.nature, nom: gr.nom, regimes: parNature(donnees, gr.nature).filter(function (g) { return !filtre || filtre(g); }) };
+    }).filter(function (gr) { return gr.regimes.length; });
+  }
   function textureDefaut(donnees) {
     var t = parNature(donnees, 'texture');
     var n = t.filter(function (g) { return g.id === TEXTURE_DEFAUT; })[0];
@@ -208,6 +216,6 @@
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
     nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer,
-    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, textureDefaut: textureDefaut
+    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut
   };
 })(window.Recueil = window.Recueil || {});

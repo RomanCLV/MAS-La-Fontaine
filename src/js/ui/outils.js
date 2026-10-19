@@ -64,9 +64,26 @@
   }
   function pluriel(n, mot, motPluriel) { return n + ' ' + (n > 1 ? (motPluriel || mot + 's') : mot); }
 
+  // Colonnes des tableaux résidents (textures, régimes, options) : groupes = Modele.groupesRegimes.
+  // colonnes : liste à plat ; debut(g) : vrai pour la 1re colonne d'un groupe (trait de séparation) ;
+  // bandeaux(gabarit, avant) : ligne au-dessus des en-têtes, un bloc par groupe ; avant = cellules des colonnes qui précèdent.
+  function colonnesGroupees(groupes) {
+    var debuts = groupes.map(function (gr) { return gr.regimes[0].id; });
+    return {
+      colonnes: [].concat.apply([], groupes.map(function (gr) { return gr.regimes; })),
+      debut: function (g) { return debuts.indexOf(g.id) >= 0; },
+      bandeaux: function (gabarit, avant) {
+        return h('div', { class: 'g g-groupes', style: gabarit }, avant,
+          groupes.map(function (gr) {
+            return h('div', { class: 'gg', style: 'grid-column:span ' + gr.regimes.length, title: gr.nom }, gr.nom.toUpperCase());
+          }));
+      }
+    };
+  }
+
   R.h = h;
   R.Outils = {
     iconeCrayon: iconeCrayon, texteSur: texteSur, dateLongue: dateLongue, dateCourte: dateCourte,
-    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, MOIS: MOIS
+    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, MOIS: MOIS, colonnesGroupees: colonnesGroupees
   };
 })(window.Recueil = window.Recueil || {});

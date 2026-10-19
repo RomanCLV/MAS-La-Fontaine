@@ -39,16 +39,18 @@
   }
 
   function grille(d, s, parc) {
-    var cols = d.referentiels.regimes.filter(function (g) { return g.id !== M.textureDefaut(d); });
+    var groupes = O.colonnesGroupees(M.groupesRegimes(d, function (g) { return g.id !== M.textureDefaut(d); }));
+    var cols = groupes.colonnes;
     var gabarit = 'grid-template-columns:34px 190px 150px repeat(' + cols.length + ',34px) 10px repeat(14,32px)';
     var residents = d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
 
+    var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), h('div')]);
     var entete = h('div', { class: 'g g-entete', style: gabarit },
       h('div', { class: 'gh colle0' }, h('span', { class: 'v' }, 'N°')),
       h('div', { class: 'gh gauche colle1' }, 'NOM Prénom'),
       h('div', { class: 'gh gauche' }, 'OBSERVATION'),
       cols.map(function (g) {
-        return h('div', { class: 'gh', style: 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), title: g.nom },
+        return h('div', { class: 'gh' + (groupes.debut(g) ? ' debut-groupe' : ''), style: 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), title: g.nom },
           h('span', { class: 'v' }, (g.abrege || g.nom).toUpperCase()));
       }),
       h('div'),
@@ -126,7 +128,7 @@
         h('div', { class: 'gc gauche obs', title: r.consigne }, r.consigne),
         cols.map(function (g) {
           var on = marques.indexOf(g.id) >= 0;
-          return h('div', { class: 'gc marque' + (on ? ' on' : '') }, on ? 'X' : '');
+          return h('div', { class: 'gc marque' + (on ? ' on' : '') + (groupes.debut(g) ? ' debut-groupe' : '') }, on ? 'X' : '');
         }),
         h('div'),
         M.CRENEAUX.map(function (c, k) {
@@ -208,7 +210,7 @@
           return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
         }) : [h('span', { class: 'pc-ex act' }), 'Activité']),
       h('div', { class: 'defil', 'data-defil': 'grille' },
-        h('div', { class: 'grille' }, entete, lignes,
+        h('div', { class: 'grille' }, bandeaux, entete, lignes,
           residents.length ? null : h('div', { class: 'vide-grille' }, 'Aucun résident actif dans ce parc.'),
           lignesSal)));
   }
