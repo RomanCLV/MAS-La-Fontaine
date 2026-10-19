@@ -8,6 +8,20 @@
     App.remplacerDonnees(M.migrer(R.DONNEES_DEMARRAGE), 'données de démarrage (recueil_base_s42.json)');
   }
 
+  // Base vide pour un essai : on garde seulement la liste des textures / régimes / options des données de démarrage ;
+  // aucun parc, résident ni preset ; une semaine (la semaine en cours).
+  function baseVide() {
+    var dem = R.DONNEES_DEMARRAGE;
+    return M.migrer({ app: M.APP, version: M.VERSION, etablissement: dem.etablissement,
+      referentiels: { parcs: [], regimes: M.copie(dem.referentiels.regimes) }, residents: [], presetsActivites: [], semaines: [] });
+  }
+  function repartirDeZero() {
+    if (App.donnees && !window.confirm('Repartir de zéro ?\n\nLa copie de travail est remplacée par une base vide : aucun parc, aucun résident, ' +
+      'aucune activité, seulement la semaine en cours. Les textures, régimes et options sont conservés.' +
+      (App.meta.nonExporte ? '\n\nAttention : la copie actuelle a des modifications non exportées, elles seront perdues.' : ''))) return;
+    App.remplacerDonnees(baseVide(), 'base vide');
+  }
+
   function resume(d) {
     var s = d.semaines.map(function (x) { return 'S' + M.numeroSemaine(x.debut).numero; }).join(', ');
     return O.pluriel(d.semaines.length, 'semaine') + ' (' + s + ') · ' + O.pluriel(d.residents.filter(function (r) { return !r.archive; }).length, 'résident actif', 'résidents actifs') +
@@ -45,7 +59,8 @@
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
           h('div', { class: 'rangee' },
             h('button', { class: 'btn btn-grand btn-principal', onclick: chargerDemarrage }, 'Charger les données de démarrage (semaine 42)'),
-            boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire))));
+            boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire),
+            h('button', { class: 'btn btn-grand', onclick: repartirDeZero }, 'Commencer avec une base vide'))));
     }
   };
 
@@ -75,7 +90,9 @@
             h('div', null, resume(App.donnees)),
             h('div', { class: 'petit' }, 'Origine : ' + (m.fichier || 'inconnue') + (m.importeLe ? ' · importée le ' + O.dateCourte(new Date(m.importeLe).toISOString().slice(0, 10)) : '')),
             h('div', { class: 'petit' }, 'Enregistrée dans ce navigateur' + (m.sauveLe ? ' à ' + O.heure(m.sauveLe) : '') + '. Exportez régulièrement.'),
-            h('button', { class: 'btn', onclick: chargerDemarrage }, 'Recharger les données de démarrage (semaine 42)'))));
+            h('div', { class: 'rangee' },
+              h('button', { class: 'btn', onclick: chargerDemarrage }, 'Recharger les données de démarrage (semaine 42)'),
+              h('button', { class: 'btn btn-danger', onclick: repartirDeZero }, 'Repartir de zéro (base vide)')))));
     }
   };
 

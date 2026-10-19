@@ -21,6 +21,9 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Retours V1 (3e lot, 2026-10-19, 2 commits)
 - Activités : couleur par activité (bleu par défaut), reprise dans la grille Semaine et la feuille chef/chariot. Plus de doublon d'activité sur un même service (retrait auto au changement de jour + blocage à l'enregistrement).
 
+## Retours V1 (4e lot, 2026-10-19)
+- Colonnes groupées Textures / Régimes / Options (grille Semaine, Tableau résidents). Boutons Importer / Exporter dans la barre du haut. « Repartir de zéro » (base vide).
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.

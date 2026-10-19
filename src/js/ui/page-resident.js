@@ -67,7 +67,10 @@
 
       function enregistrer() {
         if (!(r.nom || '').trim() && !(r.prenom || '').trim()) { b.erreur = 'Indiquez au moins un nom ou un prénom.'; App.rendre(); return; }
-        if (!M.parc(d, r.parcId)) { b.erreur = 'Choisissez un parc.'; App.rendre(); return; }
+        if (!M.parc(d, r.parcId)) {
+          b.erreur = d.referentiels.parcs.length ? 'Choisissez un parc.' : 'Aucun parc : créez d’abord un parc dans la page Parcs.';
+          App.rendre(); return;
+        }
         r.nom = r.nom.trim(); r.prenom = r.prenom.trim(); r.consigne = (r.consigne || '').trim();
         var copie = M.copie(r);
         App.modifier(function () {
