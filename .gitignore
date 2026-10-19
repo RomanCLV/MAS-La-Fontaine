@@ -1,0 +1,25 @@
+# Données sources potentiellement sensibles
+data/source/
+*.xlsx
+*.xls
+*.xlsm
+~$*
+
+# Fichier de reprise temporaire
+handoff.md
+
+# Dépendances / builds (générique, à affiner en phase 4)
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+.env
+*.log
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

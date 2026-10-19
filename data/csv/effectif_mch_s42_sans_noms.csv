@@ -1,0 +1,79 @@
+﻿code;parc;type;observation;HACHE;MIXE;SANS_PORC;SANS_RESIDUS;DBL_LEGUMES_VERT;PLATEAU_HYPO;DOUBLE_PLAT;POTS_GOURMANDS;DIABETIQUE;ENRICHI;SANS_PRODUIT_MER;PANE_PATE_RIZ_FRITE;Lun_midi;Lun_soir;Mar_midi;Mar_soir;Mer_midi;Mer_soir;Jeu_midi;Jeu_soir;Ven_midi;Ven_soir;Sam_midi;Sam_soir;Dim_midi;Dim_soir
+AMB-01;AMBOISE;resident;DOUBLE LEGUMES VERT;;;;;X;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-02;AMBOISE;resident;;;;X;;;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-03;AMBOISE;resident;;;;X;;;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-04;AMBOISE;resident;DOUBLE  PORTION;X;;X;;;;X;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-05;AMBOISE;resident;;X;;;X;;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-06;AMBOISE;resident;;X;;;;;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-07;AMBOISE;resident;;X;;;;;;;;;;;;1;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-08;AMBOISE;resident;ENRICHIE;;X;;;;;;;;X;;;0;1;1;1;1;1;1;1;1;1;1;1;1;1
+AMB-salaries;AMBOISE;salaries;;;;;;;;;;;;;;2;;;;;;;;;;;;;
+AMB-salariesSP;AMBOISE;salaries_sans_porc;;;;X;;;;;;;;;;2;;;;;;;;;;;;;
+BON-01;BONAGUIL;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+BON-02;BONAGUIL;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+BON-03;BONAGUIL;resident;EN ASSIETTE SANS RESIDU et ENRICHI;;;;X;;;;;;X;;;;;;;;;;;;;;;;
+BON-04;BONAGUIL;resident;SANS PRODUIT DE LA MER;;;X;;;;;;;;X;;;;;;;;;;;;;;;
+BON-05;BONAGUIL;resident;EN ASSIETTE DIABETIQUE;;;X;;;;;;X;;;;;;;;;;;;;;;;;
+BON-06;BONAGUIL;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+BON-07;BONAGUIL;resident;ENRICHI;X;;;;;;;;;X;;;;;;;;;;;;;;;;
+BON-08;BONAGUIL;resident;ENRICHI;;X;;;;;;X;;X;;;;;;;;;;;;;;;;
+BON-salaries;BONAGUIL;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+BON-salariesSP;BONAGUIL;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+COL-01;COLLIOURE;resident;DOUBLE PLAT;;;;;;;X;;;;;;;;;;;;;;;;;;;
+COL-02;COLLIOURE;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+COL-03;COLLIOURE;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+COL-04;COLLIOURE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+COL-05;COLLIOURE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+COL-06;COLLIOURE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+COL-07;COLLIOURE;resident;;X;;;;;;;;;;;;;;;;;;;;;;;;;
+COL-08;COLLIOURE;resident;SANS RESIDU / DOUBLE PLAT;X;;;X;;;X;;;;;;;;;;;;;;;;;;;
+COL-salaries;COLLIOURE;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+COL-salariesSP;COLLIOURE;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+LUD-01;LUDE;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LUD-02;LUDE;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+LUD-03;LUDE;resident;SANS PRODUIT DE LA MER / DOUBLE PLAT;X;;;;;;X;;;;X;;;;;;;;;;;;;;;
+LUD-04;LUDE;resident;MIXE TOUT LE FROID / DOUBLE PLAT;X;;;;;;X;;;;;;;;;;;;;;;;;;;
+LUD-05;LUDE;resident;ENRICHIE;;X;;;;;;X;;X;;;;;;;;;;;;;;;;
+LUD-06;LUDE;resident;DOUBLE PLAT;;X;;;;;X;;;;;;;;;;;;;;;;;;;
+LUD-07;LUDE;resident;ENRICHIE / DOUBLE PLAT;;X;;;;;X;;;X;;;;;;;;;;;;;;;;
+LUD-08;LUDE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+LUD-salaries;LUDE;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+LUD-salariesSP;LUDE;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+MIR-01;MIRANDE;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MIR-02;MIRANDE;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MIR-03;MIRANDE;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MIR-04;MIRANDE;resident;DOUBLE PLAT;;;X;;;;X;;;;;;;;;;;;;;;;;;;
+MIR-05;MIRANDE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+MIR-06;MIRANDE;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+MIR-07;MIRANDE;resident;DOUBLE PLAT;X;;X;;;;X;;;;;;;;;;;;;;;;;;;
+MIR-08;MIRANDE;resident;SANS PRODUIT DE LA MER / DOUBLE PLAT;;X;;;;;X;;;;X;;;;;;;;;;;;;;;
+MIR-09;MIRANDE;resident;PLATEAU - HYPOCALORIQUE;;;;;;X;;;;;;;;;;;;;;;;;;;;
+MIR-salaries;MIRANDE;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MIR-salariesSP;MIRANDE;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+SUL-01;SULLY;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SUL-02;SULLY;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SUL-03;SULLY;resident;DOUBLE LEGUMES VERT;;;;;X;;;;;;;;;;;;;;;;;;;;;
+SUL-04;SULLY;resident;DOUBLE LEGUMES VERT;;;X;;X;;;;;;;;;;;;;;;;;;;;;
+SUL-05;SULLY;resident;DOUBLE PLAT;;;X;;;;X;;;;;;;;;;;;;;;;;;;
+SUL-06;SULLY;resident;DOUBLE PLAT;;;X;;;;X;;;;;;;;;;;;;;;;;;;
+SUL-salaries;SULLY;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SUL-salariesSP;SULLY;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-01;ALHAMBRA;resident;EN ASSIETTE DIABETIQUE;;;;;;;;;X;;;;;;;;;;;;;;;;;
+ALH-02;ALHAMBRA;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-03;ALHAMBRA;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-04;ALHAMBRA;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-05;ALHAMBRA;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-06;ALHAMBRA;resident;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-07;ALHAMBRA;resident;SANS RESIDU EN ASSIETTE;;;;X;;;;;;;;;;;;;;;;;;;;;;
+ALH-08;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-09;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-10;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-11;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-12;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-13;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-14;ALHAMBRA;resident;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+ALH-15;ALHAMBRA;resident;EN ASSIETTE POISSON OU VIANDE PANE PATE,RIZ OU FRITE;;;;;;;;;;;;X;;;;;;;;;;;;;;
+ALH-salaries;ALHAMBRA;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ALH-salariesSP;ALHAMBRA;salaries_sans_porc;;;;X;;;;;;;;;;;;;;;;;;;;;;;
+SPO-salaries;SPORT;salaries;;;;;;;;;;;;;;;;;;;;;;;;;;;
+SPO-salariesSP;SPORT;salaries_sans_porc;;;;;;;;;;;;;;;;;;;;;;;;;;;
