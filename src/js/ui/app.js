@@ -62,12 +62,14 @@
   App.nettoyerOnglets = function () {
     var d = App.donnees;
     if (!M.semaine(d, App.ui.semaine)) App.ui.semaine = d.semaines[d.semaines.length - 1].id;
-    App.ui.onglets = App.ui.onglets.filter(function (o) {
+    function existe(o) {
       if (!R.Pages[o.type]) return false;
       if (o.type === 'semaine') return !!M.semaine(d, o.id);
       if (o.type === 'resident') return !!M.resident(d, o.id) || !!App.brouillons[cle(o)];
       return true;
-    });
+    }
+    App.ui.onglets = App.ui.onglets.filter(existe);
+    App.ui.fermes = App.ui.fermes.filter(existe);
     if (!App.ui.onglets.length) App.ui.onglets.push({ type: 'semaine', id: App.ui.semaine });
     if (!App.ui.onglets.some(function (o) { return cle(o) === App.ui.actif; })) App.ui.actif = cle(App.ui.onglets[0]);
   };

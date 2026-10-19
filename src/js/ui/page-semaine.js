@@ -210,6 +210,19 @@
           lignesSal)));
   }
 
+  // Supprime la semaine s (après confirmation) et affiche la semaine voisine. La dernière semaine ne peut pas être supprimée.
+  function supprimer(d, s) {
+    var i = d.semaines.indexOf(s);
+    if (!window.confirm('Supprimer définitivement la ' + O.titreSemaine(s).toLowerCase() +
+      ' ?\n\nToutes ses saisies (présences, activités, salariés…) seront perdues.')) return;
+    if (R.Pages.activites.abandonner) R.Pages.activites.abandonner();
+    var voisine = d.semaines[i - 1] || d.semaines[i + 1];
+    App.modifier(function () { d.semaines.splice(i, 1); }, { sansRendu: true });
+    App.ui.semaine = voisine.id;
+    App.nettoyerOnglets();
+    App.ouvrir('semaine', voisine.id);
+  }
+
   R.Pages.semaine = {
     titre: function (o) {
       var s = M.semaine(App.donnees, o.id);
@@ -231,7 +244,8 @@
             App.modifier(function () { d.semaines.push(suivante); }, { sansRendu: true });
             App.ouvrir('semaine', suivante.id);
           } }, 'Créer la semaine suivante'),
-          h('button', { class: 'btn', onclick: function () { App.ui.semaine = s.id; App.ouvrir('imprimer'); } }, 'Imprimer cette semaine')),
+          h('button', { class: 'btn', onclick: function () { App.ui.semaine = s.id; App.ouvrir('imprimer'); } }, 'Imprimer cette semaine'),
+          d.semaines.length > 1 ? h('button', { class: 'btn btn-danger', onclick: function () { supprimer(d, s); } }, 'Supprimer cette semaine') : null),
         App.ui.manager ? alertes(d, s) : null,
         activites(s),
         parc ? [
