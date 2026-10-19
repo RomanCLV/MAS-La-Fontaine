@@ -5,7 +5,7 @@
 | `outils.js` | `Recueil.h(tag, attrs, ...enfants)` (création DOM sans `innerHTML` ⇒ pas d'injection), formats de dates français |
 | `app.js` | `Recueil.App` : état (données + état UI), sauvegarde, barre du haut, menu Pages, onglets, rendu |
 | `page-semaine.js` | Saisie : alertes (manager), bandeau activités, onglets de parcs, grille présences, salariés, Sodexo, Direction, Nettoyage |
-| `page-residents.js` / `page-resident.js` | Liste type TYPOLOGIE (éditer / archiver / supprimer au survol) ; fiche + absences |
+| `page-residents.js` / `page-resident.js` | Bascule Liste / Tableau (mémorisée). Liste type TYPOLOGIE (éditer / archiver / supprimer au survol) ; Tableau : une colonne par texture/régime/option, clic = X, brouillon enregistré d’un coup (cases modifiées entourées) ; fiche + absences |
 | `page-parcs.js` / `page-regimes.js` | Référentiels (nom, couleur, ordre ; nature et effet pour les régimes) |
 | `page-activites.js` | Activités de la semaine, presets (charger, mettre à jour, enregistrer) |
 | `page-fichier.js` | Accueil, page Importer, page Exporter |

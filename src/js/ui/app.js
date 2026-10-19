@@ -41,6 +41,7 @@
       manager: !!ui.manager,
       semaine: ui.semaine || '',
       parcActif: ui.parcActif || '',
+      residentsVue: ui.residentsVue || 'liste',
       impression: ui.impression || null
     };
     if (App.donnees) App.nettoyerOnglets();
