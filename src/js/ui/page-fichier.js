@@ -46,7 +46,7 @@
           h('div', { class: 'rangee' },
             h('button', { class: 'btn btn-grand btn-principal', onclick: chargerDemarrage }, 'Charger les données de démarrage (semaine 42)'),
             boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire)),
-          h('p', { class: 'petit' }, 'Les données de démarrage viennent de data/recueil_base_s42.json : 62 résidents aux noms fictifs (aucun vrai nom). ' +
+          h('p', { class: 'petit' }, 'Données de démarrage : 62 résidents aux noms fictifs (aucun vrai nom). ' +
             'Ensuite, l’application garde une copie de travail dans ce navigateur et la restaure à chaque ouverture.')));
     }
   };

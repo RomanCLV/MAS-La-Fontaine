@@ -1,4 +1,4 @@
-/* Copie de data/recueil_base_s42.json (données de démarrage, noms FICTIFS).
+/* Copie de src/data/recueil_base_s42.json (données de démarrage, noms FICTIFS).
    Intégrée en JS car un navigateur ne peut pas lire un fichier voisin en file://. */
 window.Recueil = window.Recueil || {};
 window.Recueil.DONNEES_DEMARRAGE = {

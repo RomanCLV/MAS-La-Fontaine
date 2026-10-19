@@ -15,5 +15,8 @@ Fichiers : `src/js/data/modele.js` (`Recueil.Modele`), `stockage.js` (`Recueil.S
 - Bonus Chrome/Edge : `enregistrerSous` / `enregistrerLie` via File System Access (`showSaveFilePicker`) si disponible ; le fichier lié n'est gardé qu'en mémoire (session).
 
 ## demarrage.js
-Copie de `data/recueil_base_s42.json` dans une variable JS (un navigateur ne peut pas lire un fichier voisin en `file://`).
+Copie de `src/data/recueil_base_s42.json` dans une variable JS (un navigateur ne peut pas lire un fichier voisin en `file://`).
 Si le JSON de départ change : remplacer tout ce qui suit `window.Recueil.DONNEES_DEMARRAGE = ` par le contenu du JSON, suivi de `;`.
+
+## Fichiers de données
+Les fichiers `.json` ouverts par l'application (données de démarrage, exports reçus) se rangent dans `src/data/`. Le code ne lit rien dans `../data` (réservé à l'analyse : sources, CSV, résumés).

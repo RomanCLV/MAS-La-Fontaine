@@ -56,3 +56,6 @@
 - « Normal », « Sans porc », « Sans viande » renommables mais non supprimables (utilisés par les calculs).
 - Police Atkinson Hyperlegible utilisée seulement si installée (pas de téléchargement : hors ligne, aucune dépendance) ; sinon police système.
 - Données de démarrage : codes remplacés par des **noms fictifs** (demande utilisateur). Les vrais noms restent uniquement dans `data/source/` (non versionné) ; pour les utiliser, importer un JSON gardé hors du dépôt. Identifiants internes AMB-01… conservés (invisibles).
+
+## 2026-10-19 — Retours V1
+- Fichiers de données de l'appli dans `src/data/` (JSON de démarrage déplacé depuis `data/`) ; le code n'accède plus à `../data`. Raison : demande utilisateur, `src/` autonome.
