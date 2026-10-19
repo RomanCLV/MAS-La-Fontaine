@@ -113,9 +113,7 @@
               h('input', { id: 'a-nom', value: b.nom, oninput: function (ev) { b.nom = ev.target.value; } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-jour' }, 'Jour'),
               h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; App.rendre(); } },
-                M.JOURS.map(function (j) {
-                  return h('option', { value: j.id, selected: j.id === b.jour }, j.nom + ' ' + O.dateCourte(M.dateDuJour(s, j.id)).slice(0, 5));
-                }))),
+                M.JOURS.map(function (j) { return h('option', { value: j.id, selected: j.id === b.jour }, j.nom); }))),
             h('div', { class: 'champ' }, h('label', { for: 'a-svc' }, 'Service impacté'),
               h('select', { id: 'a-svc', onchange: function (ev) { b.service = ev.target.value; App.rendre(); } },
                 M.SERVICES.map(function (x) { return h('option', { value: x.id, selected: x.id === b.service }, x.nom); })))),
