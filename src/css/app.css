@@ -114,7 +114,8 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .gh.jour,.gc.jour{border-left:2px solid var(--gris)}
 .gg{font-size:11px;font-weight:700;letter-spacing:.04em;text-align:center;padding:4px 2px;background:var(--clair);color:var(--gris);border:1px solid #bbb;border-left:2px solid var(--gris);border-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .debut-groupe{border-left:2px solid var(--gris)!important}
-.v{writing-mode:vertical-rl;transform:rotate(180deg);height:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Texte vertical des en-têtes : jamais tronqué (la ligne prend la hauteur du plus long), lettres aérées. */
+.v{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:12px;letter-spacing:.08em;line-height:1.15;padding:8px 0 6px}
 .gc{display:flex;align-items:center;justify-content:center;font-size:13px;border-left:1px solid #ccc;border-bottom:1px solid #ccc;height:30px;min-width:0}
 .gc.gauche{justify-content:flex-start;padding-left:4px;gap:4px}
 .gc.obs{font-size:12px;color:var(--gris);padding-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px}
