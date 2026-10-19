@@ -148,8 +148,9 @@
         }));
     });
 
-    function ligneNombres(libelle, note, fond, lire, ecrire) {
-      return h('div', { class: 'g g-sal', style: gabarit + ';background:' + fond },
+    // separe : trait marqué au-dessus de la ligne (début des lignes « tous parcs »).
+    function ligneNombres(libelle, note, fond, lire, ecrire, separe) {
+      return h('div', { class: 'g g-sal' + (separe ? ' separe' : ''), style: gabarit + ';background:' + fond },
         h('div', { class: 'gc colle0', style: 'background:' + fond }),
         h('div', { class: 'gc gauche gras colle1', style: 'grid-column:span 2;background:' + fond }, libelle),
         h('div', { class: 'gnote', style: 'grid-column:span ' + cols.length }, note),
@@ -197,7 +198,7 @@
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),
       ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire),
-      ligneNombres('Salariés SODEXO standard', 'tous parcs', '#e4edf7', so.lire, so.ecrire),
+      ligneNombres('Salariés SODEXO standard', 'tous parcs', '#e4edf7', so.lire, so.ecrire, true),
       ligneNombres('Salariés SODEXO sans porc', 'tous parcs', '#e4edf7', sp.lire, sp.ecrire),
       ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
       ligneNombres('Nettoyage', 'tous parcs · sans viande', '#e4edf7', ne.lire, ne.ecrire)

@@ -127,6 +127,7 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .g-ligne:hover .crayon,.crayon:focus-visible{visibility:visible}
 .pc{border:0;border-left:1px solid #ccc;border-bottom:1px solid #ccc;height:30px;font-size:13px;cursor:pointer;padding:0;background:#eef6ec}
 .pc.jour{border-left:2px solid var(--gris)}
+.g-sal.separe>div{border-top:3px solid var(--gris)}
 .pc.absent{background:#f6d9c7;color:#8a3b00;font-weight:700}
 .pc.abs-fiche{background:repeating-linear-gradient(135deg,#f6d9c7 0 4px,#fbe9de 4px 8px)}
 .colle0,.colle1{position:sticky;z-index:2;background:#fff}
