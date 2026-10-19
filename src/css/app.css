@@ -173,7 +173,7 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .carte-activite.choisie{border:2px solid var(--bleu);background:var(--bleu-clair)}
 .carte-preset{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #bbb;border-radius:6px;padding:8px 10px;font-size:14px}
 .groupe-participants{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
-.groupe-participants > .etiquette-parc{width:100px;text-align:center;padding:4px 6px}
+.groupe-participants > .etiquette-parc{width:100px;min-height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
 .groupe-participants > div{flex:1 1 400px}
 .participant{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--trait);border-radius:999px;font-size:14px;background:#fff;margin:0 6px 6px 0;cursor:pointer}
 .participant.on{background:var(--bleu);color:#fff;border-color:var(--bleu);font-weight:700}
