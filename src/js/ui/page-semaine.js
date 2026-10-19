@@ -32,7 +32,7 @@
       h('span', { class: 'bandeau-titre' }, 'Activités de la semaine'),
       s.activites.length ? null : h('span', { class: 'petit' }, 'Aucune.'),
       s.activites.map(function (a) {
-        return h('button', { class: 'puce-activite', onclick: function () { R.PageActivites.ouvrirActivite(a.id); } },
+        return h('button', { class: 'puce-activite', style: 'border-color:' + a.couleur, onclick: function () { R.PageActivites.ouvrirActivite(a.id); } },
           h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
       }),
       h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
@@ -137,6 +137,7 @@
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {
             class: 'pc ' + bord(k) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
+            style: act ? '--act:' + act.couleur : null,
             title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k,
             onpointerdown: function (e) { presser(e, i, k); },
             // Clavier seulement (Entrée / Espace) : la souris passe par presser.
@@ -203,7 +204,9 @@
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
       h('div', { class: 'legende' },
         h('span', { class: 'pc-ex abs-fiche' }), 'Absence (fiche)',
-        h('span', { class: 'pc-ex act' }), 'Activité'),
+        s.activites.length ? s.activites.map(function (a) {
+          return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
+        }) : [h('span', { class: 'pc-ex act' }), 'Activité']),
       h('div', { class: 'defil', 'data-defil': 'grille' },
         h('div', { class: 'grille' }, entete, lignes,
           residents.length ? null : h('div', { class: 'vide-grille' }, 'Aucun résident actif dans ce parc.'),

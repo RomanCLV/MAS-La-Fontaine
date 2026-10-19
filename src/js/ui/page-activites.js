@@ -8,7 +8,7 @@
   function charger(a) {
     var e = etat();
     e.selection = a ? a.id : 'nouvelle';
-    e.b = a ? M.copie(a) : { id: M.nouvelId('a'), nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null };
+    e.b = a ? M.copie(a) : { id: M.nouvelId('a'), nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null, couleur: M.COULEUR_ACTIVITE };
     e.erreur = '';
     e.initial = JSON.stringify(e.b);
   }
@@ -40,6 +40,7 @@
     if (p.jours[0]) b.jour = p.jours[0];
     if (p.services[0]) b.service = p.services[0];
     b.participantIds = p.participantIds.filter(function (id) { var r = M.resident(d, id); return r && !r.archive; });
+    b.couleur = p.couleur || M.COULEUR_ACTIVITE;
     b.presetId = p.id;
   }
 
@@ -80,7 +81,7 @@
             p = { id: M.nouvelId('preset'), nom: nom };
             d.presetsActivites.push(p);
           }
-          p.jours = [b.jour]; p.services = [b.service]; p.participantIds = b.participantIds.slice();
+          p.jours = [b.jour]; p.services = [b.service]; p.participantIds = b.participantIds.slice(); p.couleur = b.couleur;
           b.presetId = p.id;
           // L'activité enregistrée garde le lien vers son preset.
           s.activites.forEach(function (a) { if (a.id === b.id) a.presetId = p.id; });
@@ -96,7 +97,7 @@
         } },
           d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
         s.activites.map(function (a) {
-          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), onclick: function () { if (peutChanger()) { charger(a); App.rendre(); } } },
+          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), style: 'border-left:6px solid ' + a.couleur, onclick: function () { if (peutChanger()) { charger(a); App.rendre(); } } },
             h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
         }),
         h('button', { class: 'btn', onclick: function () { if (peutChanger()) { charger(null); App.rendre(); } } }, '+ Ajouter une activité'),
@@ -129,6 +130,8 @@
           h('div', { class: 'rangee bas' },
             h('div', { class: 'champ', style: 'flex:1 1 180px' }, h('label', { for: 'a-nom' }, 'Nom de l’activité'),
               h('input', { id: 'a-nom', value: b.nom, oninput: function (ev) { b.nom = ev.target.value; App.signalerModif(); } })),
+            h('div', { class: 'champ' }, h('label', { for: 'a-couleur' }, 'Couleur'),
+              h('input', { id: 'a-couleur', type: 'color', value: b.couleur, oninput: function (ev) { b.couleur = ev.target.value; App.signalerModif(); } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-jour' }, 'Jour'),
               h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; App.rendre(); } },
                 M.JOURS.map(function (j) { return h('option', { value: j.id, selected: j.id === b.jour }, j.nom); }))),

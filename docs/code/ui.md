@@ -7,7 +7,7 @@
 | `page-semaine.js` | Saisie : créer la semaine suivante, supprimer la semaine (confirmation ; impossible s’il n’en reste qu’une ; on bascule sur la voisine), alertes (manager), bandeau activités, onglets de parcs, grille présences, salariés, Sodexo, Direction, Nettoyage |
 | `page-residents.js` / `page-resident.js` | Bascule Liste / Tableau (mémorisée). Liste type TYPOLOGIE (éditer / archiver / supprimer au survol) ; Tableau : une colonne par texture/régime/option, clic = X, brouillon enregistré d’un coup (cases modifiées entourées) ; fiche + absences |
 | `page-parcs.js` / `page-regimes.js` | Référentiels (nom, couleur, ordre ; nature et effet pour les régimes) |
-| `page-activites.js` | Activités de la semaine, presets (charger, mettre à jour, enregistrer) |
+| `page-activites.js` | Activités de la semaine (nom, couleur, jour, service, participants), presets (charger, mettre à jour, enregistrer ; gardent la couleur). La couleur entoure les cases de la grille Semaine (variable CSS `--act`), la puce et la légende |
 | `page-fichier.js` | Accueil, page Importer, page Exporter (choix de la semaine envoyée → nom du fichier) |
 | `page-imprimer.js` | Choix semaine/jours/services/type, aperçu, impression |
 

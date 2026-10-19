@@ -28,6 +28,7 @@
   var TEXTURE_DEFAUT = 'normal';
   var REGIME_SANS_PORC = 'sans_porc';   // salariés « sans porc »
   var REGIME_NETTOYAGE = 'sans_viande'; // équipe nettoyage (halal : œufs/poisson)
+  var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
 
   function creneau(jour, service) { return jour + '_' + service; }
   function decoupeCreneau(c) {
@@ -148,14 +149,15 @@
       };
     });
     d.presetsActivites = tableau(d.presetsActivites).map(function (p) {
-      return { id: String(p.id), nom: p.nom || '', jours: tableau(p.jours), services: tableau(p.services), participantIds: tableau(p.participantIds) };
+      return { id: String(p.id), nom: p.nom || '', jours: tableau(p.jours), services: tableau(p.services), participantIds: tableau(p.participantIds),
+        couleur: p.couleur || COULEUR_ACTIVITE };
     });
     d.semaines = tableau(d.semaines).map(function (s) {
       var n = {
         id: s.id || idSemaine(s.debut), debut: lundiDe(s.debut),
         presences: objet(s.presences), activites: tableau(s.activites).map(function (a) {
           return { id: a.id || nouvelId('a'), nom: a.nom || 'Activité', jour: a.jour || 'lun', service: a.service || 'midi',
-            participantIds: tableau(a.participantIds), presetId: a.presetId || null };
+            participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
         salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {},
         alertesTraitees: tableau(s.alertesTraitees)
@@ -200,7 +202,7 @@
 
   R.Modele = {
     VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, CRENEAUX: CRENEAUX,
-    TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE,
+    TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,

@@ -108,7 +108,7 @@
       colonnes.push(col);
     });
     activites.forEach(function (a) {
-      var col = { id: a.id, type: 'activite', nom: a.nom, couleur: '#bfbfbf', c: compteursVides(), residents: [], partis: [], activite: a,
+      var col = { id: a.id, type: 'activite', nom: a.nom, couleur: a.couleur || M.COULEUR_ACTIVITE, c: compteursVides(), residents: [], partis: [], activite: a,
         salaries: { standard: 0, sansPorc: 0 } };
       colAct[a.id] = col;
       colonnes.push(col);
