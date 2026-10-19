@@ -20,3 +20,4 @@ Si le JSON de départ change : remplacer tout ce qui suit `window.Recueil.DONNEE
 
 ## Fichiers de données
 Les fichiers `.json` ouverts par l'application (données de démarrage, exports reçus) se rangent dans `src/data/`. Le code ne lit rien dans `../data` (réservé à l'analyse : sources, CSV, résumés).
+**`src/data/` est ignoré par git** : ce sont les données résidents réelles. Seule la copie intégrée `demarrage.js` (noms fictifs) est versionnée ; ne jamais y coller de vraies données.

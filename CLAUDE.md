@@ -10,7 +10,7 @@ Langue : français pour échanges et docs. Code/identifiants : anglais ou franç
 3. **Phases dans l'ordre** : 1 Analyse → 2 Conseil → 3 Design → 4 Analyse technique → 5 Code. Ne pas coder avant validation design + choix techniques. Phase courante : voir `docs/etat.md`.
 4. **Mettre à jour les MD** à chaque décision/avancée (courtement). Le MD est la mémoire ; la conversation est jetable.
 5. **Contexte lourd ou conversation longue** → proposer `/compact` ou nouvelle conversation (avec prompt de reprise + `handoff.md` si utile ; `handoff.md` est temporaire, à supprimer après lecture).
-6. **Données** : les Excel sources peuvent contenir des données personnelles/santé → `data/source/` est ignoré par git. Ne jamais publier ni envoyer ailleurs.
+6. **Données** : les Excel sources peuvent contenir des données personnelles/santé → `data/source/` et `src/data/` (données résidents réelles de l'appli) sont ignorés par git. Ne jamais publier ni envoyer ailleurs.
 7. Ne pas inventer le métier : en cas de doute sur un terme/règle de restauration collective, demander.
 
 ## Table de routage (que lire, quand)

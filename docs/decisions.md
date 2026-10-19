@@ -60,3 +60,4 @@
 ## 2026-10-19 — Retours V1
 - Fichiers de données de l'appli dans `src/data/` (JSON de démarrage déplacé depuis `data/`) ; le code n'accède plus à `../data`. Raison : demande utilisateur, `src/` autonome.
 - Saisie des présences par « presser-glisser-relâcher » : la valeur inverse de la première case est appliquée au rectangle survolé. Raison : demande utilisateur (saisie plus rapide).
+- `src/data/` ignoré par git (données résidents réelles) ; le JSON de démarrage n'y est plus versionné, seule sa copie fictive `src/js/data/demarrage.js` l'est. Raison : demande utilisateur, données personnelles/santé.

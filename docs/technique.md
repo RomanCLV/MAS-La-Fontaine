@@ -40,4 +40,4 @@ Principe directeur : **zéro dépendance externe, zéro installation** → rien 
 - Outil de développement seulement (non livré, non nécessaire à l'utilisateur) : serveur `python -m http.server` (Python, licence PSF) déclaré dans `.claude/launch.json` pour tester dans le navigateur intégré de Claude, qui n'exécute pas les scripts en `file://`.
 
 ## Données de démarrage
-`src/data/recueil_base_s42.json` : référentiels + 62 résidents aux **noms fictifs** (régimes et parcs réels, identifiants internes AMB-01…) + semaine 2026-S42. Schéma repris dans `docs/code/architecture.md` ; copie intégrée dans `src/js/data/demarrage.js`.
+`src/data/recueil_base_s42.json` (local, non versionné : `src/data/` est ignoré par git) : référentiels + 62 résidents aux **noms fictifs** (régimes et parcs réels, identifiants internes AMB-01…) + semaine 2026-S42. Schéma repris dans `docs/code/architecture.md` ; copie intégrée dans `src/js/data/demarrage.js`.

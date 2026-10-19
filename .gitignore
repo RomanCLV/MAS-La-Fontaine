@@ -1,5 +1,7 @@
 # Données sources potentiellement sensibles
 data/source/
+# Données résidents de l'appli (fichiers .json réels) : jamais commitées
+src/data/
 *.xlsx
 *.xls
 *.xlsm
