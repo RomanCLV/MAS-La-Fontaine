@@ -57,13 +57,61 @@
           M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + sc.service));
       }));
 
-    function basculer(r, c) {
+    // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau}, en une seule sauvegarde.
+    // Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
+    function appliquer(cases, v) {
       App.modifier(function () {
-        var nv = 1 - C.presence(s, r, c).valeur;
-        var p = s.presences[r.id] = s.presences[r.id] || {};
-        if (nv === C.presenceParDefaut(s, r, c)) delete p[c]; else p[c] = nv;
-        if (!Object.keys(p).length) delete s.presences[r.id];
+        cases.forEach(function (x) {
+          var r = residents[x.i], c = M.CRENEAUX[x.k];
+          var p = s.presences[r.id] = s.presences[r.id] || {};
+          if (v === C.presenceParDefaut(s, r, c)) delete p[c]; else p[c] = v;
+          if (!Object.keys(p).length) delete s.presences[r.id];
+        });
       });
+    }
+    function inverse(i, k) { return 1 - C.presence(s, residents[i], M.CRENEAUX[k]).valeur; }
+
+    // Souris : presser une case inverse sa valeur ; glisser étend cette valeur au rectangle
+    // entre la première case et la case survolée ; relâcher enregistre ; Échap annule.
+    function presser(e, i, k) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      var zone = e.currentTarget.closest('.grille');
+      var cases = Array.prototype.map.call(zone.querySelectorAll('.pc'), function (b) {
+        return { b: b, classe: b.className, texte: b.textContent, i: +b.getAttribute('data-i'), k: +b.getAttribute('data-k') };
+      });
+      var v = inverse(i, k), fin = { i: i, k: k };
+      function dessiner() {
+        var i0 = Math.min(i, fin.i), i1 = Math.max(i, fin.i), k0 = Math.min(k, fin.k), k1 = Math.max(k, fin.k);
+        cases.forEach(function (x) {
+          x.dedans = x.i >= i0 && x.i <= i1 && x.k >= k0 && x.k <= k1;
+          x.b.className = x.dedans ? x.classe.replace(/ (present|absent|abs-fiche)\b/g, '') + (v ? ' present' : ' absent') + ' zone' : x.classe;
+          x.b.textContent = x.dedans ? String(v) : x.texte;
+        });
+      }
+      function bouger(ev) {
+        var el = document.elementFromPoint(ev.clientX, ev.clientY);
+        var b = el && el.closest('.pc');
+        if (!b || !zone.contains(b)) return;
+        var n = { i: +b.getAttribute('data-i'), k: +b.getAttribute('data-k') };
+        if (n.i !== fin.i || n.k !== fin.k) { fin = n; dessiner(); }
+      }
+      function arreter(annule) {
+        document.removeEventListener('pointermove', bouger);
+        document.removeEventListener('pointerup', relacher);
+        document.removeEventListener('pointercancel', annuler);
+        document.removeEventListener('keydown', echap);
+        if (annule) cases.forEach(function (x) { x.b.className = x.classe; x.b.textContent = x.texte; });
+        else appliquer(cases.filter(function (x) { return x.dedans; }), v);
+      }
+      function relacher() { arreter(false); }
+      function annuler() { arreter(true); }
+      function echap(ev) { if (ev.key === 'Escape') arreter(true); }
+      document.addEventListener('pointermove', bouger);
+      document.addEventListener('pointerup', relacher);
+      document.addEventListener('pointercancel', annuler);
+      document.addEventListener('keydown', echap);
+      dessiner();
     }
 
     var lignes = residents.map(function (r, i) {
@@ -88,8 +136,10 @@
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {
             class: 'pc ' + bord(k) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
-            title: titre.join(' · '), 'aria-label': titre.join(' · '),
-            onclick: function () { basculer(r, c); }
+            title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k,
+            onpointerdown: function (e) { presser(e, i, k); },
+            // Clavier seulement (Entrée / Espace) : la souris passe par presser.
+            onclick: function (e) { if (e.detail === 0) appliquer([{ i: i, k: k }], inverse(i, k)); }
           }, String(p.valeur));
         }));
     });

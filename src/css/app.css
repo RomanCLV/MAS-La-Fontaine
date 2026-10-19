@@ -131,6 +131,8 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .gh.colle0,.gh.colle1{background:var(--clair)}
 .g-ligne:hover .colle0,.g-ligne:hover .colle1{background:#fffbe8}
 .pc.act{box-shadow:inset 0 0 0 3px var(--bleu)}
+.pc{touch-action:none;user-select:none}
+.pc.zone{outline:2px solid var(--encre);outline-offset:-2px}
 .pc:hover{filter:brightness(.94)}
 .g-sal .gc{background:transparent}
 .gnote{border-bottom:1px solid #ccc;font-size:11px;color:#555;display:flex;align-items:center;padding-left:6px}
