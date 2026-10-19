@@ -5,15 +5,16 @@
 
   function bord(k) { return k % 2 === 0 ? 'jour' : ''; }
 
+  // Bandeau affiché seulement s'il y a des alertes (ou des alertes masquées à réafficher).
   function alertes(d, s) {
     var liste = C.alertesVisibles(d, s);
     var masquees = (s.alertesTraitees || []).length;
+    if (!liste.length && !masquees) return null;
     function traiter(a, statut) {
       App.modifier(function () { s.alertesTraitees.push({ cle: a.cle, statut: statut }); });
     }
     return h('div', { class: 'bandeau bandeau-alertes' },
       h('span', { class: 'bandeau-titre' }, 'Alertes de présence · ' + liste.length),
-      liste.length ? null : h('span', { class: 'petit' }, 'Aucune alerte.'),
       liste.map(function (a) {
         return h('span', { class: 'alerte' },
           h('span', null, h('b', null, a.titre), ' · ', a.detail),
