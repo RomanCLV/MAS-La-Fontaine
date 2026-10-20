@@ -63,3 +63,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Prochaines actions
 1. Utilisateur : tests ci-dessus + réponses aux questions → corrections.
 2. Commit de la phase 5 (après accord).
+
+## Retours V1 (9e lot, 2026-10-20)
+- Résidents : avec un filtre actif (nom, parc, archivés), le titre affiche aussi le nombre de résidents affichés (« · 3 actifs · 1 affiché »).

@@ -166,11 +166,17 @@
       var actifs = d.residents.filter(function (r) { return !r.archive; }).length;
       var nbModifs = Object.keys(f.modifs).length;
       var zone = h('div', null, vue === 'tableau' ? vueTableau(d, f) : vueListe(d, f));
-      function rafraichir() { zone.replaceChildren(vue === 'tableau' ? vueTableau(d, f) : vueListe(d, f)); }
+      // Nombre de résidents affichés, seulement quand un filtre est actif (sinon = actifs).
+      function texteCompte() {
+        if (!f.q && !f.parc && !f.archives) return '';
+        return ' · ' + O.pluriel(filtrer(d, f).length, 'affiché');
+      }
+      var compte = h('span', null, texteCompte());
+      function rafraichir() { zone.replaceChildren(vue === 'tableau' ? vueTableau(d, f) : vueListe(d, f)); compte.textContent = texteCompte(); }
       function choisirVue(v) { App.ui.residentsVue = v; App.sauverUi(); App.rendre(); }
       return h('div', { class: 'page page-large' },
         h('div', { class: 'page-tete' },
-          h('div', { class: 'titre-ligne' }, h('h1', null, 'Résidents ', h('span', { class: 'sous' }, '· ' + actifs + ' actifs')), App.indicateur()),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Résidents ', h('span', { class: 'sous' }, '· ' + actifs + ' actifs', compte)), App.indicateur()),
           h('div', { class: 'segments', role: 'group', 'aria-label': 'Affichage' },
             h('button', { class: 'segment' + (vue === 'liste' ? ' actif' : ''), 'aria-pressed': vue === 'liste' ? 'true' : 'false',
               onclick: function () { choisirVue('liste'); } }, 'Liste'),
