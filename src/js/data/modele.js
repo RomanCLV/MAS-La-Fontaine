@@ -48,7 +48,6 @@
     { id: 'tendre', nom: 'Tendre', nature: 'texture', couleur: '#f0b48a', toujoursVisible: false, services: MS },
     { id: 'mouline', nom: 'Mouliné', nature: 'texture', couleur: '#ebaa95', toujoursVisible: false, services: MS },
     { id: 'mixe', nom: 'Mixé', nature: 'texture', couleur: '#e6a0a0', toujoursVisible: true, services: MS },
-    { id: 'mixe_lisse', nom: 'Mixé lisse', nature: 'texture', couleur: '#d98888', toujoursVisible: false, services: MS },
     { id: 'sans_porc', nom: 'Sans porc', nature: 'regime', couleur: '#f4b6c8', toujoursVisible: true, services: MS },
     { id: 'sans_viande', nom: 'Sans viande', nature: 'regime', couleur: '#ffe08a', toujoursVisible: true, services: MS },
     { id: 'vegetarien', nom: 'Végétarien', nature: 'regime', couleur: '#b7dfa0', toujoursVisible: false, services: MS },

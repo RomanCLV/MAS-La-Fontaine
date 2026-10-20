@@ -42,10 +42,11 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (9e lot, 2026-10-20)
 - Fichier de démarrage `recueil_base_s42.json` supprimé (et `demarrage.js`, bouton « Recharger les données de démarrage »). Base vide = **listes par défaut** du code (`REGIMES_DEFAUT`). 93 tests verts ; vérifié dans le navigateur intégré.
-- Listes par défaut enrichies (choix utilisateur) : 6 textures, 15 régimes et allergies, 6 options (+ Demi-portion).
+- Listes par défaut enrichies (choix utilisateur) : 5 textures, 15 régimes et allergies, 6 options (+ Demi-portion).
 - Feuille cuisine : lignes réduites automatiquement si elles ne tiennent pas dans la page A4 (sinon coupées, constaté avec 27 éléments).
 - Question : masquer sur la feuille cuisine les régimes / options à 0 pour le service ?
-- Commit f3b8710. Puis : case **« Toujours affiché »** par texture / régime / option (page Régimes, info-bulle) ; grille Semaine = colonnes toujours affichées + celles présentes chez un résident du parc. Défaut : les 14 éléments d'avant cochés, les 13 nouveaux non ; fichiers existants : tout coché. 96 tests verts ; vérifié dans le navigateur intégré.
+- Commit f3b8710. Puis : case **« Toujours affiché »** par texture / régime / option (page Régimes, info-bulle) ; grille Semaine = colonnes toujours affichées + celles présentes chez un résident du parc. Défaut : les 14 éléments d'avant cochés, les 12 nouveaux non ; fichiers existants : tout coché. 96 tests verts ; vérifié dans le navigateur intégré. Commit 3d115f1.
+- « Mixé lisse » retiré de la liste par défaut (Mixé veut déjà dire lisse).
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.
