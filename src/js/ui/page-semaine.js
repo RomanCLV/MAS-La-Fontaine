@@ -289,7 +289,9 @@
               onclick: function () { App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } }, p.nom + ' (' + n + ')');
           })),
           grille(d, s, parc)
-        ] : h('div', { class: 'message' }, 'Aucun parc : créez-en un dans la page Parcs.'));
+        ] : h('div', { class: 'message message-attention message-action' },
+          h('span', null, 'Aucun parc : créez-en un dans la page Parcs.'),
+          h('button', { class: 'btn', onclick: function () { App.ouvrir('parcs'); } }, 'Aller à la page Parcs')));
     }
   };
 })(window.Recueil = window.Recueil || {});
