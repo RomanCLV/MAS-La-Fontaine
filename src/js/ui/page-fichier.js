@@ -52,8 +52,7 @@
           h('p', null, 'Aucune donnée dans ce navigateur pour l’instant. Pour commencer :'),
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
           h('div', { class: 'rangee' },
-            h('button', { class: 'btn btn-grand btn-principal', onclick: chargerDemarrage }, 'Charger les données de démarrage (semaine 42)'),
-            boutonFichier('Ouvrir un fichier reçu (.json)…', false, lire),
+            boutonFichier('Ouvrir un fichier reçu (.json)…', true, lire),
             h('button', { class: 'btn btn-grand', onclick: repartirDeZero }, 'Commencer avec une base vide'))));
     }
   };

@@ -50,7 +50,7 @@
             h('div', { class: 'rangee' },
               h('button', { class: 'btn btn-danger', onclick: vider }, 'Vider le cache local')),
             h('div', { class: 'petit' }, 'Utile pour repartir d’une application propre, ou avant de laisser le poste à quelqu’un d’autre. ' +
-              'Ensuite, l’écran d’accueil propose de charger les données de démarrage, d’ouvrir un fichier ou de commencer avec une base vide.'))));
+              'Ensuite, l’écran d’accueil propose d’ouvrir un fichier ou de commencer avec une base vide.'))));
     }
   };
 })(window.Recueil = window.Recueil || {});

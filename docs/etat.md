@@ -26,9 +26,10 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (5e lot, 2026-10-20)
 - Page **Options** (menu Pages) : zone « Données en cache » + bouton « Vider le cache local » (retour à l’accueil).
+- Accueil : bouton « Charger les données de démarrage » retiré (reste dans Importer).
 
 ## Non vérifié (à faire par l'utilisateur)
-1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.
+1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.
 3. Export → fichier `.json` ; import du même fichier sur un autre poste/navigateur.
 
