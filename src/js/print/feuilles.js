@@ -201,10 +201,17 @@
       h('div', { class: 'ch-detail' }, detail));
   }
 
-  function bac(libelle, valeur, desc) {
-    return h('div', { class: 'ch-bac' },
+  // qui : 'sal' ou 'res' (bacs collectifs) = petit bandeau SALARIÉS / RÉSIDENTS et fond distinct.
+  function bac(libelle, valeur, desc, qui) {
+    return h('div', { class: 'ch-bac' + (qui ? ' ch-bac-' + qui : '') },
+      qui ? h('div', { class: 'ch-bac-qui' }, qui === 'sal' ? 'SALARIÉS' : 'RÉSIDENTS') : null,
       h('div', { class: 'ch-bac-haut' }, h('span', { class: 'ch-bac-lab' }, libelle), h('span', { class: 'ch-bac-val' }, tiret(valeur))),
       h('div', { class: 'ch-bac-desc' }, desc));
+  }
+  // Bacs collectifs à quantité non nulle ; aucun → message.
+  function bacsNonVides(liste) {
+    var bacs = liste.filter(function (b) { return b.n; }).map(function (b) { return bac(b.lab, b.n, b.desc, b.qui); });
+    return bacs.length ? bacs : [h('div', { class: 'ch-bac-desc' }, 'Aucun bac collectif cette fois.')];
   }
 
   // Chariot d'un service « présence seulement » (petit déjeuner) : des nombres, pas d'étiquettes ;
@@ -220,9 +227,10 @@
       h('div', { class: 'ch-corps' },
         h('div', { class: 'ch-collectif' },
           h('div', { class: 'ch-bandeau' }, 'PETIT DÉJEUNER · à charger'),
-          h('div', { class: 'ch-bacs' },
-            bac('Résidents', cpt.residents, cpt.residents ? 'Présents à ce service' : 'Aucun cette fois'),
-            col.type === 'activite' ? null : bac('Salariés', sal, sal ? 'Salariés du parc' : 'Aucun cette fois'))),
+          h('div', { class: 'ch-bacs' }, bacsNonVides([
+            { qui: 'sal', lab: 'Salariés', n: sal, desc: 'Salariés du parc' },
+            { qui: 'res', lab: 'Résidents', n: cpt.residents, desc: 'Présents à ce service' }
+          ]))),
         parts.length ? h('div', { class: 'ch-collectif ch-parts' },
           h('div', { class: 'ch-bandeau' }, 'PARTICULARITÉS · ce service'),
           h('div', { class: 'ch-bacs' }, parts.map(function (x) {
@@ -254,7 +262,6 @@
     }
 
     function collectif() {
-      var sp = ch.salaries.sansPorc + ch.sansPorcSeuls;
       var enPlus = [];
       if (ch.doubles.length) {
         enPlus.push(O.pluriel(ch.doubles.length, 'plat chaud', 'plats chauds') + ' en double (étiquette ' + ch.doubles.join(', ') + ')');
@@ -263,12 +270,12 @@
       return h('div', { class: 'ch-collectif' },
         h('div', { class: 'ch-bandeau' }, 'COLLECTIF · bacs à charger'),
         h('div', { class: 'ch-bacs' },
-          col.type === 'activite' ? null :
-            bac('Salariés standard', ch.salaries.standard, ch.salaries.standard ? '1 bac standard, portions normales' : 'Aucun cette fois'),
-          bac('Sans porc' + (col.type === 'activite' ? ' (résidents)' : ' (salariés + résidents)'), sp,
-            sp ? [ch.salaries.sansPorc ? O.pluriel(ch.salaries.sansPorc, 'salarié') : null, ch.sansPorcSeuls ? O.pluriel(ch.sansPorcSeuls, 'résident') : null]
-              .filter(Boolean).join(' + ') + ' · bac « sans porc »' : 'Aucun cette fois'),
-          bac('Normaux simples (résidents)', ch.normauxSimples, ch.normauxSimples ? 'Sans texture, régime ni option' : 'Aucun cette fois'),
+          bacsNonVides([
+            { qui: 'sal', lab: 'Salariés standard', n: ch.salaries.standard, desc: 'Bac standard, portions normales' },
+            { qui: 'sal', lab: 'Salariés sans porc', n: ch.salaries.sansPorc, desc: 'Bac « sans porc »' },
+            { qui: 'res', lab: 'Résidents simples', n: ch.normauxSimples, desc: 'Sans texture, régime ni option' },
+            { qui: 'res', lab: 'Résidents sans porc', n: ch.sansPorcSeuls, desc: 'Seul régime « sans porc » · bac « sans porc »' }
+          ]),
           enPlus.length ? h('div', { class: 'ch-enplus' }, 'En plus : ' + enPlus.join(' · ') + '.') : null));
     }
 
@@ -302,7 +309,7 @@
             h('div', { class: 'ch-indiv-haut' }, h('b', null, 'INDIVIDUEL · assiettes à identifier (étiquettes)'), h('span', null, 'EQ = équivalent portions')),
             h('div', { class: 'ch-grille' }, cases))),
         h('div', { class: 'ch-pied' },
-          h('span', null, 'Les convives « sans porc » seuls sont en collectif (bac dédié), sans étiquette.'),
+          h('span', null, 'Les résidents dont le seul régime est « sans porc » sont en collectif (bac Résidents sans porc), sans étiquette.'),
           h('span', null, libelleCourt(c) + (nPages > 1 ? ' · page ' + (p + 1) + '/' + nPages : '')))));
     }
     return pages;

@@ -110,3 +110,6 @@
 
 ## 2026-10-20 — Feuille cuisine sans lignes à 0
 - Textures, régimes et options dont le total du service est 0 : ligne non imprimée (pastilles « Sur ces N plats » aussi). Les lignes REPAS restent. Raison : demande utilisateur (répond à la question ouverte du 9e lot).
+
+## 2026-10-20 — Feuille chariot : bacs salariés / résidents séparés
+- Collectif en quatre bacs : Salariés standard, Salariés sans porc, Résidents simples, Résidents sans porc (avant : un bac « sans porc » commun). Fond beige = salariés, bleu = résidents. Bac imprimé seulement si sa quantité n'est pas 0 (aucun → « Aucun bac collectif cette fois »). Petit déjeuner : idem pour Salariés / Résidents. Raison : demande utilisateur.

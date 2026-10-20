@@ -63,6 +63,10 @@
 .ch-bac-lab{font-size:17px;font-weight:700}
 .ch-bac-val{font-size:30px;font-weight:700}
 .ch-bac-desc{font-size:13px;color:#444}
+/* Bacs collectifs : salariés (beige) et résidents (bleu) bien distincts, aussi en noir et blanc (bandeau écrit). */
+.ch-bac-sal{background:#f0ede4}
+.ch-bac-res{background:#e4edf7}
+.ch-bac-qui{font-size:11px;font-weight:700;letter-spacing:.08em;color:#444}
 .ch-enplus{font-size:13px;border-top:1px solid #767676;padding-top:8px}
 .ch-indiv{flex-grow:1;display:flex;flex-direction:column;gap:8px;min-width:0}
 .ch-indiv-haut{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}

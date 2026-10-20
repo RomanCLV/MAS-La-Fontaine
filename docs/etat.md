@@ -45,6 +45,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Listes par défaut enrichies (choix utilisateur) : 5 textures, 15 régimes et allergies, 6 options (+ Demi-portion).
 - Feuille cuisine : lignes réduites automatiquement si elles ne tiennent pas dans la page A4 (sinon coupées, constaté avec 27 éléments).
 - ~~Question : masquer sur la feuille cuisine les régimes / options à 0 ?~~ → oui, fait (textures aussi).
+- Feuille chariot : quatre bacs collectifs distincts (Salariés standard / sans porc, Résidents simples / sans porc), masqués à 0. 109 tests verts ; vérifié dans le navigateur intégré.
 - Commit f3b8710. Puis : case **« Toujours affiché »** par texture / régime / option (page Régimes, info-bulle) ; grille Semaine = colonnes toujours affichées + celles présentes chez un résident du parc. Défaut : les 14 éléments d'avant cochés, les 12 nouveaux non ; fichiers existants : tout coché. 96 tests verts ; vérifié dans le navigateur intégré. Commit 3d115f1.
 - « Mixé lisse » retiré de la liste par défaut (Mixé veut déjà dire lisse).
 - Preset **MAS La Fontaine** : 7 parcs ajoutés depuis l'accueil (« Commencer avec MAS La Fontaine ») ou la page Parcs (manquants seulement). Commit e9d022f. Puis preset d'activité **Sport jeudi midi** (accueil MAS + bouton page Activités). 108 tests verts ; vérifié dans le navigateur intégré.
