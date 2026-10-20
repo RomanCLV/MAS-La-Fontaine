@@ -9,6 +9,7 @@ Fonctions pures : entrées = données + semaine + créneau ; aucune lecture du D
 
 ## Colonnes de la feuille cuisine — `feuilleJour(donnees, semaine, creneau)`
 Colonnes : chaque parc (résidents actifs présents **hors** participants d'activité + salariés du parc) ; chaque activité du créneau (participants présents) ; `TOTAL PARCS` (parcs + activités) ; `SODEXO` ; `DIRECTION` ; `AUTRES` (Nettoyage) ; `TÉMOINS` (Plats témoins) ; `TOTAL À PRODUIRE`.
+Colonne de parc : aussi `partis` ([{ resident, activite, plats }] : présents partis en activité) et `platsPartis` (somme de leurs plats).
 Compteurs par colonne : `residents`, `platsEnPlus`, `salStd`, `salSansPorc`, `total` (= somme des 4), `tex{}`, `reg{}`, `opt{}`.
 - Poids d'un résident = 1 + `platsEnPlus` (une par option « +1 plat » : double plat, gros gourmand… ; cumulables, ex. les deux = 3).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.

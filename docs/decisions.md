@@ -122,3 +122,6 @@
 
 ## 2026-10-20 — Chariot d'activité : parc sur les étiquettes
 - En-tête de chaque étiquette : « RÉSIDENT · PARC <nom> » (pastille couleur du parc), seulement sur les chariots d'activité. Raison : demande utilisateur.
+
+## 2026-10-21 — Grille Semaine : ligne « En activité »
+- Sous « Plats <parc> » et les textures : plats des résidents du parc partis en activité (comptés dans l'activité, donc retirés du parc). Ligne affichée seulement s'il y en a sur un service affiché. Raison : comprendre pourquoi les plats du parc sont moins nombreux que les présents.

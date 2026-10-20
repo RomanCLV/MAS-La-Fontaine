@@ -123,7 +123,7 @@
     var colonnes = [];
 
     donnees.referentiels.parcs.forEach(function (p) {
-      var col = { id: p.id, type: 'parc', nom: p.nom, couleur: p.couleur, c: compteursVides(), residents: [], partis: [] };
+      var col = { id: p.id, type: 'parc', nom: p.nom, couleur: p.couleur, c: compteursVides(), residents: [], partis: [], platsPartis: 0 };
       var sal = ((semaine.salaries || {})[p.id] || {})[c] || {};
       col.salaries = { standard: sal.standard || 0, sansPorc: sal.sansPorc || 0 };
       ajouterConvives(col.c, col.salaries.standard, col.salaries.sansPorc, refs, sv, texDef);
@@ -145,7 +145,11 @@
       }
       var col = act ? colAct[act.id] : colParc[r.parcId];
       if (!col) return; // parc inconnu : ignoré (signalé dans la page Résidents)
-      if (act && colParc[r.parcId]) colParc[r.parcId].partis.push({ resident: r, activite: act });
+      if (act && colParc[r.parcId]) {
+        var w = poids(r, refs, sv);
+        colParc[r.parcId].partis.push({ resident: r, activite: act, plats: w });
+        colParc[r.parcId].platsPartis += w;  // plats retirés du parc (comptés dans l'activité)
+      }
       ajouterResident(col.c, r, refs, sv, texDef);
       col.residents.push(r);
     });

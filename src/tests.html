@@ -136,6 +136,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(col(f, 'p1').c.residents, 2, 'B retiré du parc 1');
     egal(col(f, 'p1').c.platsEnPlus, 0, 'Son double plat part avec lui');
     egal(col(f, 'p1').partis.length, 1, 'Parc 1 : 1 résident parti en activité');
+    egal([col(f, 'p1').platsPartis, col(f, 'p2').platsPartis], [2, 1], 'Plats retirés des parcs : B (double plat) = 2, D = 1');
     egal(col(f, 'act').c.total, 3, 'Colonne Sport = B (2 plats) + D');
     egal(col(f, 'act').c.tex.hache, 2, 'La texture suit le résident');
     egal(col(f, 'totalParcs').c.total, 8, 'Total parcs inchangé');

@@ -89,11 +89,12 @@
     // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
     // (résidents présents hors partis en activité, plats en plus, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
-    var comptes, majs = [];
+    var colonnes, comptes, majs = [];
     function calculer() {
-      comptes = vis.map(function (c) {
-        return C.feuilleJour(d, s, c).parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0].c;
+      colonnes = vis.map(function (c) {
+        return C.feuilleJour(d, s, c).parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0];
       });
+      comptes = colonnes.map(function (col) { return col.c; });
     }
     // Une ligne de texture apparaît ou disparaît (ex. salariés en texture par défaut) : re-rendu complet.
     function majCarres() {
@@ -108,6 +109,7 @@
       }).map(function (g) { return g.id; });
     }
     calculer();
+    // style et titre : texte, ou fonction du n° de créneau affiché k.
     function ligneCarres(libelle, note, valeur, style, titre, fin) {
       return h('div', { class: 'g g-carres' + (fin ? ' fin-carres' : ''), style: gabarit },
         h('div', { class: 'gc colle0' }),
@@ -116,9 +118,9 @@
         h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + 1) }, note),
         h('div'),
         vis.map(function (c, k) {
-          var carre = h('span', { style: style });
+          var carre = h('span', { style: typeof style === 'function' ? style(k) : style });
           function maj() {
-            var n = valeur(k), t = titre + ' · ' + C.libelleCreneaux([c]) + ' : ' + O.pluriel(n, 'plat');
+            var n = valeur(k), t = (typeof titre === 'function' ? titre(k) : titre) + ' · ' + C.libelleCreneaux([c]) + ' : ' + O.pluriel(n, 'plat');
             carre.className = 'carre' + (n ? '' : ' vide');
             carre.title = t;
             carre.setAttribute('aria-label', t);
@@ -132,13 +134,29 @@
     // Puis une ligne par texture présente (en plats, double plat = 2). Normal + Haché + … = plats du parc.
     var presentes = texturesPresentes();
     var textures = M.parNature(d, 'texture').filter(function (g) { return presentes.indexOf(g.id) >= 0; });
+    // Enfin, si des résidents du parc partent en activité sur un service affiché : plats retirés du parc
+    // (comptés dans la colonne de l'activité), pour comprendre un nombre de plats plus petit que les présents.
+    var avecActivite = colonnes.some(function (col) { return col.platsPartis; });
+    function activitesDe(k) {
+      var parAct = {};
+      colonnes[k].partis.forEach(function (x) {
+        var a = parAct[x.activite.id] = parAct[x.activite.id] || { activite: x.activite, plats: 0 };
+        a.plats += x.plats;
+      });
+      return Object.keys(parAct).map(function (id) { return parAct[id]; });
+    }
     var carres = [
       ligneCarres('Plats ' + parc.nom, 'ce parc', function (k) { return comptes[k].total; }, null,
-        'Plats ' + parc.nom + ' (résidents présents hors activités, plats en plus, salariés du parc)', !textures.length)
+        'Plats ' + parc.nom + ' (résidents présents hors activités, plats en plus, salariés du parc)', !textures.length && !avecActivite)
     ].concat(textures.map(function (g, i) {
       return ligneCarres(g.nom, '', function (k) { return comptes[k].tex[g.id] || 0; },
-        'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), 'Texture ' + g.nom + ' (' + parc.nom + ')', i === textures.length - 1);
-    }));
+        'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), 'Texture ' + g.nom + ' (' + parc.nom + ')', i === textures.length - 1 && !avecActivite);
+    }), avecActivite ? [ligneCarres('En activité', 'retirés de ce parc', function (k) { return colonnes[k].platsPartis; },
+      function (k) { var acts = activitesDe(k); return acts.length === 1 ? 'border-color:' + acts[0].activite.couleur : null; },
+      function (k) {
+        return 'Plats de résidents ' + parc.nom + ' partis en activité, comptés dans l’activité' +
+          activitesDe(k).map(function (a) { return ' · ' + a.activite.nom + ' : ' + O.pluriel(a.plats, 'plat'); }).join('');
+      }, true)] : []);
 
     // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde.
     // Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
