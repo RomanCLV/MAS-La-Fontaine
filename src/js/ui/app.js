@@ -60,8 +60,15 @@
       semaine: ui.semaine || '',
       parcActif: ui.parcActif || '',
       residentsVue: ui.residentsVue || 'liste',
+      servicesVisibles: servicesVisibles(ui.servicesVisibles),
       impression: ui.impression || null
     };
+  }
+
+  // Services affichés dans la grille Semaine (simple affichage) : tous par défaut, jamais aucun.
+  function servicesVisibles(liste) {
+    var v = M.IDS_SERVICES.filter(function (id) { return Array.isArray(liste) && liste.indexOf(id) >= 0; });
+    return v.length ? v : M.IDS_SERVICES.slice();
   }
 
   // Retire les onglets dont l'objet n'existe plus ; garantit un onglet ouvert.

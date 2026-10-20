@@ -30,7 +30,7 @@
     if (!liste.length) return;
     var ids = liste.map(function (x) { return x.r.id; });
     e.b.participantIds = e.b.participantIds.filter(function (id) { return ids.indexOf(id) < 0; });
-    e.info = 'Déjà inscrits à une autre activité ' + M.jour(e.b.jour).nom.toLowerCase() + ' ' + e.b.service +
+    e.info = 'Déjà inscrits à une autre activité ' + M.jour(e.b.jour).nom.toLowerCase() + ' ' + M.service(e.b.service).court +
       ', donc retirés de celle-ci : ' + libelleConflits(liste) + '.';
   }
 
@@ -124,7 +124,7 @@
           d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
         s.activites.map(function (a) {
           return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), style: 'border-left:6px solid ' + a.couleur, onclick: function () { if (peutChanger()) { charger(a); App.rendre(); } } },
-            h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
+            h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + M.service(a.service).court + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
         }),
         h('button', { class: 'btn', onclick: function () { if (peutChanger()) { charger(null); App.rendre(); } } }, '+ Ajouter une activité'),
         h('div', { class: 'gras', style: 'margin-top:8px' }, 'Presets enregistrés'),
@@ -132,7 +132,7 @@
         d.presetsActivites.map(function (p) {
           return h('div', { class: 'carte-preset' },
             h('div', null, p.nom, h('br'), h('span', { class: 'petit' },
-              p.jours.map(function (j) { return M.jour(j) ? M.jour(j).nom.toLowerCase() : j; }).join(', ') + ' · ' + p.services.join(', ') + ' · ' +
+              p.jours.map(function (j) { return M.jour(j) ? M.jour(j).nom.toLowerCase() : j; }).join(', ') + ' · ' + p.services.map(function (id) { return M.service(id).court; }).join(', ') + ' · ' +
               O.pluriel(p.participantIds.length, 'participant'))),
             h('button', { class: 'btn btn-icone', 'aria-label': 'Supprimer le preset ' + p.nom, title: 'Supprimer le preset', onclick: function () {
               if (!window.confirm('Supprimer le preset « ' + p.nom + ' » ? Les activités déjà créées ne changent pas.')) return;

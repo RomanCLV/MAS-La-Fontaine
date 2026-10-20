@@ -3,7 +3,29 @@
   'use strict';
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
-  function bord(k) { return k % 2 === 0 ? 'jour' : ''; }
+  // Créneaux affichés (services cochés dans le filtre) ; les autres sont seulement masqués.
+  function creneauxVisibles() {
+    return M.CRENEAUX.filter(function (c) { return App.ui.servicesVisibles.indexOf(M.decoupeCreneau(c).service) >= 0; });
+  }
+  // Trait marqué au début de chaque jour : sur le premier service affiché.
+  function bord(c) { return M.decoupeCreneau(c).service === App.ui.servicesVisibles[0] ? 'jour' : ''; }
+
+  function filtreServices() {
+    var vis = App.ui.servicesVisibles;
+    return h('div', { class: 'filtre-services' },
+      h('span', { class: 'gras' }, 'Services affichés :'),
+      M.SERVICES.map(function (x) {
+        var on = vis.indexOf(x.id) >= 0, seul = on && vis.length === 1;
+        return h('label', { class: 'choix' + (on ? ' on' : ''), title: seul ? 'Au moins un service reste affiché' : null },
+          h('input', { type: 'checkbox', checked: on, disabled: seul, onchange: function () {
+            var liste = on ? vis.filter(function (id) { return id !== x.id; }) : vis.concat([x.id]);
+            App.ui.servicesVisibles = M.IDS_SERVICES.filter(function (id) { return liste.indexOf(id) >= 0; });
+            App.sauverUi();
+            App.rendre();
+          } }), x.nom);
+      }),
+      vis.length < M.SERVICES.length ? h('span', { class: 'petit' }, 'Les services masqués gardent leurs saisies.') : null);
+  }
 
   // Bandeau affiché seulement s'il y a des alertes (ou des alertes masquées à réafficher).
   function alertes(d, s) {
@@ -33,7 +55,7 @@
       s.activites.length ? null : h('span', { class: 'petit' }, 'Aucune.'),
       s.activites.map(function (a) {
         return h('button', { class: 'puce-activite', style: 'border-color:' + a.couleur, onclick: function () { R.PageActivites.ouvrirActivite(a.id); } },
-          h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + a.service + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
+          h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + M.service(a.service).court + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
       }),
       h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
   }
@@ -41,7 +63,8 @@
   function grille(d, s, parc) {
     var groupes = O.colonnesGroupees(M.groupesRegimes(d, function (g) { return g.id !== M.textureDefaut(d); }));
     var cols = groupes.colonnes;
-    var gabarit = 'grid-template-columns:34px 190px 150px repeat(' + cols.length + ',34px) 10px repeat(14,32px)';
+    var vis = creneauxVisibles();
+    var gabarit = 'grid-template-columns:34px 190px 150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
     var residents = d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
 
     var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), h('div')]);
@@ -54,25 +77,25 @@
           h('span', { class: 'v' }, (g.abrege || g.nom).toUpperCase()));
       }),
       h('div'),
-      M.CRENEAUX.map(function (c, k) {
+      vis.map(function (c) {
         var sc = M.decoupeCreneau(c);
-        return h('div', { class: 'gh ' + bord(k) }, h('span', { class: 'v' },
-          M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + sc.service));
+        return h('div', { class: 'gh ' + bord(c) }, h('span', { class: 'v' },
+          M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + M.service(sc.service).court));
       }));
 
-    // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau}, en une seule sauvegarde.
+    // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde.
     // Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
     function appliquer(cases, v) {
       App.modifier(function () {
         cases.forEach(function (x) {
-          var r = residents[x.i], c = M.CRENEAUX[x.k];
+          var r = residents[x.i], c = vis[x.k];
           var p = s.presences[r.id] = s.presences[r.id] || {};
           if (v === C.presenceParDefaut(s, r, c)) delete p[c]; else p[c] = v;
           if (!Object.keys(p).length) delete s.presences[r.id];
         });
       });
     }
-    function inverse(i, k) { return 1 - C.presence(s, residents[i], M.CRENEAUX[k]).valeur; }
+    function inverse(i, k) { return 1 - C.presence(s, residents[i], vis[k]).valeur; }
 
     // Souris : presser une case inverse sa valeur ; glisser étend cette valeur au rectangle
     // entre la première case et la case survolée ; relâcher enregistre ; Échap annule.
@@ -131,14 +154,14 @@
           return h('div', { class: 'gc marque' + (on ? ' on' : '') + (groupes.debut(g) ? ' debut-groupe' : '') }, on ? 'X' : '');
         }),
         h('div'),
-        M.CRENEAUX.map(function (c, k) {
+        vis.map(function (c, k) {
           var p = C.presence(s, r, c);
           var act = C.activiteDe(s, r.id, c);
           var titre = [M.nomAffiche(r) + ' · ' + C.libelleCreneaux([c]) + ' : ' + (p.valeur ? 'présent' : 'absent')];
           if (p.source === 'absence') titre.push('absence enregistrée dans la fiche');
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {
-            class: 'pc ' + bord(k) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
+            class: 'pc ' + bord(c) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
             style: act ? '--act:' + act.couleur : null,
             title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k,
             onpointerdown: function (e) { presser(e, i, k); },
@@ -155,9 +178,9 @@
         h('div', { class: 'gc gauche gras colle1', style: 'grid-column:span 2;background:' + fond }, libelle),
         h('div', { class: 'gnote', style: 'grid-column:span ' + cols.length }, note),
         h('div'),
-        M.CRENEAUX.map(function (c, k) {
+        vis.map(function (c) {
           var v = lire(c);
-          return h('div', { class: 'gc ' + bord(k) }, h('input', {
+          return h('div', { class: 'gc ' + bord(c) }, h('input', {
             class: 'nb', type: 'number', min: '0', step: '1', inputmode: 'numeric', value: v ? String(v) : '',
             'aria-label': libelle + ' · ' + C.libelleCreneaux([c]),
             onchange: function (e) {
@@ -256,6 +279,7 @@
           d.semaines.length > 1 ? h('button', { class: 'btn btn-danger', onclick: function () { supprimer(d, s); } }, 'Supprimer cette semaine') : null),
         App.ui.manager ? alertes(d, s) : null,
         activites(s),
+        filtreServices(),
         parc ? [
           h('div', { class: 'onglets-parcs', role: 'tablist' }, parcs.map(function (p) {
             var actif = p.id === parc.id;

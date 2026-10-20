@@ -6,7 +6,7 @@
   function choix() {
     var c = App.ui.impression;
     if (!c || !Array.isArray(c.jours)) {
-      c = App.ui.impression = { chef: true, chariot: true, jours: M.JOURS.map(function (j) { return j.id; }), services: ['midi', 'soir'] };
+      c = App.ui.impression = { chef: true, chariot: true, jours: M.JOURS.map(function (j) { return j.id; }), services: M.IDS_SERVICES.slice() };
     }
     return c;
   }

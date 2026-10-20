@@ -13,6 +13,7 @@ Compteurs par colonne : `residents`, `doublesPlats`, `salStd`, `salSansPorc`, `t
 - Poids d'un résident = 1 + 1 s'il a l'option « plat » (double plat).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.
 - Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille chef), texture par défaut, sans régime, compris dans `total`.
+- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : résident = 1 (pas de double plat) ; salariés, Sodexo, direction, nettoyage, témoins comptés en nombre ; `tex`, `reg`, `opt` vides.
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 
 ## Ventilation — `ventilation(donnees, compteurs)`
@@ -25,5 +26,5 @@ Liste « sur N plats » : textures hors défaut, régimes, options sans `affecte
 
 ## Alertes — `alertes(donnees, semaine)` puis `alertesVisibles(...)`
 1. **Présent alors qu'absent** : présence saisie à 1 sur un créneau d'absence de la fiche (une alerte par résident, créneaux regroupés).
-2. **Aucune présence** : 0 sur les 14 créneaux sans absence dans la fiche cette semaine.
+2. **Aucune présence** : 0 sur les 21 créneaux sans absence dans la fiche cette semaine.
 Clé stable (`type:resident:créneaux`) ; une alerte traitée (« C'est voulu » / « Ignorer ») est masquée tant que sa clé est identique.

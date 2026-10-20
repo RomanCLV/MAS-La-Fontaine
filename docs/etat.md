@@ -33,6 +33,9 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Menu Pages réordonné : Semaine, Parcs, Régimes, Résidents, Activités | Importer, Exporter | Options. « Imprimer » retiré du menu (bouton sur la page Semaine).
 - Semaine : ligne « Plats témoins » (par service) → colonne TÉMOINS de la feuille chef, ajoutée au total à produire. 69 tests verts.
 
+## Retours V1 (7e lot, 2026-10-20)
+- Service **Petit déjeuner** (présences seulement) : grille, absences par service, feuilles chef/chariot simplifiées ; fichiers version 3. Filtre « Services affichés » sur la page Semaine. 78 tests verts ; vérifié dans le navigateur intégré.
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.

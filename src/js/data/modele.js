@@ -3,7 +3,8 @@
 (function (R) {
   'use strict';
 
-  var VERSION = 2; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
+  var VERSION = 3; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
+                   // 3 : service petit déjeuner (absences « midi et soir » étendues au petit déjeuner)
   var APP = 'recueil-alimentation-mas-la-fontaine';
 
   var JOURS = [
@@ -15,10 +16,13 @@
     { id: 'sam', nom: 'Samedi', court: 'sam.' },
     { id: 'dim', nom: 'Dimanche', court: 'dim.' }
   ];
+  // Identifiant sans « _ » (séparateur des créneaux). presenceSeule : on compte les présents, sans textures ni régimes.
   var SERVICES = [
-    { id: 'midi', nom: 'Midi' },
-    { id: 'soir', nom: 'Soir' }
+    { id: 'petitdej', nom: 'Petit déjeuner', court: 'p.-déj.', presenceSeule: true },
+    { id: 'midi', nom: 'Midi', court: 'midi' },
+    { id: 'soir', nom: 'Soir', court: 'soir' }
   ];
+  var IDS_SERVICES = SERVICES.map(function (s) { return s.id; });
   var CRENEAUX = [];
   JOURS.forEach(function (j) {
     SERVICES.forEach(function (s) { CRENEAUX.push(j.id + '_' + s.id); });
@@ -41,7 +45,7 @@
   }
   function jour(jourId) { return JOURS[indexJour(jourId)]; }
   function service(serviceId) {
-    return serviceId === 'soir' ? SERVICES[1] : SERVICES[0];
+    return SERVICES.filter(function (s) { return s.id === serviceId; })[0] || SERVICES[1];
   }
 
   // ---- Dates ISO "AAAA-MM-JJ", calculées en UTC (pas d'effet heure d'été) ----
@@ -126,6 +130,7 @@
       throw new Error('Ce fichier vient d\'une version plus récente de l\'application (version ' + entree.version + ').');
     }
     var ancienne = (+entree.version || 1) < 2;
+    var sansPetitDej = (+entree.version || 1) < 3;
     var d = copie(entree);
     d.version = VERSION;
     d.etablissement = d.etablissement || 'MAS La Fontaine';
@@ -147,7 +152,10 @@
         regimeIds: tableau(r.regimeIds).slice(), optionIds: tableau(r.optionIds).slice(),
         consigne: r.consigne || '', archive: !!r.archive,
         absences: tableau(r.absences).filter(function (a) { return a && a.debut && a.fin; }).map(function (a) {
-          return { debut: a.debut, fin: a.fin, services: tableau(a.services).length ? a.services.slice() : ['midi', 'soir'] };
+          var sv = IDS_SERVICES.filter(function (x) { return tableau(a.services).indexOf(x) >= 0; });
+          // Avant la version 3 : une absence « midi et soir » couvre aussi le petit déjeuner.
+          if (sansPetitDej && sv.indexOf('midi') >= 0 && sv.indexOf('soir') >= 0 && sv.indexOf('petitdej') < 0) sv.unshift('petitdej');
+          return { debut: a.debut, fin: a.fin, services: sv.length ? sv : IDS_SERVICES.slice() };
         })
       };
     });
@@ -216,7 +224,7 @@
   }
 
   R.Modele = {
-    VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, CRENEAUX: CRENEAUX,
+    VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
     TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,

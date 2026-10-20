@@ -66,3 +66,8 @@
 - Nettoyage en deux lignes : « Nettoyage » (standard) et « Nettoyage sans viande ». Anciens fichiers (version 1) : leur nettoyage passe en sans viande (c'était la règle). Format de fichier version 2. Raison : demande utilisateur.
 - Plats témoins : saisis par service (ligne de la semaine), colonne « TÉMOINS » de la feuille chef, comptés en texture normale sans régime et **ajoutés au total à produire**. Repris par « Créer la semaine suivante » (comme direction/nettoyage). Pas de chariot. Raison : réponses utilisateur.
 - Feuille chef : en-têtes de colonnes 11 px et zones 10 px pour loger la colonne en plus (même avec une activité).
+
+## 2026-10-20 — Service Petit déjeuner et filtre des services
+- Nouveau service **Petit déjeuner** (avant midi) : **présences seulement** (pas de textures, régimes, options ni double plat). Lignes salariés / Sodexo / direction / nettoyage / témoins disponibles (vides par défaut ; l'utilisateur n'a pas de préférence). Feuille chef et feuille chariot imprimées, en version simplifiée. Raison : réponses utilisateur.
+- Absences : une case par service. Fichiers d'avant (version ≤ 2) : une absence « midi et soir » couvre aussi le petit déjeuner. Format de fichier version 3.
+- Page Semaine : filtre « Services affichés » = simple affichage (les données restent), au moins un service, mémorisé dans le navigateur.

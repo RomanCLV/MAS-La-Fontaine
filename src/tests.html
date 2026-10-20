@@ -79,7 +79,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
   }
 
   groupe('Dates et créneaux', function () {
-    egal(M.CRENEAUX.length, 14, '14 créneaux par semaine');
+    egal(M.CRENEAUX.length, 21, '21 créneaux par semaine (petit déjeuner, midi, soir)');
+    egal(M.CRENEAUX.slice(0, 3), ['lun_petitdej', 'lun_midi', 'lun_soir'], 'Ordre des services : petit déjeuner, midi, soir');
     egal(M.idSemaine('2026-10-12'), '2026-S42', 'Semaine ISO du 12/10/2026');
     egal(M.idSemaine('2027-01-01'), '2026-S53', '1er janvier 2027 = semaine 53 de 2026');
     egal(M.lundiDe('2026-10-18'), '2026-10-12', 'Lundi de la semaine du dimanche 18/10');
@@ -176,6 +177,29 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence' && a.residentId === 'C'; }), true, 'Aucune présence sans absence → alerte');
     Cr.absences.push({ debut: '2026-10-01', fin: '2026-10-30', services: ['midi', 'soir'] });
     egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence'; }), false, 'Absence enregistrée → pas d\'alerte');
+  });
+
+  groupe('Petit déjeuner (présences seulement)', function () {
+    var d = jeu(), s = d.semaines[0];
+    s.salaries.p1.lun_petitdej = { standard: 1, sansPorc: 1 };
+    s.temoins.lun_petitdej = 1;
+    var f = C.feuilleJour(d, s, 'lun_petitdej'), p1 = col(f, 'p1').c;
+    egal(f.presenceSeule, true, 'Service marqué « présence seulement »');
+    egal([p1.residents, p1.doublesPlats, p1.salStd, p1.salSansPorc, p1.total], [3, 0, 1, 1, 5], 'Parc 1 : 3 résidents (pas de double plat) + 2 salariés = 5');
+    egal([p1.tex, p1.reg, p1.opt], [{}, {}, {}], 'Ni textures, ni régimes, ni options');
+    egal(f.total.total, 3 + 2 + 1 + 1, 'Total à produire = 4 résidents + 2 salariés + 1 témoin');
+    egal(C.feuilleJour(d, s, 'lun_midi').presenceSeule, false, 'Midi : comptage complet');
+    var A = d.residents[0];
+    A.absences.push({ debut: '2026-10-13', fin: '2026-10-13', services: ['petitdej'] });
+    egal([C.presence(s, A, 'mar_petitdej').valeur, C.presence(s, A, 'mar_midi').valeur], [0, 1], 'Absence au petit déjeuner seulement');
+    var v2 = M.migrer({ app: M.APP, version: 2, residents: [{ id: 'X', absences: [
+      { debut: '2026-10-12', fin: '2026-10-13', services: ['midi', 'soir'] },
+      { debut: '2026-10-14', fin: '2026-10-14', services: ['soir'] },
+      { debut: '2026-10-15', fin: '2026-10-15' }] }] });
+    egal(v2.residents[0].absences.map(function (a) { return a.services; }), [['petitdej', 'midi', 'soir'], ['soir'], ['petitdej', 'midi', 'soir']],
+      'Version 2 : absence « midi et soir » étendue au petit déjeuner, « soir seulement » inchangée');
+    var v3 = M.migrer({ app: M.APP, version: 3, residents: [{ id: 'Y', absences: [{ debut: '2026-10-12', fin: '2026-10-13', services: ['midi', 'soir'] }] }] });
+    egal(v3.residents[0].absences[0].services, ['midi', 'soir'], 'Version 3 : absence « midi et soir » conservée telle quelle');
   });
 
   groupe('Feuille chariot', function () {

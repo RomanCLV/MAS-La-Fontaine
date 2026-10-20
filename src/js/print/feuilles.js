@@ -12,8 +12,10 @@
   }
   function libelleCourt(c) {
     var s = M.decoupeCreneau(c);
-    return M.jour(s.jour).nom + ' ' + s.service;
+    return M.jour(s.jour).nom + ' ' + M.service(s.service).court;
   }
+  // Unité affichée à côté du total : « plats », ou « petits déj. » (service « présence seulement »).
+  function unite(f) { return f.presenceSeule ? 'petits déj.' : 'plats'; }
   function tiret(v) { return v ? v : '–'; }
   // Nom trop long pour la colonne de libellés : abrégé du référentiel s'il existe.
   function nomCourt(g) { return g.nom.length > 26 && g.abrege ? g.abrege : g.nom; }
@@ -52,34 +54,37 @@
     var lignes = [
       groupe('REPAS'),
       ligne('Résidents présents', function (x) { return x.residents; }),
-      ligne('+ Doubles plats (en plus)', function (x) { return x.doublesPlats; }),
+      f.presenceSeule ? null : ligne('+ Doubles plats (en plus)', function (x) { return x.doublesPlats; }),
       ligne('Salariés standard', function (x) { return x.salStd; }),
       ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
       ligne('Plats témoins', function (x) { return x.temoins; }),
-      ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' }),
-      groupe('TEXTURES (tous convives)')
+      ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' })
     ];
-    lignesNature('texture').forEach(function (g) {
-      var defaut = g.id === texDef;
-      lignes.push(ligne(defaut ? g.nom : g.nom.toUpperCase(), function (x) { return x.tex[g.id] || 0; },
-        defaut ? {} : { classe: 'fc-texture', fond: g.couleur }));
-    });
-    lignes.push(groupe('RÉGIMES (tous convives)'));
-    lignesNature('regime').forEach(function (g) {
-      lignes.push(ligne(nomCourt(g), function (x) { return x.reg[g.id] || 0; }));
-    });
-    var options = lignesNature('option', function (g) { return g.affecte !== 'plat' && g.affecte !== 'information'; });
-    if (options.length) {
-      lignes.push(groupe('OPTIONS'));
-      options.forEach(function (g) {
-        lignes.push(ligne(nomCourt(g) + (g.affecte === 'legumes' ? ' (à part)' : ''), function (x) { return x.opt[g.id] || 0; }));
+    // Petit déjeuner (présence seulement) : ni textures, ni régimes, ni options.
+    if (!f.presenceSeule) {
+      lignes.push(groupe('TEXTURES (tous convives)'));
+      lignesNature('texture').forEach(function (g) {
+        var defaut = g.id === texDef;
+        lignes.push(ligne(defaut ? g.nom : g.nom.toUpperCase(), function (x) { return x.tex[g.id] || 0; },
+          defaut ? {} : { classe: 'fc-texture', fond: g.couleur }));
       });
+      lignes.push(groupe('RÉGIMES (tous convives)'));
+      lignesNature('regime').forEach(function (g) {
+        lignes.push(ligne(nomCourt(g), function (x) { return x.reg[g.id] || 0; }));
+      });
+      var options = lignesNature('option', function (g) { return g.affecte !== 'plat' && g.affecte !== 'information'; });
+      if (options.length) {
+        lignes.push(groupe('OPTIONS'));
+        options.forEach(function (g) {
+          lignes.push(ligne(nomCourt(g) + (g.affecte === 'legumes' ? ' (à part)' : ''), function (x) { return x.opt[g.id] || 0; }));
+        });
+      }
     }
 
     var sousTitre = [donnees.etablissement, 'Semaine ' + M.numeroSemaine(semaine.debut).numero];
     if (f.activites.length) {
       sousTitre.push('Activité : ' + f.activites.map(function (a) {
-        return a.nom + ' (' + M.jour(a.jour).court + ' ' + a.service + ')';
+        return a.nom + ' (' + M.jour(a.jour).court + ' ' + M.service(a.service).court + ')';
       }).join(', '));
     }
 
@@ -99,10 +104,12 @@
           col.type === 'activite' ? col.nom.toUpperCase() + ' (activité)' : col.nom);
       }));
 
+    var regle = f.presenceSeule ? 'Petit déjeuner : présences seulement (pas de textures ni régimes). Total parc = résidents + salariés.'
+      : 'Total parc = résidents + doubles plats + salariés.';
     var pied = f.activites.length
       ? 'Colonne ' + f.activites.map(function (a) { return a.nom; }).join(', ') +
-        ' : résidents retirés de leur parc (même repas, chariot distinct). Total parc = résidents + doubles plats + salariés.'
-      : 'Total parc = résidents + doubles plats + salariés.';
+        ' : résidents retirés de leur parc (même repas, chariot distinct). ' + regle
+      : regle;
 
     return h('div', { class: 'feuille feuille-chef' },
       h('div', { class: 'fc-entete' },
@@ -111,8 +118,8 @@
           h('div', { class: 'fc-sous' }, sousTitre.join(' · '))),
         h('div', { class: 'fc-grand' },
           h('div', { class: 'fc-grand-lab' }, 'TOTAL À PRODUIRE'),
-          h('div', { class: 'fc-grand-val' }, total, ' ', h('span', null, 'plats')))),
-      h('div', { class: 'fc-ventil' },
+          h('div', { class: 'fc-grand-val' }, total, ' ', h('span', null, unite(f))))),
+      f.presenceSeule ? null : h('div', { class: 'fc-ventil' },
         h('span', { class: 'fc-ventil-lab' }, 'Sur ces ' + total + ' plats :'),
         C.ventilation(donnees, f.total).map(function (v) {
           return h('span', { class: 'fc-chip', style: 'background:' + v.couleur + ';color:' + O.texteSur(v.couleur) },
@@ -127,18 +134,13 @@
     var f = C.feuilleJour(donnees, semaine, c);
     var pages = [];
     f.parcs.forEach(function (col) {
-      if (col.c.total > 0) pages = pages.concat(chariot(donnees, semaine, c, col));
+      if (col.c.total > 0) pages = pages.concat(f.presenceSeule ? chariotSimple(donnees, semaine, c, col) : chariot(donnees, semaine, c, col));
     });
     return pages;
   }
 
-  function chariot(donnees, semaine, c, col) {
-    var ch = C.chariot(donnees, semaine, c, col);
-    var refs = M.refs(donnees);
-    var texDef = M.textureDefaut(donnees);
-    var cpt = col.c;
-
-    // Sous-titre : résidents partis en activité (parc) ou provenance (activité).
+  // Sous-titre d'un chariot : résidents partis en activité (parc) ou provenance (activité).
+  function infoChariot(donnees, col) {
     var info = '';
     if (col.type === 'activite') {
       var parParc = {};
@@ -147,14 +149,58 @@
         var p = M.parc(donnees, id);
         return (p ? p.nom : id) + ' (' + parParc[id] + ')';
       }).join(', ') + '. Même repas, chariot dédié.';
-    } else if (ch.partis.length) {
+    } else if ((col.partis || []).length) {
       var parAct = {};
-      ch.partis.forEach(function (x) { parAct[x.activite.nom] = (parAct[x.activite.nom] || 0) + 1; });
+      col.partis.forEach(function (x) { parAct[x.activite.nom] = (parAct[x.activite.nom] || 0) + 1; });
       info = Object.keys(parAct).map(function (nom) {
         var n = parAct[nom];
         return O.pluriel(n, 'résident') + ' parti' + (n > 1 ? 's' : '') + ' à l\'activité ' + nom + ' : sur son chariot, pas ici.';
       }).join(' · ');
     }
+    return info;
+  }
+
+  function enteteChariot(semaine, c, col, info, libelle, volume, detail) {
+    return h('div', { class: 'ch-entete' },
+      h('div', { class: 'ch-nom', style: 'background:' + col.couleur + ';color:' + O.texteSur(col.couleur) }, col.nom.toUpperCase()),
+      h('div', { class: 'ch-info' },
+        h('div', { class: 'ch-titre' }, 'CHARIOT · ' + titreCreneau(semaine, c)),
+        info ? h('div', { class: 'ch-sous' }, info) : null),
+      h('div', { class: 'ch-plats' }, h('div', { class: 'ch-plats-lab' }, libelle), h('div', { class: 'ch-plats-val' }, volume)),
+      h('div', { class: 'ch-detail' }, detail));
+  }
+
+  function bac(libelle, valeur, desc) {
+    return h('div', { class: 'ch-bac' },
+      h('div', { class: 'ch-bac-haut' }, h('span', { class: 'ch-bac-lab' }, libelle), h('span', { class: 'ch-bac-val' }, tiret(valeur))),
+      h('div', { class: 'ch-bac-desc' }, desc));
+  }
+
+  // Chariot d'un service « présence seulement » (petit déjeuner) : des nombres, pas d'étiquettes.
+  function chariotSimple(donnees, semaine, c, col) {
+    var cpt = col.c;
+    var sal = cpt.salStd + cpt.salSansPorc;
+    var detail = [O.pluriel(cpt.residents, 'résident')];
+    if (sal) detail.push(O.pluriel(sal, 'salarié'));
+    return [h('div', { class: 'feuille feuille-chariot' },
+      enteteChariot(semaine, c, col, infoChariot(donnees, col), 'PETITS DÉJ.', cpt.total, detail.join(' + ')),
+      h('div', { class: 'ch-corps' },
+        h('div', { class: 'ch-collectif' },
+          h('div', { class: 'ch-bandeau' }, 'PETIT DÉJEUNER · à charger'),
+          h('div', { class: 'ch-bacs' },
+            bac('Résidents', cpt.residents, cpt.residents ? 'Présents à ce service' : 'Aucun cette fois'),
+            col.type === 'activite' ? null : bac('Salariés', sal, sal ? 'Salariés du parc' : 'Aucun cette fois')))),
+      h('div', { class: 'ch-pied' },
+        h('span', null, 'Petit déjeuner : présences seulement (pas de textures ni régimes).'),
+        h('span', null, libelleCourt(c))))];
+  }
+
+  function chariot(donnees, semaine, c, col) {
+    var ch = C.chariot(donnees, semaine, c, col);
+    var refs = M.refs(donnees);
+    var texDef = M.textureDefaut(donnees);
+    var cpt = col.c;
+    var info = infoChariot(donnees, col);
 
     var detail = [O.pluriel(cpt.residents, 'résident')];
     if (cpt.doublesPlats) detail.push(O.pluriel(cpt.doublesPlats, 'double plat', 'doubles plats'));
@@ -162,23 +208,11 @@
     var textures = M.parNature(donnees, 'texture').filter(function (g) { return cpt.tex[g.id]; });
 
     function entete() {
-      return h('div', { class: 'ch-entete' },
-        h('div', { class: 'ch-nom', style: 'background:' + col.couleur + ';color:' + O.texteSur(col.couleur) }, col.nom.toUpperCase()),
-        h('div', { class: 'ch-info' },
-          h('div', { class: 'ch-titre' }, 'CHARIOT · ' + titreCreneau(semaine, c)),
-          info ? h('div', { class: 'ch-sous' }, info) : null),
-        h('div', { class: 'ch-plats' }, h('div', { class: 'ch-plats-lab' }, 'PLATS'), h('div', { class: 'ch-plats-val' }, ch.volume)),
-        h('div', { class: 'ch-detail' }, detail.join(' + '), h('br'),
-          h('b', null, textures.map(function (g, i) {
-            var t = g.nom + ' ' + cpt.tex[g.id];
-            return [i ? ' · ' : '', g.id === texDef ? t : h('span', { class: 'ch-tex', style: 'background:' + g.couleur }, t)];
-          }))));
-    }
-
-    function bac(libelle, valeur, desc) {
-      return h('div', { class: 'ch-bac' },
-        h('div', { class: 'ch-bac-haut' }, h('span', { class: 'ch-bac-lab' }, libelle), h('span', { class: 'ch-bac-val' }, tiret(valeur))),
-        h('div', { class: 'ch-bac-desc' }, desc));
+      return enteteChariot(semaine, c, col, info, 'PLATS', ch.volume, [detail.join(' + '), h('br'),
+        h('b', null, textures.map(function (g, i) {
+          var t = g.nom + ' ' + cpt.tex[g.id];
+          return [i ? ' · ' : '', g.id === texDef ? t : h('span', { class: 'ch-tex', style: 'background:' + g.couleur }, t)];
+        }))]);
     }
 
     function collectif() {

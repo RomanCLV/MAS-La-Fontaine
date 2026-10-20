@@ -25,7 +25,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 
 ### 2. Résidents
 - Nom, prénom (**uniquement**), parc, texture, régimes, options, consigne libre éventuelle.
-- Présent par défaut ; **absences par période** (début, fin, midi/soir) — simple, "pas d'usine à gaz". Changement de régime sur une semaine : saisi pour la semaine (pas de gestion de dates complexe en V1).
+- Présent par défaut ; **absences par période** (début, fin, services cochés : petit déjeuner / midi / soir) — simple, "pas d'usine à gaz". Changement de régime sur une semaine : saisi pour la semaine (pas de gestion de dates complexe en V1).
 - Actions sur la liste des résidents (au survol de la ligne) : éditer, archiver, supprimer. Page « Résidents » au style de l'onglet TYPOLOGIE CONVIVES de l'Excel, avec bouton « Ajouter un résident » (v2 : l'archivage remplace « pas d'archives »).
 - Pas de lignes libres supplémentaires : on ajoute un résident via la page Résidents.
 - ~5 lignes libres supplémentaires par parc pour ajouter des résidents.
@@ -45,14 +45,15 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - **Presets** d'activité : enregistrent jour(s), service et liste de participants ; rechargés à l'ajout d'une activité sur une semaine, puis éditables.
 - Exemple actuel : Sport du jeudi midi.
 
-### 5. Sorties imprimables (A4 paysage, 1 feuille par jour × service : midi / soir)
+### 5. Sorties imprimables (A4 paysage, 1 feuille par jour × service : petit déjeuner / midi / soir)
+- **Petit déjeuner** : présences seulement (pas de textures, régimes ni options) ; feuille chef et feuilles chariot simplifiées (nombres par parc).
 - **Feuille chef (outil de production, variante A validée)** : tableau en zones : **Parcs** (+ colonne Activité si elle existe ce jour-là) avec leur total ; **Équipe Sodexo** ; **Direction** ; **Nettoyage** ; puis **TOTAL À PRODUIRE** mis en avant. Lignes : repas (résidents, doubles plats en plus, salariés std / sans porc), textures, régimes, options. Un seul total par colonne (plus de « plats chauds avec doubles » séparé : les doubles sont dans le total). Le volume total est suivi de la ventilation (« sur 120 plats : 5 sans produit de la mer, 15 sans viande, 15 sans porc… », régimes comptés sur tous les convives). Lignes **Haché** et **Mixé** très visibles, avec leur couleur de référentiel.
 - **Feuille chariot (variante A validée)** : par parc : header (parc, jour, service, volume) + collectif (bacs) + étiquettes en bandeau. Un chariot contient les plats résidents **et** salariés : chaque étiquette indique **Résident** ou **Salarié** (pas le nom du parc, déjà en header). **Texture** = élément le plus visible (bandeau coloré) ; régimes en pastilles colorées.
 
 ### 5 bis. Interface (layout global)
 - Application à **onglets** (façon IDE) : onglets ouverts en haut, accès aux onglets fermés (menu « Pages » + « Fermés récemment »), plusieurs fiches ouvertes en même temps. Les onglets ouverts sont **restaurés** à la réouverture de l'app.
 - Pages distinctes, dans cet ordre du menu Pages : **Semaine**, **Parcs**, **Régimes**, **Résidents**, **Activités** | **Fichier : Importer**, **Fichier : Exporter** | **Options** (séparateurs entre les groupes). Imprimer s'ouvre depuis la page Semaine (« Imprimer cette semaine »).
-- Saisie semaine : alertes manager **au-dessus** de la grille (pas sur le côté, pour garder la largeur) ; régimes en **lecture seule** dans la grille ; au survol d'une ligne, bouton stylo qui ouvre la fiche du résident dans un **nouvel onglet** (pas de changement de page).
+- Saisie semaine : filtre « Services affichés » (petit déjeuner / midi / soir) pour masquer des colonnes ; les données restent. Alertes manager **au-dessus** de la grille (pas sur le côté, pour garder la largeur) ; régimes en **lecture seule** dans la grille ; au survol d'une ligne, bouton stylo qui ouvre la fiche du résident dans un **nouvel onglet** (pas de changement de page).
 
 ### 6. Fichier et sauvegarde
 - Échange par **fichier JSON** (client exporte, prestataire importe). Pas de serveur.

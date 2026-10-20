@@ -2,17 +2,17 @@
 (function (R) {
   'use strict';
   var M = R.Modele, h = R.h, O = R.Outils, App = R.App;
-  var SERVICES_ABS = [
-    { v: 'midi,soir', nom: 'Midi et soir' },
-    { v: 'midi', nom: 'Midi seulement' },
-    { v: 'soir', nom: 'Soir seulement' }
-  ];
+  function absenceVide() { return { debut: '', fin: '', services: M.IDS_SERVICES.slice() }; }
+  function libelleServices(services) {
+    if (services.length === M.IDS_SERVICES.length) return 'Tous les services';
+    return services.map(function (id) { return M.service(id).nom; }).join(', ');
+  }
 
   function brouillon(o) {
     var k = App.cle(o);
     if (!App.brouillons[k]) {
       var r = M.resident(App.donnees, o.id);
-      App.brouillons[k] = { r: M.copie(r), nouveau: false, modifie: false, erreur: '', abs: { debut: '', fin: '', services: 'midi,soir' } };
+      App.brouillons[k] = { r: M.copie(r), nouveau: false, modifie: false, erreur: '', abs: absenceVide() };
     }
     return App.brouillons[k];
   }
@@ -22,7 +22,7 @@
     var parcId = App.ui.parcActif && M.parc(d, App.ui.parcActif) ? App.ui.parcActif : (d.referentiels.parcs[0] || {}).id;
     var r = M.residentVide(parcId);
     r.textureId = M.textureDefaut(d);
-    App.brouillons['resident:' + r.id] = { r: r, nouveau: true, modifie: false, erreur: '', abs: { debut: '', fin: '', services: 'midi,soir' } };
+    App.brouillons['resident:' + r.id] = { r: r, nouveau: true, modifie: false, erreur: '', abs: absenceVide() };
     App.ouvrir('resident', r.id);
   }
 
@@ -90,9 +90,10 @@
         var a = b.abs;
         if (!a.debut || !a.fin) { b.erreur = 'Indiquez les deux dates de l’absence.'; App.rendre(); return; }
         if (a.fin < a.debut) { b.erreur = 'La date de fin est avant la date de début.'; App.rendre(); return; }
-        r.absences.push({ debut: a.debut, fin: a.fin, services: a.services.split(',') });
+        if (!a.services.length) { b.erreur = 'Cochez au moins un service.'; App.rendre(); return; }
+        r.absences.push({ debut: a.debut, fin: a.fin, services: a.services.slice() });
         r.absences.sort(function (x, y) { return x.debut < y.debut ? -1 : 1; });
-        b.abs = { debut: '', fin: '', services: 'midi,soir' };
+        b.abs = absenceVide();
         b.erreur = ''; b.modifie = true;
         App.rendre();
       }
@@ -128,7 +129,7 @@
               return h('div', { class: 'absence' },
                 h('span', { class: 'gras', style: 'width:70px' }, libelleAbsence(a)),
                 h('span', null, 'du ', h('b', null, O.dateCourte(a.debut)), ' au ', h('b', null, O.dateCourte(a.fin))),
-                h('span', { class: 'choix choix-info' }, a.services.length === 2 ? 'Midi et soir' : (a.services[0] === 'midi' ? 'Midi seulement' : 'Soir seulement')),
+                h('span', { class: 'choix choix-info' }, libelleServices(a.services)),
                 h('button', { class: 'btn', style: 'margin-left:auto', onclick: function () {
                   r.absences.splice(i, 1); b.modifie = true; App.rendre();
                 } }, 'Retirer'));
@@ -138,9 +139,15 @@
                 h('input', { id: 'f-du', type: 'date', value: b.abs.debut, onchange: function (e) { b.abs.debut = e.target.value; } })),
               h('div', { class: 'champ' }, h('label', { for: 'f-au' }, 'Au (inclus)'),
                 h('input', { id: 'f-au', type: 'date', value: b.abs.fin, onchange: function (e) { b.abs.fin = e.target.value; } })),
-              h('div', { class: 'champ' }, h('label', { for: 'f-sv' }, 'Services'),
-                h('select', { id: 'f-sv', onchange: function (e) { b.abs.services = e.target.value; } },
-                  SERVICES_ABS.map(function (x) { return h('option', { value: x.v, selected: x.v === b.abs.services }, x.nom); }))),
+              h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Services'),
+                M.SERVICES.map(function (x) {
+                  var on = b.abs.services.indexOf(x.id) >= 0;
+                  return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () {
+                    var liste = on ? b.abs.services.filter(function (id) { return id !== x.id; }) : b.abs.services.concat([x.id]);
+                    b.abs.services = M.IDS_SERVICES.filter(function (id) { return liste.indexOf(id) >= 0; });
+                    App.rendre();
+                  } }), x.nom);
+                })),
               h('button', { class: 'btn gras', onclick: ajouterAbsence }, '+ Ajouter l’absence'))),
           h('div', { class: 'rangee boutons' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
