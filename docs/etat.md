@@ -56,7 +56,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Questions métier ouvertes (hypothèses appliquées, voir `decisions.md`)
 - Double plat : textures et régimes comptés sur **2 plats** (un haché en double = 2 hachés). Correct ?
-- Équipe Sodexo : saisie **standard + sans porc** (comme les salariés de parc). Correct ?
 - Chariots imprimés pour les **parcs et activités** seulement (pas Sodexo / Direction / Nettoyage). Correct ?
 - Étiquette « Salarié » de la maquette : non produite (les salariés ne sont saisis qu'en nombres standard / sans porc). Faut-il des salariés avec régime individuel ?
 - Questions plus anciennes toujours ouvertes : zone du nettoyage (« Autres »), étiquettes par repas ou par résident.

@@ -219,13 +219,12 @@
         ecrire: function (c, n) { if (n) s[table][c] = n; else delete s[table][c]; }
       };
     }
-    var a = salarie('standard'), b = salarie('sansPorc'), so = sodexo('standard'), sp = sodexo('sansPorc');
+    var a = salarie('standard'), b = salarie('sansPorc'), so = sodexo('standard');
     var di = simple('direction'), ne = simple('nettoyage'), nv = simple('nettoyageSansViande'), te = simple('temoins');
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),
       ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire),
-      ligneNombres('Salariés SODEXO standard', 'tous parcs', '#e4edf7', so.lire, so.ecrire, true),
-      ligneNombres('Salariés SODEXO sans porc', 'tous parcs', '#e4edf7', sp.lire, sp.ecrire),
+      ligneNombres('Salariés SODEXO', 'tous parcs', '#e4edf7', so.lire, so.ecrire, true),
       ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
       ligneNombres('Nettoyage', 'tous parcs', '#e4edf7', ne.lire, ne.ecrire),
       ligneNombres('Nettoyage sans viande', 'tous parcs', '#e4edf7', nv.lire, nv.ecrire),

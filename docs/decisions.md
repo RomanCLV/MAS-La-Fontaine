@@ -97,3 +97,7 @@
 - Accès : accueil « Commencer avec MAS La Fontaine » + page Parcs « Ajouter les parcs MAS La Fontaine ». Parcs déjà présents (même nom) : on n'ajoute que les manquants, rien n'est modifié ni supprimé.
 - Le preset ne contient que les parcs (textures / régimes / options = listes par défaut).
 - Ajout : preset d'activité **Sport, jeudi midi** (sans participant, couleur par défaut). Accueil MAS : inclus ; page Activités : « Ajouter les presets MAS La Fontaine » s'il manque (même nom). Raison : demande utilisateur.
+
+## 2026-10-20 — Sodexo sans porc retiré
+- Grille Semaine : plus de ligne « Salariés SODEXO sans porc » ; la ligne standard est renommée « Salariés SODEXO ». Raison : demande utilisateur.
+- Anciennes données : un sans porc Sodexo déjà saisi est compté en standard à l'ouverture (le nombre de repas ne change pas).

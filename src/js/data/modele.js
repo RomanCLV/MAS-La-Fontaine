@@ -216,10 +216,10 @@
         salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {},
         alertesTraitees: tableau(s.alertesTraitees)
       };
-      // Sodexo : ancien format possible = un nombre par créneau.
+      // Sodexo : ancien format possible = un nombre par créneau. Plus de saisie « sans porc » : un ancien sans porc compte en standard.
       Object.keys(objet(s.sodexo)).forEach(function (c) {
         var v = s.sodexo[c];
-        n.sodexo[c] = typeof v === 'object' && v ? { standard: nombre(v.standard), sansPorc: nombre(v.sansPorc) } : { standard: nombre(v), sansPorc: 0 };
+        n.sodexo[c] = typeof v === 'object' && v ? { standard: nombre(v.standard) + nombre(v.sansPorc), sansPorc: 0 } : { standard: nombre(v), sansPorc: 0 };
       });
       Object.keys(objet(s.direction)).forEach(function (c) { n.direction[c] = nombre(s.direction[c]); });
       // Version 1 : tout le nettoyage était « sans viande » → passe dans nettoyageSansViande.

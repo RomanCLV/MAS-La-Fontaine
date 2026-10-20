@@ -72,7 +72,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       ],
       semaines: [{ id: '2026-S42', debut: '2026-10-12',
         salaries: { p1: { lun_midi: { standard: 2, sansPorc: 1 } } },
-        sodexo: { lun_midi: { standard: 3, sansPorc: 1 } },
+        sodexo: { lun_midi: { standard: 4, sansPorc: 0 } },
         direction: { lun_midi: 3 }, nettoyage: { lun_midi: 5 }, temoins: { lun_midi: 2 } }]
     });
   }
@@ -94,7 +94,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal([p1.residents, p1.doublesPlats, p1.salStd, p1.salSansPorc, p1.total], [3, 1, 2, 1, 7], 'Parc 1 : 3 résidents + 1 double + 2 std + 1 sans porc = 7');
     egal(p2.total, 1, 'Parc 2 : résident archivé non compté');
     egal(col(f, 'totalParcs').c.total, 8, 'Total parcs = 7 + 1');
-    egal(col(f, 'sodexo').c.total, 4, 'Sodexo 3 std + 1 sans porc');
+    egal(col(f, 'sodexo').c.total, 4, 'Sodexo 4 standard');
     egal(col(f, 'direction').c.total, 3, 'Direction 3');
     egal(col(f, 'nettoyage').c.total, 5, 'Nettoyage 5 (zone Autres)');
     egal(col(f, 'temoins').c.total, 2, 'Plats témoins 2');
@@ -140,7 +140,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal([n2.total, n2.reg.sans_viande, n2.tex.normal], [5, 3, 5], 'Nettoyage 2 standard + 3 sans viande = 5, dont 3 sans viande');
     egal(col(f, 'direction').c.tex.normal, 3, 'Direction en texture normale');
     egal(col(f, 'totalParcs').c.reg.sans_viande, undefined, 'Nettoyage hors total parcs');
-    egal(f.total.reg.sans_porc, 1 + 1 + 1, 'Sans porc = résident C + salarié parc + Sodexo');
+    egal(f.total.reg.sans_porc, 1 + 1, 'Sans porc = résident C + salarié parc (plus de sans porc Sodexo)');
     egal(C.feuilleJour(d, d.semaines[0], 'sam_midi').total.total, 5, 'Samedi : ni direction ni nettoyage');
   });
 
@@ -260,6 +260,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: 4 } }] });
     egal(m.semaines[0].debut, '2026-10-12', 'Début ramené au lundi');
     egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo nombre → {standard, sansPorc}');
+    var so = M.migrer({ app: M.APP, version: M.VERSION, semaines: [{ debut: '2026-10-12', sodexo: { lun_midi: { standard: 3, sansPorc: 2 } } }] }).semaines[0];
+    egal(so.sodexo.lun_midi, { standard: 5, sansPorc: 0 }, 'Sodexo sans porc (plus saisi) → compté en standard');
     egal(Array.isArray(m.residents) && Array.isArray(m.presetsActivites), true, 'Tableaux manquants créés');
     var v1 = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 5 } }] }).semaines[0];
     egal([v1.nettoyage, v1.nettoyageSansViande], [{}, { lun_midi: 5 }], 'Version 1 : nettoyage → nettoyage sans viande');
