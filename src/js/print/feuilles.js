@@ -57,10 +57,15 @@
         }));
     }
     function groupe(libelle) { return h('div', { class: 'fc-groupe' }, libelle); }
-    // Seulement ce qui concerne le service (cases « Services » de la page Régimes).
+    // Total (toutes colonnes) d'une texture / d'un régime / d'une option.
+    function totalDe(g) {
+      var table = g.nature === 'texture' ? f.total.tex : (g.nature === 'option' ? f.total.opt : f.total.reg);
+      return table[g.id] || 0;
+    }
+    // Seulement ce qui concerne le service (cases « Services » de la page Régimes) et n'est pas à 0.
     function lignesNature(nature, filtre) {
       return donnees.referentiels.regimes.filter(function (g) {
-        return g.nature === nature && M.concerne(g, f.service) && (!filtre || filtre(g));
+        return g.nature === nature && M.concerne(g, f.service) && totalDe(g) && (!filtre || filtre(g));
       });
     }
 
@@ -73,7 +78,7 @@
       ligne('Plats témoins', function (x) { return x.temoins; }),
       ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' })
     ];
-    // Groupes vides (rien de coché pour ce service, ex. petit déjeuner) : non affichés.
+    // Groupes vides (rien de coché pour ce service, ex. petit déjeuner, ou tout à 0) : non affichés.
     var textures = lignesNature('texture');
     if (textures.length) {
       lignes.push(groupe('TEXTURES (tous convives)'));
@@ -106,6 +111,7 @@
       });
     }
 
+    var ventil = C.ventilation(donnees, f.total, f.service).filter(function (v) { return v.valeur; });
     var sousTitre = [donnees.etablissement, 'Semaine ' + M.numeroSemaine(semaine.debut).numero];
     if (f.activites.length) {
       sousTitre.push('Activité : ' + f.activites.map(function (a) {
@@ -144,9 +150,9 @@
         h('div', { class: 'fc-grand' },
           h('div', { class: 'fc-grand-lab' }, 'TOTAL À PRODUIRE'),
           h('div', { class: 'fc-grand-val' }, total, ' ', h('span', null, unite(f))))),
-      f.presenceSeule ? null : h('div', { class: 'fc-ventil' },
+      f.presenceSeule || !ventil.length ? null : h('div', { class: 'fc-ventil' },
         h('span', { class: 'fc-ventil-lab' }, 'Sur ces ' + total + ' plats :'),
-        C.ventilation(donnees, f.total, f.service).map(function (v) {
+        ventil.map(function (v) {
           return h('span', { class: 'fc-chip', style: 'background:' + v.couleur + ';color:' + O.texteSur(v.couleur) },
             v.nature === 'texture' ? v.nom.toUpperCase() : nomCourt(v), ' ', h('b', null, v.valeur));
         })),

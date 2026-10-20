@@ -107,3 +107,6 @@
 - Puis une ligne de carrés par texture (fond = couleur de la texture), comptée en plats comme la feuille cuisine (Normal + Haché + … = total). Textures montrées : par défaut, « Toujours affichées », et toute texture ayant au moins un plat sur un service affiché (sinon la somme serait fausse). Raison : la texture est essentielle (choix utilisateur).
 - Correction utilisateur : les carrés comptent le **parc affiché**, pas la MAS. Ligne « Plats <parc> » = colonne du parc sur la feuille cuisine (résidents présents hors partis en activité + doubles plats + salariés du parc) ; textures idem, pour ce parc.
 - Lignes de texture : affichées seulement si la texture a au moins un plat dans le parc sur un service affiché de la semaine (y compris Normal et les « Toujours affichées »). Raison : demande utilisateur.
+
+## 2026-10-20 — Feuille cuisine sans lignes à 0
+- Textures, régimes et options dont le total du service est 0 : ligne non imprimée (pastilles « Sur ces N plats » aussi). Les lignes REPAS restent. Raison : demande utilisateur (répond à la question ouverte du 9e lot).
