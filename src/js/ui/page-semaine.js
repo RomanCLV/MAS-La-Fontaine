@@ -161,7 +161,8 @@
       e.preventDefault();
       var zone = e.currentTarget.closest('.grille');
       var cases = Array.prototype.map.call(zone.querySelectorAll('.pc'), function (b) {
-        return { b: b, classe: b.className, texte: b.textContent, i: +b.getAttribute('data-i'), k: +b.getAttribute('data-k') };
+        return { b: b, classe: b.className, texte: b.textContent, i: +b.getAttribute('data-i'), k: +b.getAttribute('data-k'),
+          w: +b.getAttribute('data-w') };
       });
       var v = inverse(i, k), fin = { i: i, k: k };
       function dessiner() {
@@ -169,7 +170,7 @@
         cases.forEach(function (x) {
           x.dedans = x.i >= i0 && x.i <= i1 && x.k >= k0 && x.k <= k1;
           x.b.className = x.dedans ? x.classe.replace(/ (present|absent|abs-fiche)\b/g, '') + (v ? ' present' : ' absent') + ' zone' : x.classe;
-          x.b.textContent = x.dedans ? String(v) : x.texte;
+          x.b.textContent = x.dedans ? String(v * x.w) : x.texte;
         });
       }
       function bouger(ev) {
@@ -197,6 +198,8 @@
       dessiner();
     }
 
+    // Case présente = nombre de plats du résident (2 avec double plat), absente = 0.
+    var refs = M.refs(d);
     var lignes = residents.map(function (r, i) {
       var marques = [r.textureId].concat(r.regimeIds, r.optionIds);
       return h('div', { class: 'g g-ligne', style: gabarit },
@@ -214,17 +217,19 @@
         vis.map(function (c, k) {
           var p = C.presence(s, r, c);
           var act = C.activiteDe(s, r.id, c);
+          var w = C.poids(r, refs, M.decoupeCreneau(c).service);
           var titre = [M.nomAffiche(r) + ' · ' + C.libelleCreneaux([c]) + ' : ' + (p.valeur ? 'présent' : 'absent')];
+          if (p.valeur && w === 2) titre.push('double plat (2 plats)');
           if (p.source === 'absence') titre.push('absence enregistrée dans la fiche');
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {
             class: 'pc ' + bord(c) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
             style: act ? '--act:' + act.couleur : null,
-            title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k,
+            title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k, 'data-w': w,
             onpointerdown: function (e) { presser(e, i, k); },
             // Clavier seulement (Entrée / Espace) : la souris passe par presser.
             onclick: function (e) { if (e.detail === 0) appliquer([{ i: i, k: k }], inverse(i, k)); }
-          }, String(p.valeur));
+          }, String(p.valeur * w));
         }));
     });
 

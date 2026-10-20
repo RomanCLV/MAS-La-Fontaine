@@ -113,3 +113,6 @@
 
 ## 2026-10-20 — Feuille chariot : bacs salariés / résidents séparés
 - Collectif en quatre bacs : Salariés standard, Salariés sans porc, Résidents simples, Résidents sans porc (avant : un bac « sans porc » commun). Fond beige = salariés, bleu = résidents. Bac imprimé seulement si sa quantité n'est pas 0 (aucun → « Aucun bac collectif cette fois »). Petit déjeuner : idem pour Salariés / Résidents. Raison : demande utilisateur.
+
+## 2026-10-20 — Grille Semaine : case = nombre de plats
+- Résident présent avec une option « plat » (double plat) : la case affiche 2 au lieu de 1 (info-bulle « double plat (2 plats) ») ; petit déjeuner toujours 1 ; absent 0. Le clic inverse toujours présent / absent. Raison : demande utilisateur.
