@@ -40,35 +40,36 @@
 
   // Textures / régimes / options par défaut d'une base vide (remise à zéro) ; modifiables ensuite dans la page Régimes.
   // Ordre = ordre des colonnes. abrege : libellé court de colonne. affecte (options) : plat, legumes ou information.
+  // toujoursVisible : colonne toujours présente dans la grille Semaine ; sinon seulement si un résident du parc l'a.
   var MS = SERVICES_REGIME_DEFAUT;
   var REGIMES_DEFAUT = [
-    { id: 'normal', nom: 'Normal', nature: 'texture', couleur: '#ffffff', services: MS },
-    { id: 'hache', nom: 'Haché', nature: 'texture', couleur: '#f6c9a8', services: MS },
-    { id: 'tendre', nom: 'Tendre', nature: 'texture', couleur: '#f0b48a', services: MS },
-    { id: 'mouline', nom: 'Mouliné', nature: 'texture', couleur: '#ebaa95', services: MS },
-    { id: 'mixe', nom: 'Mixé', nature: 'texture', couleur: '#e6a0a0', services: MS },
-    { id: 'mixe_lisse', nom: 'Mixé lisse', nature: 'texture', couleur: '#d98888', services: MS },
-    { id: 'sans_porc', nom: 'Sans porc', nature: 'regime', couleur: '#f4b6c8', services: MS },
-    { id: 'sans_viande', nom: 'Sans viande', nature: 'regime', couleur: '#ffe08a', services: MS },
-    { id: 'vegetarien', nom: 'Végétarien', nature: 'regime', couleur: '#b7dfa0', services: MS },
-    { id: 'sans_produit_mer', nom: 'Sans produit de la mer', abrege: 'Sans prod. mer', nature: 'regime', couleur: '#c9b7e8', services: MS },
-    { id: 'sans_residus', nom: 'Sans résidus', nature: 'regime', couleur: '#c9d9a6', services: MS },
-    { id: 'hypo', nom: 'Hypocalorique', abrege: 'Plateau hypo', nature: 'regime', couleur: '#b9e3d8', services: MS },
-    { id: 'diabetique', nom: 'Diabétique', nature: 'regime', couleur: '#9dc3e6', services: MS },
-    { id: 'sans_sel', nom: 'Sans sel', nature: 'regime', couleur: '#dddddd', services: MS },
-    { id: 'pauvre_potassium_proteines', nom: 'Pauvre en potassium / protéines', abrege: 'Pauvre K / prot.', nature: 'regime', couleur: '#e3c6de', services: MS },
-    { id: 'sans_gluten', nom: 'Sans gluten', nature: 'regime', couleur: '#f2cfa0', services: MS },
-    { id: 'sans_lactose', nom: 'Sans lactose', nature: 'regime', couleur: '#d6e6f5', services: MS },
-    { id: 'allergie_lait', nom: 'Allergie lait', abrege: 'All. lait', nature: 'regime', couleur: '#aecbe8', services: MS },
-    { id: 'allergie_oeufs', nom: 'Allergie œufs', abrege: 'All. œufs', nature: 'regime', couleur: '#fff2b3', services: MS },
-    { id: 'allergie_arachides', nom: 'Allergie arachides', abrege: 'All. arachides', nature: 'regime', couleur: '#e0b98a', services: MS },
-    { id: 'allergie_fruits_coque', nom: 'Allergie fruits à coque', abrege: 'All. fruits à coque', nature: 'regime', couleur: '#c8a27a', services: MS },
-    { id: 'double_plat', nom: 'Double plat', nature: 'option', affecte: 'plat', couleur: '#f4a460', services: MS },
-    { id: 'double_legumes_vert', nom: 'Double légumes vert', abrege: 'Dbl légumes vert', nature: 'option', affecte: 'legumes', couleur: '#a9d18e', services: MS },
-    { id: 'demi_portion', nom: 'Demi-portion', nature: 'option', affecte: '', couleur: '#c6d8ee', services: MS },
-    { id: 'enrichi', nom: 'Enrichi', nature: 'option', affecte: '', couleur: '#f2d27a', services: MS },
-    { id: 'pane_pate_riz_frite', nom: 'Poisson/viande panée + pâtes/riz/frites', abrege: 'Pané + féculent', nature: 'option', affecte: '', couleur: '#d9c29c', services: MS },
-    { id: 'pots_gourmands', nom: 'Pots gourmands', nature: 'option', affecte: 'information', couleur: '#e8e8e8', services: SERVICES_POTS_GOURMANDS }
+    { id: 'normal', nom: 'Normal', nature: 'texture', couleur: '#ffffff', toujoursVisible: true, services: MS },
+    { id: 'hache', nom: 'Haché', nature: 'texture', couleur: '#f6c9a8', toujoursVisible: true, services: MS },
+    { id: 'tendre', nom: 'Tendre', nature: 'texture', couleur: '#f0b48a', toujoursVisible: false, services: MS },
+    { id: 'mouline', nom: 'Mouliné', nature: 'texture', couleur: '#ebaa95', toujoursVisible: false, services: MS },
+    { id: 'mixe', nom: 'Mixé', nature: 'texture', couleur: '#e6a0a0', toujoursVisible: true, services: MS },
+    { id: 'mixe_lisse', nom: 'Mixé lisse', nature: 'texture', couleur: '#d98888', toujoursVisible: false, services: MS },
+    { id: 'sans_porc', nom: 'Sans porc', nature: 'regime', couleur: '#f4b6c8', toujoursVisible: true, services: MS },
+    { id: 'sans_viande', nom: 'Sans viande', nature: 'regime', couleur: '#ffe08a', toujoursVisible: true, services: MS },
+    { id: 'vegetarien', nom: 'Végétarien', nature: 'regime', couleur: '#b7dfa0', toujoursVisible: false, services: MS },
+    { id: 'sans_produit_mer', nom: 'Sans produit de la mer', abrege: 'Sans prod. mer', nature: 'regime', couleur: '#c9b7e8', toujoursVisible: true, services: MS },
+    { id: 'sans_residus', nom: 'Sans résidus', nature: 'regime', couleur: '#c9d9a6', toujoursVisible: true, services: MS },
+    { id: 'hypo', nom: 'Hypocalorique', abrege: 'Plateau hypo', nature: 'regime', couleur: '#b9e3d8', toujoursVisible: true, services: MS },
+    { id: 'diabetique', nom: 'Diabétique', nature: 'regime', couleur: '#9dc3e6', toujoursVisible: true, services: MS },
+    { id: 'sans_sel', nom: 'Sans sel', nature: 'regime', couleur: '#dddddd', toujoursVisible: false, services: MS },
+    { id: 'pauvre_potassium_proteines', nom: 'Pauvre en potassium / protéines', abrege: 'Pauvre K / prot.', nature: 'regime', couleur: '#e3c6de', toujoursVisible: false, services: MS },
+    { id: 'sans_gluten', nom: 'Sans gluten', nature: 'regime', couleur: '#f2cfa0', toujoursVisible: false, services: MS },
+    { id: 'sans_lactose', nom: 'Sans lactose', nature: 'regime', couleur: '#d6e6f5', toujoursVisible: false, services: MS },
+    { id: 'allergie_lait', nom: 'Allergie lait', abrege: 'All. lait', nature: 'regime', couleur: '#aecbe8', toujoursVisible: false, services: MS },
+    { id: 'allergie_oeufs', nom: 'Allergie œufs', abrege: 'All. œufs', nature: 'regime', couleur: '#fff2b3', toujoursVisible: false, services: MS },
+    { id: 'allergie_arachides', nom: 'Allergie arachides', abrege: 'All. arachides', nature: 'regime', couleur: '#e0b98a', toujoursVisible: false, services: MS },
+    { id: 'allergie_fruits_coque', nom: 'Allergie fruits à coque', abrege: 'All. fruits à coque', nature: 'regime', couleur: '#c8a27a', toujoursVisible: false, services: MS },
+    { id: 'double_plat', nom: 'Double plat', nature: 'option', affecte: 'plat', couleur: '#f4a460', toujoursVisible: true, services: MS },
+    { id: 'double_legumes_vert', nom: 'Double légumes vert', abrege: 'Dbl légumes vert', nature: 'option', affecte: 'legumes', couleur: '#a9d18e', toujoursVisible: true, services: MS },
+    { id: 'demi_portion', nom: 'Demi-portion', nature: 'option', affecte: '', couleur: '#c6d8ee', toujoursVisible: false, services: MS },
+    { id: 'enrichi', nom: 'Enrichi', nature: 'option', affecte: '', couleur: '#f2d27a', toujoursVisible: true, services: MS },
+    { id: 'pane_pate_riz_frite', nom: 'Poisson/viande panée + pâtes/riz/frites', abrege: 'Pané + féculent', nature: 'option', affecte: '', couleur: '#d9c29c', toujoursVisible: true, services: MS },
+    { id: 'pots_gourmands', nom: 'Pots gourmands', nature: 'option', affecte: 'information', couleur: '#e8e8e8', toujoursVisible: true, services: SERVICES_POTS_GOURMANDS }
   ];
 
   function creneau(jour, service) { return jour + '_' + service; }
@@ -181,6 +182,7 @@
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
       n.nature = (g.nature === 'texture' || g.nature === 'option') ? g.nature : 'regime';
       if (n.nature === 'option') n.affecte = g.affecte || '';
+      n.toujoursVisible = g.toujoursVisible !== false; // absent (fichiers d'avant) : toujours affiché
       // Avant la version 4 : tout concernait midi et soir (petit déjeuner sans régimes), sauf les pots gourmands.
       n.services = sansServicesRegimes
         ? (n.id === 'pots_gourmands' ? SERVICES_POTS_GOURMANDS : SERVICES_REGIME_DEFAUT).slice()
@@ -270,6 +272,14 @@
   function concerne(g, serviceId) {
     return !g || (g.services || SERVICES_REGIME_DEFAUT).indexOf(serviceId) >= 0;
   }
+  // Le résident r a-t-il la texture / le régime / l'option g ?
+  function aRegime(r, g) {
+    return r.textureId === g.id || r.regimeIds.indexOf(g.id) >= 0 || r.optionIds.indexOf(g.id) >= 0;
+  }
+  // Colonne de g dans une grille de résidents : toujours, ou seulement si l'un d'eux l'a.
+  function colonneAffichee(g, residents) {
+    return g.toujoursVisible !== false || residents.some(function (r) { return aRegime(r, g); });
+  }
   function textureDefaut(donnees) {
     var t = parNature(donnees, 'texture');
     var n = t.filter(function (g) { return g.id === TEXTURE_DEFAUT; })[0];
@@ -285,6 +295,7 @@
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
     nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer, baseVide: baseVide,
-    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne
+    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne,
+    aRegime: aRegime, colonneAffichee: colonneAffichee
   };
 })(window.Recueil = window.Recueil || {});

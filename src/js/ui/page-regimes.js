@@ -15,6 +15,8 @@
     { v: 'information', nom: 'Information : quantité par zone (hors production)' }
   ];
   var PROTEGES = [M.TEXTURE_DEFAUT, M.REGIME_SANS_PORC, M.REGIME_NETTOYAGE];
+  var AIDE_AFFICHE = 'Coché : la colonne est toujours présente dans la grille Semaine. ' +
+    'Décoché : elle n’apparaît que si un résident du parc affiché a cet élément.';
 
   function effet(g) {
     if (g.nature === 'texture') return g.id === M.TEXTURE_DEFAUT ? 'Texture par défaut' : 'Texture';
@@ -28,9 +30,7 @@
   }
 
   function utilisations(d, g) {
-    return d.residents.filter(function (r) {
-      return r.textureId === g.id || r.regimeIds.indexOf(g.id) >= 0 || r.optionIds.indexOf(g.id) >= 0;
-    }).length;
+    return d.residents.filter(function (r) { return M.aRegime(r, g); }).length;
   }
 
   // Ajoute / retire un service, en gardant l'ordre petit déjeuner, midi, soir.
@@ -47,10 +47,10 @@
     liste[i] = liste[j]; liste[j] = g;
   }
 
-  function valeurEdition(ed) { return [ed.nom, ed.abrege, ed.couleur, ed.nature, ed.affecte, ed.services.join(',')].join('|'); }
-  function edition(id, table, nom, abrege, couleur, nature, affecte, services) {
+  function valeurEdition(ed) { return [ed.nom, ed.abrege, ed.couleur, ed.nature, ed.affecte, ed.services.join(','), ed.visible].join('|'); }
+  function edition(id, table, nom, abrege, couleur, nature, affecte, services, visible) {
     var ed = { id: id, table: table, nom: nom, abrege: abrege, couleur: couleur, nature: nature, affecte: affecte,
-      services: services.slice(), erreur: '' };
+      services: services.slice(), visible: visible, erreur: '' };
     ed.init = valeurEdition(ed);
     return ed;
   }
@@ -63,6 +63,16 @@
         s.court);
     }));
   }
+
+  // Case « Toujours affiché » (colonne de la grille Semaine).
+  function caseAffiche(on, changer, nom) {
+    return h('label', { class: 'choix' + (on ? ' on' : ''), title: AIDE_AFFICHE },
+      h('input', { type: 'checkbox', checked: on, 'aria-label': 'Toujours affiché' + (nom ? ' : ' + nom : ''), onchange: changer }),
+      on ? 'Oui' : 'Non');
+  }
+
+  // Texture par défaut : pas de colonne dans la grille (les autres textures suffisent).
+  function sansColonne() { return h('span', { class: 'petit', title: 'La texture par défaut n’a pas de colonne dans la grille Semaine.' }, '—'); }
 
   R.Pages.regimes = {
     titre: function () { return 'Régimes'; },
@@ -91,6 +101,7 @@
           }
           g.nom = ed.nom.trim(); g.abrege = ed.abrege.trim(); g.couleur = ed.couleur; g.nature = ed.nature;
           g.services = ed.services.slice();
+          g.toujoursVisible = ed.visible;
           if (g.nature === 'option') g.affecte = ed.affecte; else delete g.affecte;
           App.etat.regimeEdit = null;
         });
@@ -110,7 +121,7 @@
         });
       }
 
-      var gabarit = 'grid-template-columns:44px minmax(0,1.4fr) minmax(0,1fr) 230px minmax(0,1.6fr) 260px';
+      var gabarit = 'grid-template-columns:44px minmax(0,1.4fr) minmax(0,1fr) 230px 100px minmax(0,1.6fr) 260px';
       function formulaire() {
         var texture = ed.nature === 'texture';
         return h('div', { class: 'ligne-reg edition', style: gabarit },
@@ -118,6 +129,8 @@
           h('input', { value: ed.nom, 'aria-label': 'Nom', placeholder: 'Nom', oninput: function (e) { ed.nom = e.target.value; App.signalerModif(); } }),
           h('input', { value: ed.abrege, 'aria-label': 'Abrégé pour la grille', placeholder: 'Abrégé (grille)', oninput: function (e) { ed.abrege = e.target.value; App.signalerModif(); } }),
           casesServices(ed.services, function (id) { ed.services = basculer(ed.services, id); App.rendre(); }),
+          ed.id === M.textureDefaut(d) ? sansColonne()
+            : caseAffiche(ed.visible, function () { ed.visible = !ed.visible; App.rendre(); }),
           texture ? h('span', { class: 'petit' }, effet({ id: ed.id, nature: 'texture' }))
             : h('span', { class: 'effet-reg' },
               h('select', { 'aria-label': 'Nature', onchange: function (e) { ed.nature = e.target.value; App.rendre(); } },
@@ -142,6 +155,9 @@
           casesServices(g.services || M.SERVICES_REGIME_DEFAUT, function (id) {
             App.modifier(function () { g.services = basculer(g.services || M.SERVICES_REGIME_DEFAUT, id); });
           }, g.nom),
+          g.id === M.textureDefaut(d) ? sansColonne() : caseAffiche(g.toujoursVisible !== false, function () {
+            App.modifier(function () { g.toujoursVisible = g.toujoursVisible === false; });
+          }, g.nom),
           h('span', { class: 'petit' }, effet(g)),
           h('span', { class: 'actions-visibles' },
             h('button', { class: 'btn btn-icone', 'aria-label': 'Monter ' + g.nom, disabled: premier,
@@ -151,7 +167,7 @@
             h('button', { class: 'btn', onclick: function () {
               if (!App.abandonner()) return;
               App.etat.regimeEdit = edition(g.id, g.nature, g.nom, g.abrege || '', g.couleur, g.nature, g.affecte || '',
-                g.services || M.SERVICES_REGIME_DEFAUT);
+                g.services || M.SERVICES_REGIME_DEFAUT, g.toujoursVisible !== false);
               App.rendre();
             } }, 'Éditer'),
             h('button', { class: 'btn btn-danger', onclick: function () { supprimer(g); } }, 'Supprimer')));
@@ -162,11 +178,12 @@
         return h('div', { class: 'carte' },
           h('h2', { class: 'titre-carte' }, t.titre + ' ', h('span', { class: 'pilule' }, elts.length)),
           h('div', { class: 'ligne-reg entete', style: gabarit }, h('span'), h('span', null, 'Nom'), h('span', null, 'Abrégé (grille)'),
-            h('span', null, 'Services concernés'), h('span', null, 'Effet sur la production'), h('span')),
+            h('span', null, 'Services concernés'), h('span', { title: AIDE_AFFICHE, class: 'aide' }, 'Toujours affiché ⓘ'),
+            h('span', null, 'Effet sur la production'), h('span')),
           elts.map(function (g, i) { return ligne(g, i === 0, i === elts.length - 1); }),
           ed && !ed.id && ed.table === t.nature ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
             if (!App.abandonner()) return;
-            App.etat.regimeEdit = edition(null, t.nature, '', '', '#dddddd', t.nature, '', M.SERVICES_REGIME_DEFAUT);
+            App.etat.regimeEdit = edition(null, t.nature, '', '', '#dddddd', t.nature, '', M.SERVICES_REGIME_DEFAUT, false);
             App.rendre();
           } }, t.ajout));
       }
@@ -175,7 +192,7 @@
         h('div', { class: 'page-tete' },
           h('div', { class: 'titre-ligne' }, h('h1', null, 'Textures, Régimes & Allergies et Options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
           h('div', { class: 'petit' }, 'Services concernés : décochés, l’élément n’apparaît pas sur les feuilles de ce service ' +
-            '(ex. pots gourmands : petit déjeuner seulement).')),
+            '(ex. pots gourmands : petit déjeuner seulement). Toujours affiché : colonne présente dans la grille Semaine même si aucun résident du parc n’a l’élément.')),
         TABLES.map(table));
     }
   };

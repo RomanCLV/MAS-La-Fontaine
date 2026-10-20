@@ -61,11 +61,14 @@
   }
 
   function grille(d, s, parc) {
-    var groupes = O.colonnesGroupees(M.groupesRegimes(d, function (g) { return g.id !== M.textureDefaut(d); }));
+    var residents = d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
+    // Colonnes « toujours affichées » (page Régimes), plus celles qu'un résident du parc présente.
+    var groupes = O.colonnesGroupees(M.groupesRegimes(d, function (g) {
+      return g.id !== M.textureDefaut(d) && M.colonneAffichee(g, residents);
+    }));
     var cols = groupes.colonnes;
     var vis = creneauxVisibles();
     var gabarit = 'grid-template-columns:34px 190px 150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
-    var residents = d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
 
     var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), h('div')]);
     var entete = h('div', { class: 'g g-entete', style: gabarit },

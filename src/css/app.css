@@ -193,7 +193,8 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .ligne-reg input:not([type=color]):not([type=checkbox]),.ligne-reg select{width:100%}
 .titre-carte{font-size:17px;margin:0 0 2px}
 .services-reg{display:flex;gap:4px;flex-wrap:wrap}
-.services-reg .choix{min-height:32px;padding:0 6px;font-size:13px;gap:4px}
+.services-reg .choix,.ligne-reg > .choix{min-height:32px;padding:0 6px;font-size:13px;gap:4px;justify-self:start}
+.aide{cursor:help;text-decoration:underline dotted}
 .effet-reg{display:flex;flex-direction:column;gap:4px}
 .edition{background:#fffbe8}
 .actions-visibles{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}

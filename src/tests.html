@@ -272,6 +272,15 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(refus, 2, 'Fichier étranger ou trop récent refusé');
   });
 
+  groupe('Colonnes affichées dans la grille', function () {
+    var m = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: [{ id: 'a', nature: 'regime' }, { id: 'b', nature: 'regime', toujoursVisible: false }] } });
+    egal(m.referentiels.regimes.map(function (g) { return g.toujoursVisible; }), [true, false], 'Champ absent (fichier d’avant) : toujours affiché');
+    var b = m.referentiels.regimes[1];
+    var avec = { textureId: 'normal', regimeIds: ['b'], optionIds: [] }, sans = { textureId: 'normal', regimeIds: [], optionIds: [] };
+    egal([M.colonneAffichee(b, [sans]), M.colonneAffichee(b, [sans, avec]), M.colonneAffichee(m.referentiels.regimes[0], [])], [false, true, true],
+      'Non « toujours affiché » : colonne seulement si un résident l’a');
+  });
+
   groupe('Base vide (listes par défaut)', function () {
     var d = M.baseVide();
     egal([d.referentiels.parcs.length, d.residents.length, d.presetsActivites.length, d.semaines.length], [0, 0, 0, 1],
@@ -282,6 +291,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       'Identifiants utilisés par les calculs présents');
     egal(M.refs(d).pots_gourmands.services, ['petitdej'], 'Pots gourmands : petit déjeuner seulement');
     egal(M.refs(d).double_plat.affecte, 'plat', 'Double plat : affecte le plat');
+    egal([M.refs(d).hache.toujoursVisible, M.refs(d).sans_gluten.toujoursVisible], [true, false], 'Toujours affiché : anciens oui, nouveaux non');
     d.referentiels.regimes[0].nom = 'Modifié';
     egal(M.baseVide().referentiels.regimes[0].nom, 'Normal', 'Une nouvelle base vide repart de la liste d’origine');
   });

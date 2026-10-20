@@ -85,3 +85,8 @@
 - Base vide (accueil ou « Repartir de zéro ») = **liste par défaut** des textures / régimes / options écrite dans le code (`Modele.REGIMES_DEFAUT`), mêmes éléments, couleurs et services qu'avant ; rangée par groupe. Les modifications faites dans la page Régimes ne changent pas cette liste.
 - Listes par défaut enrichies (choix utilisateur sur propositions) : textures Normal, Haché (= « coupé », vocabulaire client), Tendre, Mouliné, Mixé, Mixé lisse ; régimes : les 6 existants + Végétarien (ni viande ni poisson, ≠ Sans viande), Sans sel, Pauvre en potassium / protéines, Sans gluten, Sans lactose, Allergie lait, Allergie œufs, Allergie arachides, Allergie fruits à coque (pas de Halal : « Sans porc » suffit) ; options : les 5 existantes + Demi-portion (assiette individuelle). Services : midi + soir (pots gourmands : petit déjeuner). Ordre des textures modifiable (↑↓ page Régimes).
 - Feuille cuisine : avec beaucoup d'éléments, les lignes rapetissent pour tenir sur la page (rien n'est coupé).
+
+## 2026-10-20 — Colonnes « Toujours affiché » de la grille Semaine
+- Chaque texture / régime / option a une case **« Toujours affiché »** (page Régimes, info-bulle). Coché : colonne toujours dans la grille Semaine. Décoché : colonne seulement si un résident **du parc affiché** a l'élément. Raison : demande utilisateur (trop de colonnes).
+- Défaut : les 14 éléments d'avant cochés, les nouveaux non ; nouvel élément ajouté : non coché. Champ absent (fichiers existants) = coché, donc rien ne change pour eux (pas de nouvelle version de fichier).
+- Hors champ : Résidents › Tableau garde toutes les colonnes (sert à cocher les régimes) ; feuilles imprimées inchangées. Texture par défaut (Normal) : jamais de colonne, pas de case.
