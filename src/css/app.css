@@ -159,7 +159,7 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .legende{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px;color:var(--gris)}
 .pc-ex{width:24px;height:18px;border:1px solid #ccc;display:inline-block;background:#eef6ec}
 .pc-ex.act{box-shadow:inset 0 0 0 3px var(--act,var(--bleu));margin-left:10px}
-.vide-grille,.vide-liste{padding:12px;color:#555}
+.vide-liste{padding:12px;color:#555}
 
 /* Liste des résidents */
 .liste{background:#fff;border:1px solid var(--trait);border-radius:8px;overflow:hidden}

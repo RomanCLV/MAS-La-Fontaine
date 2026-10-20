@@ -237,10 +237,14 @@
         s.activites.length ? s.activites.map(function (a) {
           return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
         }) : [h('span', { class: 'pc-ex act' }), 'Activité']),
+      // Hors de la zone défilante : les boutons restent visibles quelle que soit la largeur de la grille.
+      residents.length ? null : h('div', { class: 'message message-attention message-action' },
+        h('span', null, 'Aucun résident actif dans ce parc.'),
+        h('span', { class: 'rangee' },
+          h('button', { class: 'btn', onclick: function () { App.ouvrir('residents'); } }, 'Voir tous les résidents'),
+          h('button', { class: 'btn btn-principal', onclick: function () { R.PageResident.nouveau(parc.id); } }, '+ Ajouter un résident à ' + parc.nom))),
       h('div', { class: 'defil', 'data-defil': 'grille' },
-        h('div', { class: 'grille' }, bandeaux, entete, lignes,
-          residents.length ? null : h('div', { class: 'vide-grille' }, 'Aucun résident actif dans ce parc.'),
-          lignesSal)));
+        h('div', { class: 'grille' }, bandeaux, entete, lignes, lignesSal)));
   }
 
   // Supprime la semaine s (après confirmation) et affiche la semaine voisine. La dernière semaine ne peut pas être supprimée.

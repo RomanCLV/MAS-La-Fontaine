@@ -17,9 +17,11 @@
     return App.brouillons[k];
   }
 
-  function nouveau() {
+  // parcIdVoulu (facultatif) : parc imposé, sinon parc actif, sinon le premier.
+  function nouveau(parcIdVoulu) {
     var d = App.donnees;
-    var parcId = App.ui.parcActif && M.parc(d, App.ui.parcActif) ? App.ui.parcActif : (d.referentiels.parcs[0] || {}).id;
+    var parcId = parcIdVoulu && M.parc(d, parcIdVoulu) ? parcIdVoulu
+      : App.ui.parcActif && M.parc(d, App.ui.parcActif) ? App.ui.parcActif : (d.referentiels.parcs[0] || {}).id;
     var r = M.residentVide(parcId);
     r.textureId = M.textureDefaut(d);
     App.brouillons['resident:' + r.id] = { r: r, nouveau: true, modifie: false, erreur: '', abs: absenceVide() };
