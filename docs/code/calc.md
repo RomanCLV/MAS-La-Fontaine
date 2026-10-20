@@ -9,12 +9,12 @@ Fonctions pures : entrées = données + semaine + créneau ; aucune lecture du D
 
 ## Colonnes de la feuille cuisine — `feuilleJour(donnees, semaine, creneau)`
 Colonnes : chaque parc (résidents actifs présents **hors** participants d'activité + salariés du parc) ; chaque activité du créneau (participants présents) ; `TOTAL PARCS` (parcs + activités) ; `SODEXO` ; `DIRECTION` ; `AUTRES` (Nettoyage) ; `TÉMOINS` (Plats témoins) ; `TOTAL À PRODUIRE`.
-Compteurs par colonne : `residents`, `doublesPlats`, `salStd`, `salSansPorc`, `total` (= somme des 4), `tex{}`, `reg{}`, `opt{}`.
-- Poids d'un résident = 1 + 1 s'il a l'option « plat » (double plat).
+Compteurs par colonne : `residents`, `platsEnPlus`, `salStd`, `salSansPorc`, `total` (= somme des 4), `tex{}`, `reg{}`, `opt{}`.
+- Poids d'un résident = 1 + `platsEnPlus` (une par option « +1 plat » : double plat, gros gourmand… ; cumulables, ex. les deux = 3).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.
 - Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille cuisine), texture par défaut, sans régime, compris dans `total`.
 - Services concernés (`regimes[].services`, `Modele.concerne`) : seuls la texture, les régimes et options qui concernent le service sont comptés (`regimesDu`, `optionsDu`). Texture non concernée → texture par défaut si elle l'est, sinon rien (`textureDu`). Idem pour salariés / Sodexo / direction / nettoyage / témoins (texture par défaut, sans porc, sans viande).
-- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : jamais de double plat ; par défaut rien n'y est coché sauf les pots gourmands. `particularites(donnees, c, col)` : éléments concernés avec les noms (chariot du petit déjeuner).
+- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : jamais de plat en plus ; par défaut rien n'y est coché sauf les pots gourmands. `particularites(donnees, c, col)` : éléments concernés avec les noms (chariot du petit déjeuner).
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 
 ## Ventilation — `ventilation(donnees, compteurs)`
@@ -23,7 +23,7 @@ Liste « sur N plats » : textures hors défaut, régimes, options sans `affecte
 ## Chariot — `chariot(donnees, semaine, creneau, colonne)`
 - Collectif : salariés standard ; bac sans porc = salariés sans porc + résidents « sans porc seuls » (texture par défaut, seul régime sans porc, aucune option ni consigne) ; résidents « normaux simples ».
 - Étiquettes : tous les autres résidents (texture, régimes, options, consigne, EQ = poids).
-- `doubles` (noms des doubles plats), `legumes` (portions à part), `partis` (résidents du parc partis en activité).
+- `doubles` ([{ nom, n }] : résidents avec n plats en plus), `platsEnPlus` (leur somme), `legumes` (portions à part), `partis` (résidents du parc partis en activité).
 
 ## Alertes — `alertes(donnees, semaine)` puis `alertesVisibles(...)`
 1. **Présent alors qu'absent** : présence saisie à 1 sur un créneau d'absence de la fiche (une alerte par résident, créneaux regroupés).

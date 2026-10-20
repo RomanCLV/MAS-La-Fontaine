@@ -72,7 +72,7 @@
     var lignes = [
       groupe('REPAS'),
       ligne('Résidents présents', function (x) { return x.residents; }),
-      f.presenceSeule ? null : ligne('+ Doubles plats (en plus)', function (x) { return x.doublesPlats; }),
+      f.presenceSeule ? null : ligne('+ Plats en plus (options)', function (x) { return x.platsEnPlus; }),
       ligne('Salariés standard', function (x) { return x.salStd; }),
       ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
       ligne('Plats témoins', function (x) { return x.temoins; }),
@@ -136,7 +136,7 @@
       }));
 
     var regle = f.presenceSeule ? 'Petit déjeuner : présences, et seulement les régimes / options cochés pour ce service. Total parc = résidents + salariés.'
-      : 'Total parc = résidents + doubles plats + salariés.';
+      : 'Total parc = résidents + plats en plus + salariés.';
     var pied = f.activites.length
       ? 'Colonne ' + f.activites.map(function (a) { return a.nom; }).join(', ') +
         ' : résidents retirés de leur parc (même repas, chariot distinct). ' + regle
@@ -249,7 +249,7 @@
     var info = infoChariot(donnees, col);
 
     var detail = [O.pluriel(cpt.residents, 'résident')];
-    if (cpt.doublesPlats) detail.push(O.pluriel(cpt.doublesPlats, 'double plat', 'doubles plats'));
+    if (cpt.platsEnPlus) detail.push(O.pluriel(cpt.platsEnPlus, 'plat en plus', 'plats en plus'));
     if (cpt.salStd + cpt.salSansPorc) detail.push(O.pluriel(cpt.salStd + cpt.salSansPorc, 'salarié'));
     var textures = M.parNature(donnees, 'texture').filter(function (g) { return cpt.tex[g.id]; });
 
@@ -264,7 +264,8 @@
     function collectif() {
       var enPlus = [];
       if (ch.doubles.length) {
-        enPlus.push(O.pluriel(ch.doubles.length, 'plat chaud', 'plats chauds') + ' en double (étiquette ' + ch.doubles.join(', ') + ')');
+        enPlus.push(O.pluriel(ch.platsEnPlus, 'plat chaud', 'plats chauds') + ' en plus (étiquette ' +
+          ch.doubles.map(function (x) { return x.nom + (x.n > 1 ? ' ×' + (x.n + 1) : ''); }).join(', ') + ')');
       }
       if (ch.legumes) enPlus.push(O.pluriel(ch.legumes, 'portion') + ' de légumes verts à part');
       return h('div', { class: 'ch-collectif' },

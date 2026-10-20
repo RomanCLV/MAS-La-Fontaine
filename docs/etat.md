@@ -50,6 +50,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - « Mixé lisse » retiré de la liste par défaut (Mixé veut déjà dire lisse).
 - Preset **MAS La Fontaine** : 7 parcs ajoutés depuis l'accueil (« Commencer avec MAS La Fontaine ») ou la page Parcs (manquants seulement). Commit e9d022f. Puis preset d'activité **Sport jeudi midi** (accueil MAS + bouton page Activités). 108 tests verts ; vérifié dans le navigateur intégré.
 - Grille Semaine : case d'un résident présent = **nombre de plats** (2 avec double plat ; 1 au petit déjeuner), absent = 0. Vérifié dans le navigateur intégré.
+- Options « +1 plat » **cumulables** (double plat + gros gourmand = 3 plats) : grille Semaine, feuille cuisine (« + Plats en plus »), chariot (EQ 3, « ×3 »). Libellé de l'effet : « +1 plat chaud (EQ +1) ». 116 tests verts ; vérifié dans le navigateur intégré.
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.

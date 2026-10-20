@@ -87,7 +87,7 @@
       }));
 
     // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
-    // (résidents présents hors partis en activité, doubles plats, salariés du parc).
+    // (résidents présents hors partis en activité, plats en plus, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
     var comptes, majs = [];
     function calculer() {
@@ -134,7 +134,7 @@
     var textures = M.parNature(d, 'texture').filter(function (g) { return presentes.indexOf(g.id) >= 0; });
     var carres = [
       ligneCarres('Plats ' + parc.nom, 'ce parc', function (k) { return comptes[k].total; }, null,
-        'Plats ' + parc.nom + ' (résidents présents hors activités, doubles plats, salariés du parc)', !textures.length)
+        'Plats ' + parc.nom + ' (résidents présents hors activités, plats en plus, salariés du parc)', !textures.length)
     ].concat(textures.map(function (g, i) {
       return ligneCarres(g.nom, '', function (k) { return comptes[k].tex[g.id] || 0; },
         'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), 'Texture ' + g.nom + ' (' + parc.nom + ')', i === textures.length - 1);
@@ -219,7 +219,7 @@
           var act = C.activiteDe(s, r.id, c);
           var w = C.poids(r, refs, M.decoupeCreneau(c).service);
           var titre = [M.nomAffiche(r) + ' · ' + C.libelleCreneaux([c]) + ' : ' + (p.valeur ? 'présent' : 'absent')];
-          if (p.valeur && w === 2) titre.push('double plat (2 plats)');
+          if (p.valeur && w > 1) titre.push(w + ' plats (options en plus)');
           if (p.source === 'absence') titre.push('absence enregistrée dans la fiche');
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {

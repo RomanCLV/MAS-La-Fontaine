@@ -57,13 +57,13 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   }]
 }
 ```
-Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `petitdej midi soir` (21 créneaux). Petit déjeuner = service « présence seulement » (`presenceSeule`) : on compte les présents, sans double plat ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
+Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `petitdej midi soir` (21 créneaux). Petit déjeuner = service « présence seulement » (`presenceSeule`) : on compte les présents, sans plat en plus ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
 
 ## Règles de calcul (résumé, détail dans `calc.md`)
 - Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1.
-- Volume (plats) = résidents présents + doubles plats + salariés (+ Sodexo, Direction, Nettoyage, Plats témoins).
+- Volume (plats) = résidents présents + plats en plus (options « +1 plat », cumulables) + salariés (+ Sodexo, Direction, Nettoyage, Plats témoins).
 - Activité : participants présents retirés de leur parc, comptés dans une colonne d'activité.
-- Textures, régimes et options « assiette » comptés **en plats** (double plat = 2) ⇒ Normal + Haché + Mixé = total.
+- Textures, régimes et options « assiette » comptés **en plats** (1 + une par option « +1 plat ») ⇒ Normal + Haché + Mixé = total.
 
 ## Routage vers les docs par module
 | Module | Fichier | Rôle |

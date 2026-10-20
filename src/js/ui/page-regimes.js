@@ -10,7 +10,7 @@
   var NATURES = [{ v: 'regime', nom: 'Régime' }, { v: 'option', nom: 'Option' }]; // passage régime ↔ option
   var EFFETS = [
     { v: '', nom: 'Assiette individuelle (compté sur les plats)' },
-    { v: 'plat', nom: '+1 plat chaud (double plat, EQ 2)' },
+    { v: 'plat', nom: '+1 plat chaud (EQ +1)' },
     { v: 'legumes', nom: 'Portion comptée à part' },
     { v: 'information', nom: 'Information : quantité par zone (hors production)' }
   ];

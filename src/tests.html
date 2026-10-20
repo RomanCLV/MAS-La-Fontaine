@@ -91,7 +91,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var d = jeu(), s = d.semaines[0];
     var f = C.feuilleJour(d, s, 'lun_midi');
     var p1 = col(f, 'p1').c, p2 = col(f, 'p2').c;
-    egal([p1.residents, p1.doublesPlats, p1.salStd, p1.salSansPorc, p1.total], [3, 1, 2, 1, 7], 'Parc 1 : 3 résidents + 1 double + 2 std + 1 sans porc = 7');
+    egal([p1.residents, p1.platsEnPlus, p1.salStd, p1.salSansPorc, p1.total], [3, 1, 2, 1, 7], 'Parc 1 : 3 résidents + 1 double + 2 std + 1 sans porc = 7');
     egal(p2.total, 1, 'Parc 2 : résident archivé non compté');
     egal(col(f, 'totalParcs').c.total, 8, 'Total parcs = 7 + 1');
     egal(col(f, 'sodexo').c.total, 4, 'Sodexo 4 standard');
@@ -114,12 +114,27 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal((t.tex.normal || 0) + (t.tex.hache || 0) + (t.tex.mixe || 0), t.total, 'Normal + Haché + Mixé = total');
   });
 
+  groupe('Plusieurs options « +1 plat »', function () {
+    var d = jeu(), s = d.semaines[0];
+    d.referentiels.regimes.push({ id: 'gros', nom: 'Gros gourmand', nature: 'option', affecte: 'plat' });
+    d.residents[1].optionIds.push('gros');
+    var refs = M.refs(d);
+    egal(C.poids(d.residents[1], refs, 'midi'), 3, 'Double plat + gros gourmand = 3 plats');
+    egal(C.poids(d.residents[1], refs, 'petitdej'), 1, 'Petit déjeuner : toujours 1');
+    var f = C.feuilleJour(d, s, 'lun_midi'), p1 = col(f, 'p1').c;
+    egal([p1.platsEnPlus, p1.total], [2, 8], 'Parc 1 : 2 plats en plus, total 8');
+    egal(p1.tex.hache, 3, 'Haché compté sur les 3 plats');
+    var ch = C.chariot(d, s, 'lun_midi', col(f, 'p1'));
+    egal(ch.etiquettes[0].eq, 3, 'Étiquette de B : EQ 3');
+    egal([ch.doubles, ch.platsEnPlus], [[{ nom: 'B', n: 2 }], 2], 'Chariot : 2 plats chauds en plus pour B');
+  });
+
   groupe('Activité retirée du parc', function () {
     var d = jeu(), s = d.semaines[0];
     s.activites.push({ id: 'act', nom: 'Sport', jour: 'lun', service: 'midi', participantIds: ['B', 'D'], presetId: null });
     var f = C.feuilleJour(d, s, 'lun_midi');
     egal(col(f, 'p1').c.residents, 2, 'B retiré du parc 1');
-    egal(col(f, 'p1').c.doublesPlats, 0, 'Son double plat part avec lui');
+    egal(col(f, 'p1').c.platsEnPlus, 0, 'Son double plat part avec lui');
     egal(col(f, 'p1').partis.length, 1, 'Parc 1 : 1 résident parti en activité');
     egal(col(f, 'act').c.total, 3, 'Colonne Sport = B (2 plats) + D');
     egal(col(f, 'act').c.tex.hache, 2, 'La texture suit le résident');
@@ -184,7 +199,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     s.temoins.lun_petitdej = 1;
     var f = C.feuilleJour(d, s, 'lun_petitdej'), p1 = col(f, 'p1').c;
     egal(f.presenceSeule, true, 'Service marqué « présence seulement »');
-    egal([p1.residents, p1.doublesPlats, p1.salStd, p1.salSansPorc, p1.total], [3, 0, 1, 1, 5], 'Parc 1 : 3 résidents (pas de double plat) + 2 salariés = 5');
+    egal([p1.residents, p1.platsEnPlus, p1.salStd, p1.salSansPorc, p1.total], [3, 0, 1, 1, 5], 'Parc 1 : 3 résidents (pas de double plat) + 2 salariés = 5');
     egal([p1.tex, p1.reg, p1.opt], [{}, {}, {}], 'Ni textures, ni régimes, ni options');
     egal(f.total.total, 3 + 2 + 1 + 1, 'Total à produire = 4 résidents + 2 salariés + 1 témoin');
     egal(C.feuilleJour(d, s, 'lun_midi').presenceSeule, false, 'Midi : comptage complet');
@@ -240,7 +255,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 
     // Double plat coché pour le petit déjeuner : pas de double (service « présence seulement »).
     refs.double_plat.services = ['petitdej', 'midi', 'soir'];
-    egal(col(C.feuilleJour(d, s, 'lun_petitdej'), 'p1').c.doublesPlats, 0, 'Petit déjeuner : jamais de double plat');
+    egal(col(C.feuilleJour(d, s, 'lun_petitdej'), 'p1').c.platsEnPlus, 0, 'Petit déjeuner : jamais de double plat');
     egal(C.ventilation(d, C.feuilleJour(d, s, 'lun_soir').total, 'soir').map(function (v) { return v.id; }).indexOf('diabetique'), -1,
       'Ventilation du soir sans diabétique');
   });
@@ -252,7 +267,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(ch.sansPorcSeuls, 1, 'C = sans porc seul (bac sans porc)');
     egal(ch.etiquettes.map(function (e) { return e.nom; }), ['B'], 'B a une étiquette');
     egal(ch.etiquettes[0].eq, 2, 'Étiquette de B : EQ 2');
-    egal(ch.doubles, ['B'], 'Double plat signalé');
+    egal(ch.doubles, [{ nom: 'B', n: 1 }], 'Double plat signalé');
+    egal(ch.platsEnPlus, 1, 'Un plat chaud en plus');
     egal(ch.volume, 7, 'Volume du chariot = total du parc');
   });
 

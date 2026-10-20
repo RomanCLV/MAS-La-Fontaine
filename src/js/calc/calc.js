@@ -43,7 +43,7 @@
 
   // ---------- Compteurs ----------
   function compteursVides() {
-    return { residents: 0, doublesPlats: 0, salStd: 0, salSansPorc: 0, temoins: 0, total: 0, tex: {}, reg: {}, opt: {} };
+    return { residents: 0, platsEnPlus: 0, salStd: 0, salSansPorc: 0, temoins: 0, total: 0, tex: {}, reg: {}, opt: {} };
   }
   function plus(table, cle, n) { if (n) table[cle] = (table[cle] || 0) + n; }
 
@@ -62,19 +62,20 @@
     return texDef && M.concerne(refs[texDef], service) ? texDef : '';
   }
 
-  // Service « présence seulement » (petit déjeuner) : jamais de double plat.
-  function aDoublePlat(resident, refs, service) {
-    if (service && M.service(service).presenceSeule) return false;
-    return optionsDu(resident, refs, service).some(function (id) { return refs[id] && refs[id].affecte === 'plat'; });
+  // Plats en plus d'un résident : un par option « +1 plat » (double plat, gros gourmand…).
+  // Service « présence seulement » (petit déjeuner) : jamais de plat en plus.
+  function platsEnPlus(resident, refs, service) {
+    if (service && M.service(service).presenceSeule) return 0;
+    return optionsDu(resident, refs, service).filter(function (id) { return refs[id] && refs[id].affecte === 'plat'; }).length;
   }
-  // Nombre de plats chauds d'un résident : 1, ou 2 avec « double plat ».
-  function poids(resident, refs, service) { return aDoublePlat(resident, refs, service) ? 2 : 1; }
+  // Nombre de plats chauds d'un résident : 1 + ses plats en plus.
+  function poids(resident, refs, service) { return 1 + platsEnPlus(resident, refs, service); }
 
   // Seuls la texture, les régimes et les options qui concernent le service sont comptés.
   function ajouterResident(cpt, resident, refs, service, texDef) {
     cpt.residents += 1;
     var w = poids(resident, refs, service);
-    if (w === 2) cpt.doublesPlats += 1;
+    cpt.platsEnPlus += w - 1;
     var t = textureDu(resident, refs, service, texDef);
     if (t) plus(cpt.tex, t, w);
     regimesDu(resident, refs, service).forEach(function (id) { plus(cpt.reg, id, w); });
@@ -96,14 +97,14 @@
   }
 
   function finir(cpt) {
-    cpt.total = cpt.residents + cpt.doublesPlats + cpt.salStd + cpt.salSansPorc + cpt.temoins;
+    cpt.total = cpt.residents + cpt.platsEnPlus + cpt.salStd + cpt.salSansPorc + cpt.temoins;
     return cpt;
   }
 
   function additionner(liste) {
     var t = compteursVides();
     liste.forEach(function (c) {
-      ['residents', 'doublesPlats', 'salStd', 'salSansPorc', 'temoins'].forEach(function (k) { t[k] += c[k]; });
+      ['residents', 'platsEnPlus', 'salStd', 'salSansPorc', 'temoins'].forEach(function (k) { t[k] += c[k]; });
       ['tex', 'reg', 'opt'].forEach(function (k) {
         Object.keys(c[k]).forEach(function (id) { plus(t[k], id, c[k][id]); });
       });
@@ -203,7 +204,7 @@
     var refs = M.refs(donnees);
     var texDef = M.textureDefaut(donnees);
     var sv = M.decoupeCreneau(c).service;
-    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], legumes: 0 };
+    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], platsEnPlus: 0, legumes: 0 };
     col.residents.forEach(function (r) {
       var opts = optionsDu(r, refs, sv).filter(function (id) { return refs[id]; });
       var regs = regimesDu(r, refs, sv).filter(function (id) { return refs[id]; });
@@ -219,7 +220,8 @@
           consigne: (r.consigne || '').trim(), eq: poids(r, refs, sv)
         });
       }
-      if (aDoublePlat(r, refs, sv)) res.doubles.push(M.nomAffiche(r));
+      var n = platsEnPlus(r, refs, sv);
+      if (n) { res.doubles.push({ nom: M.nomAffiche(r), n: n }); res.platsEnPlus += n; }
       opts.forEach(function (id) { if (refs[id].affecte === 'legumes') res.legumes += 1; });
     });
     res.salaries = col.salaries || { standard: 0, sansPorc: 0 };
@@ -287,7 +289,7 @@
   R.Calc = {
     estAbsentFiche: estAbsentFiche, presence: presence, presenceParDefaut: presenceParDefaut,
     activitesDuCreneau: activitesDuCreneau, activiteDe: activiteDe, residentsActifs: residentsActifs,
-    poids: poids, aDoublePlat: aDoublePlat, regimesDu: regimesDu, optionsDu: optionsDu, textureDu: textureDu, compteursVides: compteursVides, additionner: additionner,
+    poids: poids, platsEnPlus: platsEnPlus, regimesDu: regimesDu, optionsDu: optionsDu, textureDu: textureDu, compteursVides: compteursVides, additionner: additionner,
     feuilleJour: feuilleJour, ventilation: ventilation, chariot: chariot, particularites: particularites,
     alertes: alertes, alertesVisibles: alertesVisibles, libelleCreneaux: libelleCreneaux
   };
