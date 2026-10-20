@@ -40,6 +40,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Retours V1 (8e lot, 2026-10-20)
 - **Services concernés** par chaque texture / régime / option (cases sur la page Régimes) ; pots gourmands = petit déjeuner seulement (quantité par zone sur la feuille cuisine, noms sur le chariot). Fichiers version 4.
 - Page Régimes en trois tableaux : Textures, Régimes, Options. 91 tests verts ; vérifié dans le navigateur intégré.
+- Fiche résident : trois groupes Texture / Régimes et allergies / Options.
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.

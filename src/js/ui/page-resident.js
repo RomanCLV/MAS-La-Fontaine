@@ -1,4 +1,4 @@
-/* Fiche résident (onglet) : identité, parc, texture, régimes et options, consigne, absences. */
+/* Fiche résident (onglet) : identité, parc, texture, régimes et allergies, options, consigne, absences. */
 (function (R) {
   'use strict';
   var M = R.Modele, h = R.h, O = R.Outils, App = R.App;
@@ -118,8 +118,8 @@
                   onchange: function () { r.textureId = g.id; b.modifie = true; App.rendre(); } }),
                 g.nom);
             })),
-          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Régimes et options'),
-            coches('regime', 'regimeIds'), coches('option', 'optionIds')),
+          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Régimes et allergies'), coches('regime', 'regimeIds')),
+          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Options'), coches('option', 'optionIds')),
           h('div', { class: 'champ' }, h('label', { for: 'f-consigne' }, 'Consigne (étiquette du chariot)'),
             h('input', { id: 'f-consigne', value: r.consigne, oninput: function (e) { r.consigne = e.target.value; modifie(); } })),
           h('div', { class: 'absences' },
