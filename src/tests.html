@@ -140,6 +140,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(col(f, 'act').c.tex.hache, 2, 'La texture suit le résident');
     egal(col(f, 'totalParcs').c.total, 8, 'Total parcs inchangé');
     egal(f.total.total, 22, 'Total à produire inchangé (pas de double compte)');
+    egal(C.chariot(d, s, 'lun_midi', col(f, 'act')).etiquettes.map(function (e) { return e.nom + ' ' + e.parc.id; }),
+      ['B p1', 'D p2'], 'Chariot d’activité : étiquettes avec le parc de chaque résident');
     egal(col(C.feuilleJour(d, s, 'lun_soir'), 'act'), undefined, 'Pas de colonne Sport le soir');
     s.presences.B = { lun_midi: 0 };
     egal(C.feuilleJour(d, s, 'lun_midi').total.total, 20, 'Participant absent : compté nulle part');
@@ -267,6 +269,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(ch.sansPorcSeuls, 1, 'C = sans porc seul (bac sans porc)');
     egal(ch.etiquettes.map(function (e) { return e.nom; }), ['B'], 'B a une étiquette');
     egal(ch.etiquettes[0].eq, 2, 'Étiquette de B : EQ 2');
+    egal(ch.etiquettes[0].parc, null, 'Chariot de parc : pas de rappel du parc');
     egal(ch.doubles, [{ nom: 'B', n: 1 }], 'Double plat signalé');
     egal(ch.platsEnPlus, 1, 'Un plat chaud en plus');
     egal(ch.volume, 7, 'Volume du chariot = total du parc');

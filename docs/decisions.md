@@ -119,3 +119,6 @@
 
 ## 2026-10-20 — Options « +1 plat » cumulables
 - Chaque option à effet « +1 plat chaud » ajoute un plat (double plat + gros gourmand = 3), au lieu de « 2 dès qu'il y en a une ». Libellé « +1 plat chaud (EQ +1) ». Feuille cuisine : ligne « + Plats en plus (options) » ; chariot : « N plats chauds en plus (étiquette X ×3) ». Raison : demande utilisateur.
+
+## 2026-10-20 — Chariot d'activité : parc sur les étiquettes
+- En-tête de chaque étiquette : « RÉSIDENT · PARC <nom> » (pastille couleur du parc), seulement sur les chariots d'activité. Raison : demande utilisateur.

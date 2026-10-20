@@ -215,6 +215,7 @@
       else {
         res.etiquettes.push({
           resident: r, nom: M.nomAffiche(r), qui: 'RÉSIDENT',
+          parc: col.type === 'activite' ? M.parc(donnees, r.parcId) : null,  // chariot d'activité : rappel du parc
           texture: refs[tex] || { id: tex, nom: tex, couleur: '#ffffff' },
           tags: regs.concat(opts).map(function (id) { return refs[id]; }),
           consigne: (r.consigne || '').trim(), eq: poids(r, refs, sv)

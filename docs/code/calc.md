@@ -22,7 +22,7 @@ Liste « sur N plats » : textures hors défaut, régimes, options sans `affecte
 
 ## Chariot — `chariot(donnees, semaine, creneau, colonne)`
 - Collectif : salariés standard ; bac sans porc = salariés sans porc + résidents « sans porc seuls » (texture par défaut, seul régime sans porc, aucune option ni consigne) ; résidents « normaux simples ».
-- Étiquettes : tous les autres résidents (texture, régimes, options, consigne, EQ = poids).
+- Étiquettes : tous les autres résidents (texture, régimes, options, consigne, EQ = poids ; `parc` = parc du résident sur un chariot d'activité, sinon null).
 - `doubles` ([{ nom, n }] : résidents avec n plats en plus), `platsEnPlus` (leur somme), `legumes` (portions à part), `partis` (résidents du parc partis en activité).
 
 ## Alertes — `alertes(donnees, semaine)` puis `alertesVisibles(...)`

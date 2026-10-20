@@ -282,7 +282,10 @@
 
     function etiquette(e, i, n) {
       return h('div', { class: 'ch-etiq' },
-        h('div', { class: 'ch-etiq-haut' }, h('span', null, e.qui), h('span', null, (i + 1) + '/' + n)),
+        h('div', { class: 'ch-etiq-haut' },
+          h('span', null, e.qui, e.parc ? [' · ', h('span', { class: 'ch-etiq-parc', style: 'background:' + e.parc.couleur + ';color:' + O.texteSur(e.parc.couleur) },
+            'PARC ' + e.parc.nom.toUpperCase())] : null),
+          h('span', null, (i + 1) + '/' + n)),
         h('div', { class: 'ch-etiq-tex', style: 'background:' + e.texture.couleur + ';color:' + O.texteSur(e.texture.couleur) }, e.texture.nom.toUpperCase()),
         h('div', { class: 'ch-etiq-corps' },
           h('div', { class: 'ch-etiq-gauche' },
