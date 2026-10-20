@@ -43,7 +43,7 @@
 
   // ---------- Compteurs ----------
   function compteursVides() {
-    return { residents: 0, doublesPlats: 0, salStd: 0, salSansPorc: 0, total: 0, tex: {}, reg: {}, opt: {} };
+    return { residents: 0, doublesPlats: 0, salStd: 0, salSansPorc: 0, temoins: 0, total: 0, tex: {}, reg: {}, opt: {} };
   }
   function plus(table, cle, n) { if (n) table[cle] = (table[cle] || 0) + n; }
 
@@ -76,14 +76,14 @@
   }
 
   function finir(cpt) {
-    cpt.total = cpt.residents + cpt.doublesPlats + cpt.salStd + cpt.salSansPorc;
+    cpt.total = cpt.residents + cpt.doublesPlats + cpt.salStd + cpt.salSansPorc + cpt.temoins;
     return cpt;
   }
 
   function additionner(liste) {
     var t = compteursVides();
     liste.forEach(function (c) {
-      ['residents', 'doublesPlats', 'salStd', 'salSansPorc'].forEach(function (k) { t[k] += c[k]; });
+      ['residents', 'doublesPlats', 'salStd', 'salSansPorc', 'temoins'].forEach(function (k) { t[k] += c[k]; });
       ['tex', 'reg', 'opt'].forEach(function (k) {
         Object.keys(c[k]).forEach(function (id) { plus(t[k], id, c[k][id]); });
       });
@@ -145,13 +145,19 @@
     ajouterConvives(nettoyage.c, (semaine.nettoyageSansViande || {})[c] || 0, 0, texDef, M.REGIME_NETTOYAGE);
     finir(nettoyage.c);
 
+    // Plats témoins (échantillons à conserver) : nombre donné par le client, texture par défaut, sans régime.
+    var temoins = { id: 'temoins', type: 'temoins', nom: 'Plats témoins', couleur: '#ffffff', c: compteursVides() };
+    temoins.c.temoins = (semaine.temoins || {})[c] || 0;
+    plus(temoins.c.tex, texDef, temoins.c.temoins);
+    finir(temoins.c);
+
     var total = { id: 'total', type: 'total', nom: 'TOTAL À PRODUIRE', couleur: '#111111',
-      c: additionner([totalParcs.c, sodexo.c, direction.c, nettoyage.c]) };
+      c: additionner([totalParcs.c, sodexo.c, direction.c, nettoyage.c, temoins.c]) };
 
     return {
       creneau: c, activites: activites,
       parcs: colonnes,                 // parcs puis activités
-      colonnes: colonnes.concat([totalParcs, sodexo, direction, nettoyage, total]),
+      colonnes: colonnes.concat([totalParcs, sodexo, direction, nettoyage, temoins, total]),
       total: total.c
     };
   }

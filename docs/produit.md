@@ -35,6 +35,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - **Équipe Sodexo (cuisiniers)** : équipe globale en plus des parcs, hors parcs, par jour et service.
 - **Direction client** (2-3, lundi-vendredi, midi uniquement) : indépendante des parcs, ajout au total.
 - **Nettoyage** : deux lignes, standard et sans viande (halal) ; hors parcs (zone à confirmer).
+- **Plats témoins** : nombre par service donné par le client ; plats en plus (texture normale), ajoutés au total à produire (colonne TÉMOINS de la feuille chef).
 - Ces lignes (Direction, Salariés Sodexo, Nettoyage) sont aussi saisies dans l'écran de saisie client, pour savoir qui est là chaque jour.
 
 ### 4. Activités (ex-« Sport »)

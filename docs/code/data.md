@@ -6,7 +6,7 @@ Fichiers : `src/js/data/modele.js` (`Recueil.Modele`), `stockage.js` (`Recueil.S
 - Constantes : `VERSION`, `APP`, `JOURS`, `SERVICES`, `CRENEAUX` (14), `TEXTURE_DEFAUT` (`normal`), `REGIME_SANS_PORC` (`sans_porc`, salariés « sans porc »), `REGIME_NETTOYAGE` (`sans_viande`, ligne « Nettoyage sans viande »).
 - Dates ISO `AAAA-MM-JJ` calculées en UTC (pas de décalage d'heure d'été) : `ajouterJours`, `dateDuCreneau`, `idSemaine` (n° ISO), `lundiDe`.
 - `groupesRegimes(donnees, filtre?)` : référentiel régimes rangé en groupes Textures / Régimes / Options (non vides).
-- Création : `nouvelId`, `semaineVide(debut)`, `semaineSuivante(semaine)` (copie salariés/Sodexo/direction/nettoyage/nettoyage sans viande, pas les présences ni activités), `residentVide(parcId)`.
+- Création : `nouvelId`, `semaineVide(debut)`, `semaineSuivante(semaine)` (copie salariés/Sodexo/direction/nettoyage/nettoyage sans viande/plats témoins, pas les présences ni activités), `residentVide(parcId)`.
 - `migrer(objet)` : vérifie `app`, refuse une version plus récente, complète les champs manquants (tableaux, `etablissement`, `abrege`…), convertit un nombre Sodexo en `{standard, sansPorc}` ; fichier version 1 : `nettoyage` (alors tout sans viande) déplacé dans `nettoyageSansViande`. Renvoie une **copie** ; lève une `Error` en français si le fichier n'est pas un recueil.
 - `nomAffiche(resident)` = « NOM Prénom ».
 

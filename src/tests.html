@@ -74,7 +74,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       semaines: [{ id: '2026-S42', debut: '2026-10-12',
         salaries: { p1: { lun_midi: { standard: 2, sansPorc: 1 } } },
         sodexo: { lun_midi: { standard: 3, sansPorc: 1 } },
-        direction: { lun_midi: 3 }, nettoyage: { lun_midi: 5 } }]
+        direction: { lun_midi: 3 }, nettoyage: { lun_midi: 5 }, temoins: { lun_midi: 2 } }]
     });
   }
 
@@ -97,7 +97,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(col(f, 'sodexo').c.total, 4, 'Sodexo 3 std + 1 sans porc');
     egal(col(f, 'direction').c.total, 3, 'Direction 3');
     egal(col(f, 'nettoyage').c.total, 5, 'Nettoyage 5 (zone Autres)');
-    egal(f.total.total, 20, 'Total à produire = 8 + 4 + 3 + 5');
+    egal(col(f, 'temoins').c.total, 2, 'Plats témoins 2');
+    egal(f.total.total, 22, 'Total à produire = 8 + 4 + 3 + 5 + 2');
     egal(C.feuilleJour(d, s, 'lun_soir').total.total, 5, 'Lundi soir : résidents seulement (4 + 1 double)');
   });
 
@@ -123,10 +124,10 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(col(f, 'act').c.total, 3, 'Colonne Sport = B (2 plats) + D');
     egal(col(f, 'act').c.tex.hache, 2, 'La texture suit le résident');
     egal(col(f, 'totalParcs').c.total, 8, 'Total parcs inchangé');
-    egal(f.total.total, 20, 'Total à produire inchangé (pas de double compte)');
+    egal(f.total.total, 22, 'Total à produire inchangé (pas de double compte)');
     egal(col(C.feuilleJour(d, s, 'lun_soir'), 'act'), undefined, 'Pas de colonne Sport le soir');
     s.presences.B = { lun_midi: 0 };
-    egal(C.feuilleJour(d, s, 'lun_midi').total.total, 18, 'Participant absent : compté nulle part');
+    egal(C.feuilleJour(d, s, 'lun_midi').total.total, 20, 'Participant absent : compté nulle part');
   });
 
   groupe('Direction et nettoyage', function () {
@@ -141,6 +142,18 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(col(f, 'totalParcs').c.reg.sans_viande, undefined, 'Nettoyage hors total parcs');
     egal(f.total.reg.sans_porc, 1 + 1 + 1, 'Sans porc = résident C + salarié parc + Sodexo');
     egal(C.feuilleJour(d, d.semaines[0], 'sam_midi').total.total, 5, 'Samedi : ni direction ni nettoyage');
+  });
+
+  groupe('Plats témoins', function () {
+    var d = jeu(), s = d.semaines[0], f = C.feuilleJour(d, s, 'lun_midi');
+    var t = col(f, 'temoins').c;
+    egal([t.temoins, t.tex.normal, Object.keys(t.reg).length], [2, 2, 0], 'Témoins : texture normale, sans régime');
+    egal(f.total.temoins, 2, 'Témoins repris dans le total à produire');
+    egal(col(f, 'totalParcs').c.temoins, 0, 'Témoins hors total parcs');
+    var t2 = f.total;
+    egal((t2.tex.normal || 0) + (t2.tex.hache || 0) + (t2.tex.mixe || 0), t2.total, 'Normal + Haché + Mixé = total (avec témoins)');
+    egal(C.feuilleJour(d, s, 'lun_soir').total.temoins, 0, 'Lundi soir : aucun témoin saisi');
+    egal(M.semaineSuivante(s).temoins, { lun_midi: 2 }, 'Semaine suivante : reprend les plats témoins');
   });
 
   groupe('Présences et alertes', function () {

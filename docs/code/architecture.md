@@ -51,6 +51,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
     salaries:   { <parcId>: { <créneau>: { standard, sansPorc } } },
     sodexo:     { <créneau>: { standard, sansPorc } },
     direction:  { <créneau>: n },  nettoyage: { <créneau>: n },  nettoyageSansViande: { <créneau>: n },
+    temoins:    { <créneau>: n },                         // plats témoins (nombre donné par le client)
     alertesTraitees: [{ cle, statut: "voulu"|"ignore" }]
   }]
 }
@@ -59,7 +60,7 @@ Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `m
 
 ## Règles de calcul (résumé, détail dans `calc.md`)
 - Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1.
-- Volume (plats) = résidents présents + doubles plats + salariés (+ Sodexo, Direction, Nettoyage).
+- Volume (plats) = résidents présents + doubles plats + salariés (+ Sodexo, Direction, Nettoyage, Plats témoins).
 - Activité : participants présents retirés de leur parc, comptés dans une colonne d'activité.
 - Textures, régimes et options « assiette » comptés **en plats** (double plat = 2) ⇒ Normal + Haché + Mixé = total.
 

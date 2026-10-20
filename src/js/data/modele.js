@@ -84,11 +84,11 @@
     var lundi = lundiDe(debut);
     return {
       id: idSemaine(lundi), debut: lundi, presences: {}, activites: [],
-      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, alertesTraitees: []
+      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {}, alertesTraitees: []
     };
   }
 
-  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage),
+  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins),
   // pas les présences ni les activités (les presets servent à les recréer).
   function semaineSuivante(semaine) {
     var s = semaineVide(ajouterJours(semaine.debut, 7));
@@ -97,6 +97,7 @@
     s.direction = copie(semaine.direction || {});
     s.nettoyage = copie(semaine.nettoyage || {});
     s.nettoyageSansViande = copie(semaine.nettoyageSansViande || {});
+    s.temoins = copie(semaine.temoins || {});
     return s;
   }
 
@@ -161,7 +162,7 @@
           return { id: a.id || nouvelId('a'), nom: a.nom || 'Activité', jour: a.jour || 'lun', service: a.service || 'midi',
             participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
-        salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {},
+        salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {},
         alertesTraitees: tableau(s.alertesTraitees)
       };
       // Sodexo : ancien format possible = un nombre par créneau.
@@ -174,6 +175,7 @@
       var nettoyageSV = ancienne ? s.nettoyage : s.nettoyageSansViande;
       if (!ancienne) Object.keys(objet(s.nettoyage)).forEach(function (c) { n.nettoyage[c] = nombre(s.nettoyage[c]); });
       Object.keys(objet(nettoyageSV)).forEach(function (c) { n.nettoyageSansViande[c] = nombre(nettoyageSV[c]); });
+      Object.keys(objet(s.temoins)).forEach(function (c) { n.temoins[c] = nombre(s.temoins[c]); });
       return n;
     });
     d.semaines.sort(function (a, b) { return a.debut < b.debut ? -1 : 1; });

@@ -55,6 +55,7 @@
       ligne('+ Doubles plats (en plus)', function (x) { return x.doublesPlats; }),
       ligne('Salariés standard', function (x) { return x.salStd; }),
       ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
+      ligne('Plats témoins', function (x) { return x.temoins; }),
       ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' }),
       groupe('TEXTURES (tous convives)')
     ];
@@ -88,6 +89,7 @@
       h('div', { class: 'fc-zone' }, 'SODEXO'),
       h('div', { class: 'fc-zone' }, 'DIRECTION'),
       h('div', { class: 'fc-zone' }, 'AUTRES'),
+      h('div', { class: 'fc-zone' }, 'TÉMOINS'),
       h('div', { class: 'fc-zone noir' }, 'TOTAL'));
     var entetes = h('div', { class: 'fc-colonnes', style: grille },
       h('div', { class: 'fc-lab' }, 'Colonne'),

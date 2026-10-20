@@ -20,11 +20,11 @@
 .fc-chip b{font-size:17px}
 .fc-table{border-top:2px solid #111}
 .fc-zones,.fc-colonnes,.fc-ligne{display:grid}
-.fc-zones{font-size:11px;font-weight:700;letter-spacing:1px}
+.fc-zones{font-size:10px;font-weight:700;letter-spacing:.3px}
 .fc-zone{border-left:2px solid #111;background:#e4e4e4;text-align:center;padding:1px 0}
 .fc-zone.noir{background:#111;color:#fff}
 .fc-colonnes{border-bottom:2px solid #111}
-.fc-col{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:12px;height:36px;line-height:1.1;padding:0 2px;overflow:hidden}
+.fc-col{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:11px;height:36px;line-height:1.1;padding:0 1px;overflow:hidden}
 .fc-lab{display:flex;align-items:center;padding-left:8px;border-bottom:1px solid #999;font-size:14px;white-space:nowrap;overflow:hidden}
 .fc-colonnes .fc-lab{font-weight:700;border-bottom:0;font-size:13px}
 .fc-cel{display:flex;align-items:center;justify-content:center;border-bottom:1px solid #999;font-size:14px}

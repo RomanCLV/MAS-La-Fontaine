@@ -64,3 +64,5 @@
 
 ## 2026-10-20 — Nettoyage et plats témoins
 - Nettoyage en deux lignes : « Nettoyage » (standard) et « Nettoyage sans viande ». Anciens fichiers (version 1) : leur nettoyage passe en sans viande (c'était la règle). Format de fichier version 2. Raison : demande utilisateur.
+- Plats témoins : saisis par service (ligne de la semaine), colonne « TÉMOINS » de la feuille chef, comptés en texture normale sans régime et **ajoutés au total à produire**. Repris par « Créer la semaine suivante » (comme direction/nettoyage). Pas de chariot. Raison : réponses utilisateur.
+- Feuille chef : en-têtes de colonnes 11 px et zones 10 px pour loger la colonne en plus (même avec une activité).
