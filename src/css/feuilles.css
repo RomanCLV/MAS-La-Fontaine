@@ -4,8 +4,8 @@
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .feuille *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
-/* ---- Feuille chef ---- */
-.feuille-chef{padding:34px 40px;gap:9px}
+/* ---- Feuille cuisine ---- */
+.feuille-cuisine{padding:34px 40px;gap:9px}
 .fc-entete{display:flex;justify-content:space-between;align-items:stretch;border-bottom:3px solid #111;padding-bottom:6px;gap:16px}
 .fc-titres{display:flex;flex-direction:column;justify-content:center}
 .fc-titre{font-size:28px;font-weight:700}

@@ -11,15 +11,15 @@
 | 2026-10-19 | Sport : jeudi midi uniquement, repas retiré du parc d'origine, texture suit le résident | Réponses 8-10 |
 | 2026-10-19 | Nettoyage "sans viande" (halal : œufs/poisson) ; direction lun-ven midi | Réponses 11-12 |
 | 2026-10-19 | Pas d'archives, pas de comparaison de semaines, nom+prénom seulement, sécurité minimale | Réponses 20-23 |
-| 2026-10-19 | Impression A4 paysage, 1 feuille/jour/service ; priorité = feuille chef puis feuille chariot | Réponses 17, 19, 26 |
+| 2026-10-19 | Impression A4 paysage, 1 feuille/jour/service ; priorité = feuille cuisine puis feuille chariot | Réponses 17, 19, 26 |
 | 2026-10-19 | Alertes destinées au manager, jamais à la cuisine | Réponse 16 |
 | 2026-10-19 | CSV/MD sans noms de résidents (codes type AMB-01) | Données de santé |
 | 2026-10-19 | Mémoire du projet = fichiers MD routés par CLAUDE.md | Économie de tokens |
 
 ## 2026-10-19 — Retours maquettes phase 3 (v1)
 - **Sport = activité**, pas un parc : ajoutée par semaine (jour, service, participants), presets réutilisables ; repas inchangé, seul le chariot change. Raison : éviter la double saisie et refléter la réalité.
-- **Feuille chef variante A** ; zones Parcs / Sodexo / Direction / Nettoyage / Total ; un seul total à produire ; ventilation des régimes sur le total. Raison : totaux « par parc / général / avec doubles » étaient confus.
-- Haché et Mixé mis en avant (couleur) sur la feuille chef.
+- **Feuille cuisine variante A** ; zones Parcs / Sodexo / Direction / Nettoyage / Total ; un seul total à produire ; ventilation des régimes sur le total. Raison : totaux « par parc / général / avec doubles » étaient confus.
+- Haché et Mixé mis en avant (couleur) sur la feuille cuisine.
 - **Chariot variante A** ; étiquettes : Résident/Salarié au lieu du parc ; texture en grand et colorée ; régimes colorés.
 - Saisie : alertes au-dessus, régimes non éditables dans la grille, pas de « lignes libres », lignes Direction / Salariés Sodexo ajoutées, stylo → fiche résident en nouvel onglet.
 - Pages distinctes (Résidents, Parcs, Activités, Régimes) ; liste Résidents façon TYPOLOGIE CONVIVES ; actions éditer/archiver/supprimer au survol (archivage réintroduit).
@@ -48,9 +48,9 @@
 - Données de démarrage intégrées en JS (`src/js/data/demarrage.js`) : un navigateur ne peut pas lire `data/recueil_base_s42.json` en `file://`.
 - Données de démarrage : couleurs des maquettes, ordre des colonnes de l'Excel, champ `abrege` (libellé court de colonne), `etablissement`.
 - **Hypothèse** : textures, régimes, enrichi et panée comptés **en plats** (double plat = 2) ⇒ Normal + Haché + Mixé = total. Double plat, double légumes et pots gourmands comptés en personnes.
-- **Hypothèse** : Sodexo saisi en `{standard, sansPorc}` par créneau (la maquette chef montre du sans porc Sodexo) ; ancien format nombre accepté.
+- **Hypothèse** : Sodexo saisi en `{standard, sansPorc}` par créneau (la maquette cuisine montre du sans porc Sodexo) ; ancien format nombre accepté.
 - Chariots : un par parc et par activité (volume > 0) ; 6 étiquettes par page, page suivante si besoin. Étiquette si texture ≠ normal, régime autre que « sans porc » seul, option ou consigne ; « sans porc » seul et « normaux simples » en collectif.
-- Feuilles d'un créneau à 0 plat non imprimées. Pots gourmands : pastille sur l'étiquette, absents de la feuille chef.
+- Feuilles d'un créneau à 0 plat non imprimées. Pots gourmands : pastille sur l'étiquette, absents de la feuille cuisine.
 - « Créer la semaine suivante » reprend salariés, Sodexo, direction, nettoyage ; pas les présences ni les activités (presets).
 - Clic sur une présence : si la valeur revient à celle de la fiche, la saisie est effacée (pas de fausse alerte).
 - « Normal », « Sans porc », « Sans viande » renommables mais non supprimables (utilisés par les calculs).
@@ -64,10 +64,11 @@
 
 ## 2026-10-20 — Nettoyage et plats témoins
 - Nettoyage en deux lignes : « Nettoyage » (standard) et « Nettoyage sans viande ». Anciens fichiers (version 1) : leur nettoyage passe en sans viande (c'était la règle). Format de fichier version 2. Raison : demande utilisateur.
-- Plats témoins : saisis par service (ligne de la semaine), colonne « TÉMOINS » de la feuille chef, comptés en texture normale sans régime et **ajoutés au total à produire**. Repris par « Créer la semaine suivante » (comme direction/nettoyage). Pas de chariot. Raison : réponses utilisateur.
-- Feuille chef : en-têtes de colonnes 11 px et zones 10 px pour loger la colonne en plus (même avec une activité).
+- Plats témoins : saisis par service (ligne de la semaine), colonne « TÉMOINS » de la feuille cuisine, comptés en texture normale sans régime et **ajoutés au total à produire**. Repris par « Créer la semaine suivante » (comme direction/nettoyage). Pas de chariot. Raison : réponses utilisateur.
+- Feuille cuisine : en-têtes de colonnes 11 px et zones 10 px pour loger la colonne en plus (même avec une activité).
 
 ## 2026-10-20 — Service Petit déjeuner et filtre des services
-- Nouveau service **Petit déjeuner** (avant midi) : **présences seulement** (pas de textures, régimes, options ni double plat). Lignes salariés / Sodexo / direction / nettoyage / témoins disponibles (vides par défaut ; l'utilisateur n'a pas de préférence). Feuille chef et feuille chariot imprimées, en version simplifiée. Raison : réponses utilisateur.
+- Nouveau service **Petit déjeuner** (avant midi) : **présences seulement** (pas de textures, régimes, options ni double plat). Lignes salariés / Sodexo / direction / nettoyage / témoins disponibles (vides par défaut ; l'utilisateur n'a pas de préférence). Feuille cuisine et feuille chariot imprimées, en version simplifiée. Raison : réponses utilisateur.
 - Absences : une case par service. Fichiers d'avant (version ≤ 2) : une absence « midi et soir » couvre aussi le petit déjeuner. Format de fichier version 3.
 - Page Semaine : filtre « Services affichés » = simple affichage (les données restent), au moins un service, mémorisé dans le navigateur.
+- « Feuille chef » renommée **« feuille cuisine »** partout (docs, appli, titre imprimé). Raison : demande utilisateur.

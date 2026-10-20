@@ -21,7 +21,7 @@ Principe directeur : **zéro dépendance externe, zéro installation** → rien 
 - `src/data` : modèle (résidents, parcs, régimes, activités, semaine) + lecture/écriture JSON + migration de version.
 - `src/calc` : **calculs purs** (totaux par zone, ventilation « sur N plats », répartition activité) — sans écran, donc testables.
 - `src/ui` : pages (Semaine, Résidents, Parcs, Activités, Régimes, Fichier import/export) + onglets.
-- `src/print` : feuille chef et feuille chariot (HTML/CSS imprimable).
+- `src/print` : feuille cuisine et feuille chariot (HTML/CSS imprimable).
 
 ## Points à confirmer (hypothèse par défaut retenue)
 1. **Zone du nettoyage** → colonne « Autres » (comme sur les maquettes).

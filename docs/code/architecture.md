@@ -13,7 +13,7 @@ src/js/data/modele.js     constantes, dates, création d'objets, migration   →
 src/js/data/stockage.js   copie de travail (localStorage), import/export JSON → data.md
 src/js/data/demarrage.js  copie intégrée de src/data/recueil_base_s42.json    → data.md
 src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
-src/js/print/feuilles.js  feuille chef + feuille chariot (HTML imprimable)   → print.md
+src/js/print/feuilles.js  feuille cuisine + feuille chariot (HTML imprimable)   → print.md
 src/js/ui/*.js            outils DOM, application à onglets, une page par fichier → ui.md
 ```
 
@@ -70,4 +70,4 @@ Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `p
 | data | `docs/code/data.md` | Modèle, migration, stockage, import/export |
 | calc | `docs/code/calc.md` | Calculs purs et leurs règles métier |
 | ui | `docs/code/ui.md` | Onglets, pages, alertes, mode manager |
-| print | `docs/code/print.md` | Feuille chef, feuille chariot, impression |
+| print | `docs/code/print.md` | Feuille cuisine, feuille chariot, impression |

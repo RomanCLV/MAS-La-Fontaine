@@ -1,4 +1,4 @@
-/* Calculs purs : présences, colonnes de la feuille chef, chariots, alertes.
+/* Calculs purs : présences, colonnes de la feuille cuisine, chariots, alertes.
    Aucune lecture de l'écran ni du stockage (testé par tests.html). */
 (function (R) {
   'use strict';
@@ -95,7 +95,7 @@
     return finir(t);
   }
 
-  // ---------- Feuille chef : colonnes d'un créneau ----------
+  // ---------- Feuille cuisine : colonnes d'un créneau ----------
   function feuilleJour(donnees, semaine, c) {
     var refs = M.refs(donnees);
     var seul = !!M.service(M.decoupeCreneau(c).service).presenceSeule;

@@ -5,7 +5,7 @@ Canvas unique (privé) : https://claude.ai/artifact/FGqnNvy6XnVWdVVvkUckx3 — �
 ## Validés le 2026-10-19 (v2.1, reflètent l'application cible)
 | Maquette | Écran | Changements v2 |
 |---|---|---|
-| 1 `Main` | Feuille chef A4 paysage | Zones Parcs / Sodexo / Direction / Autres / TOTAL ; un seul total à produire ; ventilation « sur N plats » ; Haché/Mixé en couleur ; colonne Activité (Sport) |
+| 1 `Main` | Feuille cuisine A4 paysage | Zones Parcs / Sodexo / Direction / Autres / TOTAL ; un seul total à produire ; ventilation « sur N plats » ; Haché/Mixé en couleur ; colonne Activité (Sport) |
 | 2 `ChariotA` | Feuille chariot Amboise | Étiquette Résident/Salarié ; texture en bandeau coloré ; régimes colorés |
 | 3 `Saisie` | Saisie client (interactif : Mode manager, Pages, stylo) | Barre d'onglets + menu Pages ; alertes au-dessus ; régimes lecture seule ; stylo au survol → onglet fiche ; lignes Sodexo/Direction/Nettoyage ; bandeau Activités ; sans « lignes libres » |
 | 4A `Residents` | Page Résidents (nouveau) | Liste type TYPOLOGIE ; éditer/archiver/supprimer au survol |
@@ -25,7 +25,7 @@ Canvas unique (privé) : https://claude.ai/artifact/FGqnNvy6XnVWdVVvkUckx3 — �
 Chariot sans pointillés ; preset seulement dans la fiche activité ; alertes avec « C'est voulu / Ignorer » (présence uniquement) ; mode manager dans recueil.ini ; code résident retiré ; activité sans salariés encadrants.
 
 ## Archives
-- Variantes 1B (feuille chef en cartes par parc) et 2B (planche d'étiquettes A4) — écartées le 2026-10-19 (fichiers supprimés du canvas).
+- Variantes 1B (feuille cuisine en cartes par parc) et 2B (planche d'étiquettes A4) — écartées le 2026-10-19 (fichiers supprimés du canvas).
 - v1 de 1A/2A/3 : remplacées par la v2 ci-dessus.
 
 Format d'une ligne : `nom — écran/fonction — lien Canvas — date — remarques`

@@ -2,10 +2,10 @@
 
 Pour chaque question : hypothèse par défaut entre parenthèses. Réponse : `R:` sous la question, puis reporter dans `produit.md` / `decisions.md`.
 
-## A. Règles de calcul (feuille chef)
+## A. Règles de calcul (feuille cuisine)
 1. **Double plat / double portion** : +1 plat chaud seulement (8 entrées, 10 plats, 8 desserts) ? Ou aussi double entrée / dessert pour certains ? (Hyp. : plat seul par défaut, paramétrable par entrée / plat / dessert.)
    R:+1 plat chaud seulement (8 entrées, 10 plats, 8 desserts)
-2. **Double légumes vert** : portion de légumes en plus, sans plat supplémentaire. La feuille chef doit-elle seulement l'indiquer ou le compter à part ?
+2. **Double légumes vert** : portion de légumes en plus, sans plat supplémentaire. La feuille cuisine doit-elle seulement l'indiquer ou le compter à part ?
    R:portion de légumes en plus , le compter à part en plus sur le document en cours de creation
 3. **Haché et mixé** : portions produites séparément du « normal ». Un mixé est-il toujours aussi « sans résidus » ? Le « mixé tout le froid » de Lude est-il une texture à part ?
    R: le haché et le mixé ont le meme grammage mais c'est une portion normal haché et ou mixé. il peut y avoir un normal un haché un mixé avec ou sans residus en terme de regime alimentaire, pour le LUDE le mixé froid est dréssé en assiette à part.
@@ -63,5 +63,5 @@ Pour chaque question : hypothèse par défaut entre parenthèses. Réponse : `R:
     R:le menu est une extraction du logiciel SOL de Sodexo, l'extraction permet d'avoir differente informations sur le menu et les quantités prévues, pour notre cas si le manager prevoir du porc alors il faut aussi prevoir du sans porc et du sans viandes tous les jours pour les Halal et et aussi "sans produits de la mer"
 25. **Nom du projet** ? Et « épade » = EHPAD ?
     R: RECEUIL ALIMENTAION MAS La Fontaine
-26. **Priorité** : une seule livraison en premier — feuille chef, feuille chariot, ou gestion des résidents côté client ?
-    R:feuille chef "outil de production" feuille chariot, afin de savoir par chariot de zone ce que ce trouve dans chaque conteneur la declinaison de la prestation
+26. **Priorité** : une seule livraison en premier — feuille cuisine, feuille chariot, ou gestion des résidents côté client ?
+    R:feuille cuisine "outil de production" feuille chariot, afin de savoir par chariot de zone ce que ce trouve dans chaque conteneur la declinaison de la prestation

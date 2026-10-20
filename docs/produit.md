@@ -5,7 +5,7 @@ Sources : `reponses.md` (réponses utilisateur), `analyse.md`. Version : brouill
 ## Objectif
 Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATFER) par une appli locale qui :
 1. permet au **client** (la MAS) de saisir/ajuster résidents, régimes et présences sans changer ses habitudes ;
-2. produit, pour le prestataire, la **feuille chef** (outil de production) et la **feuille chariot** (contenu de chaque chariot/conteneur par zone) imprimables ;
+2. produit, pour le prestataire, la **feuille cuisine** (outil de production) et la **feuille chariot** (contenu de chaque chariot/conteneur par zone) imprimables ;
 3. réduit erreurs, gaspillage et plats facturés pour rien.
 
 ## Utilisateurs
@@ -35,19 +35,19 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - **Équipe Sodexo (cuisiniers)** : équipe globale en plus des parcs, hors parcs, par jour et service.
 - **Direction client** (2-3, lundi-vendredi, midi uniquement) : indépendante des parcs, ajout au total.
 - **Nettoyage** : deux lignes, standard et sans viande (halal) ; hors parcs (zone à confirmer).
-- **Plats témoins** : nombre par service donné par le client ; plats en plus (texture normale), ajoutés au total à produire (colonne TÉMOINS de la feuille chef).
+- **Plats témoins** : nombre par service donné par le client ; plats en plus (texture normale), ajoutés au total à produire (colonne TÉMOINS de la feuille cuisine).
 - Ces lignes (Direction, Salariés Sodexo, Nettoyage) sont aussi saisies dans l'écran de saisie client, pour savoir qui est là chaque jour.
 
 ### 4. Activités (ex-« Sport »)
 - Une **activité** est un évènement ajouté à une semaine : nom, jour, service impacté, participants (résidents uniquement pour l'instant). Ce n'est pas un parc ni une fiche à remplir.
-- Le **repas/la portion ne change pas** : le client laisse la présence à 1. Seul l'emplacement change : les participants sont retirés de leur parc et regroupés dans une colonne d'activité (chariot distinct) sur la feuille chef et les chariots. Colonne affichée uniquement les jours où une activité existe.
+- Le **repas/la portion ne change pas** : le client laisse la présence à 1. Seul l'emplacement change : les participants sont retirés de leur parc et regroupés dans une colonne d'activité (chariot distinct) sur la feuille cuisine et les chariots. Colonne affichée uniquement les jours où une activité existe.
 - Pas de double saisie : un résident coché « 1 » le jeudi midi et participant au Sport n'est compté qu'une fois (dans l'activité).
 - **Presets** d'activité : enregistrent jour(s), service et liste de participants ; rechargés à l'ajout d'une activité sur une semaine, puis éditables.
 - Exemple actuel : Sport du jeudi midi.
 
 ### 5. Sorties imprimables (A4 paysage, 1 feuille par jour × service : petit déjeuner / midi / soir)
-- **Petit déjeuner** : présences seulement (pas de textures, régimes ni options) ; feuille chef et feuilles chariot simplifiées (nombres par parc).
-- **Feuille chef (outil de production, variante A validée)** : tableau en zones : **Parcs** (+ colonne Activité si elle existe ce jour-là) avec leur total ; **Équipe Sodexo** ; **Direction** ; **Nettoyage** ; puis **TOTAL À PRODUIRE** mis en avant. Lignes : repas (résidents, doubles plats en plus, salariés std / sans porc), textures, régimes, options. Un seul total par colonne (plus de « plats chauds avec doubles » séparé : les doubles sont dans le total). Le volume total est suivi de la ventilation (« sur 120 plats : 5 sans produit de la mer, 15 sans viande, 15 sans porc… », régimes comptés sur tous les convives). Lignes **Haché** et **Mixé** très visibles, avec leur couleur de référentiel.
+- **Petit déjeuner** : présences seulement (pas de textures, régimes ni options) ; feuille cuisine et feuilles chariot simplifiées (nombres par parc).
+- **Feuille cuisine (outil de production, variante A validée)** : tableau en zones : **Parcs** (+ colonne Activité si elle existe ce jour-là) avec leur total ; **Équipe Sodexo** ; **Direction** ; **Nettoyage** ; puis **TOTAL À PRODUIRE** mis en avant. Lignes : repas (résidents, doubles plats en plus, salariés std / sans porc), textures, régimes, options. Un seul total par colonne (plus de « plats chauds avec doubles » séparé : les doubles sont dans le total). Le volume total est suivi de la ventilation (« sur 120 plats : 5 sans produit de la mer, 15 sans viande, 15 sans porc… », régimes comptés sur tous les convives). Lignes **Haché** et **Mixé** très visibles, avec leur couleur de référentiel.
 - **Feuille chariot (variante A validée)** : par parc : header (parc, jour, service, volume) + collectif (bacs) + étiquettes en bandeau. Un chariot contient les plats résidents **et** salariés : chaque étiquette indique **Résident** ou **Salarié** (pas le nom du parc, déjà en header). **Texture** = élément le plus visible (bandeau coloré) ; régimes en pastilles colorées.
 
 ### 5 bis. Interface (layout global)

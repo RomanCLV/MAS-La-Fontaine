@@ -7,12 +7,12 @@ Fonctions pures : entrées = données + semaine + créneau ; aucune lecture du D
 - `presence(semaine, resident, creneau)` → `{valeur: 0|1, source: "saisie"|"absence"|"defaut"}` ; saisie prioritaire.
 - `activiteDe(semaine, residentId, creneau)` : 1re activité du créneau contenant le résident.
 
-## Colonnes de la feuille chef — `feuilleJour(donnees, semaine, creneau)`
+## Colonnes de la feuille cuisine — `feuilleJour(donnees, semaine, creneau)`
 Colonnes : chaque parc (résidents actifs présents **hors** participants d'activité + salariés du parc) ; chaque activité du créneau (participants présents) ; `TOTAL PARCS` (parcs + activités) ; `SODEXO` ; `DIRECTION` ; `AUTRES` (Nettoyage) ; `TÉMOINS` (Plats témoins) ; `TOTAL À PRODUIRE`.
 Compteurs par colonne : `residents`, `doublesPlats`, `salStd`, `salSansPorc`, `total` (= somme des 4), `tex{}`, `reg{}`, `opt{}`.
 - Poids d'un résident = 1 + 1 s'il a l'option « plat » (double plat).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.
-- Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille chef), texture par défaut, sans régime, compris dans `total`.
+- Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille cuisine), texture par défaut, sans régime, compris dans `total`.
 - Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : résident = 1 (pas de double plat) ; salariés, Sodexo, direction, nettoyage, témoins comptés en nombre ; `tex`, `reg`, `opt` vides.
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 

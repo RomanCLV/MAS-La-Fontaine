@@ -7,7 +7,7 @@
     { v: '', nom: 'Assiette individuelle (compté sur les plats)' },
     { v: 'plat', nom: '+1 plat chaud (double plat, EQ 2)' },
     { v: 'legumes', nom: 'Portion comptée à part' },
-    { v: 'information', nom: 'Information seulement (hors feuille chef)' }
+    { v: 'information', nom: 'Information seulement (hors feuille cuisine)' }
   ];
   var PROTEGES = [M.TEXTURE_DEFAUT, M.REGIME_SANS_PORC, M.REGIME_NETTOYAGE];
 

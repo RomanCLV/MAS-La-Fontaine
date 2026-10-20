@@ -1,4 +1,4 @@
-/* Feuilles imprimables A4 paysage : feuille chef et feuille chariot (maquettes Main et ChariotA v2.1).
+/* Feuilles imprimables A4 paysage : feuille cuisine et feuille chariot (maquettes Main et ChariotA v2.1).
    Aucune alerte n'apparaît ici. */
 (function (R) {
   'use strict';
@@ -20,8 +20,8 @@
   // Nom trop long pour la colonne de libellés : abrégé du référentiel s'il existe.
   function nomCourt(g) { return g.nom.length > 26 && g.abrege ? g.abrege : g.nom; }
 
-  // ---------------- Feuille chef ----------------
-  function chef(donnees, semaine, c) {
+  // ---------------- Feuille cuisine ----------------
+  function cuisine(donnees, semaine, c) {
     var f = C.feuilleJour(donnees, semaine, c);
     var cols = f.colonnes;
     var nParcs = f.parcs.length;                 // parcs + activités
@@ -111,10 +111,10 @@
         ' : résidents retirés de leur parc (même repas, chariot distinct). ' + regle
       : regle;
 
-    return h('div', { class: 'feuille feuille-chef' },
+    return h('div', { class: 'feuille feuille-cuisine' },
       h('div', { class: 'fc-entete' },
         h('div', { class: 'fc-titres' },
-          h('div', { class: 'fc-titre' }, 'FEUILLE CHEF · ' + titreCreneau(semaine, c)),
+          h('div', { class: 'fc-titre' }, 'FEUILLE CUISINE · ' + titreCreneau(semaine, c)),
           h('div', { class: 'fc-sous' }, sousTitre.join(' · '))),
         h('div', { class: 'fc-grand' },
           h('div', { class: 'fc-grand-lab' }, 'TOTAL À PRODUIRE'),
@@ -270,7 +270,7 @@
     return pages;
   }
 
-  // Toutes les feuilles demandées, dans l'ordre jour × service (chef puis chariots).
+  // Toutes les feuilles demandées, dans l'ordre jour × service (cuisine puis chariots).
   function construire(donnees, semaine, choix) {
     var frag = document.createDocumentFragment();
     var n = 0;
@@ -280,12 +280,12 @@
         if (choix.services.indexOf(s.id) < 0) return;
         var c = M.creneau(j.id, s.id);
         if (C.feuilleJour(donnees, semaine, c).total.total === 0) return;
-        if (choix.chef) { frag.appendChild(chef(donnees, semaine, c)); n++; }
+        if (choix.cuisine) { frag.appendChild(cuisine(donnees, semaine, c)); n++; }
         if (choix.chariot) chariots(donnees, semaine, c).forEach(function (pg) { frag.appendChild(pg); n++; });
       });
     });
     return { fragment: frag, nombre: n };
   }
 
-  R.Feuilles = { chef: chef, chariots: chariots, construire: construire };
+  R.Feuilles = { cuisine: cuisine, chariots: chariots, construire: construire };
 })(window.Recueil = window.Recueil || {});

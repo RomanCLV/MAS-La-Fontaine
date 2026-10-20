@@ -19,7 +19,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Bandeau « Alertes de présence » masqué sans alerte. Bouton « Supprimer cette semaine » (confirmation). Export : le nom du fichier suit bien la semaine affichée (bug à la fermeture d'un onglet) + choix « Semaine envoyée » sur la page Exporter.
 
 ## Retours V1 (3e lot, 2026-10-19, 2 commits)
-- Activités : couleur par activité (bleu par défaut), reprise dans la grille Semaine et la feuille chef/chariot. Plus de doublon d'activité sur un même service (retrait auto au changement de jour + blocage à l'enregistrement).
+- Activités : couleur par activité (bleu par défaut), reprise dans la grille Semaine et la feuille cuisine/chariot. Plus de doublon d'activité sur un même service (retrait auto au changement de jour + blocage à l'enregistrement).
 
 ## Retours V1 (4e lot, 2026-10-19)
 - Colonnes groupées Textures / Régimes / Options (grille Semaine, Tableau résidents). Boutons Importer / Exporter dans la barre du haut. « Repartir de zéro » (base vide).
@@ -31,10 +31,11 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Retours V1 (6e lot, 2026-10-20)
 - Semaine : Nettoyage séparé en « Nettoyage » (standard) et « Nettoyage sans viande » ; fichiers version 2 (anciens fichiers migrés).
 - Menu Pages réordonné : Semaine, Parcs, Régimes, Résidents, Activités | Importer, Exporter | Options. « Imprimer » retiré du menu (bouton sur la page Semaine).
-- Semaine : ligne « Plats témoins » (par service) → colonne TÉMOINS de la feuille chef, ajoutée au total à produire. 69 tests verts.
+- Semaine : ligne « Plats témoins » (par service) → colonne TÉMOINS de la feuille cuisine, ajoutée au total à produire. 69 tests verts.
 
 ## Retours V1 (7e lot, 2026-10-20)
-- Service **Petit déjeuner** (présences seulement) : grille, absences par service, feuilles chef/chariot simplifiées ; fichiers version 3. Filtre « Services affichés » sur la page Semaine. 78 tests verts ; vérifié dans le navigateur intégré.
+- Service **Petit déjeuner** (présences seulement) : grille, absences par service, feuilles cuisine/chariot simplifiées ; fichiers version 3. Filtre « Services affichés » sur la page Semaine. 78 tests verts ; vérifié dans le navigateur intégré.
+- « Feuille chef » renommée « feuille cuisine » (docs, appli, titre imprimé).
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.

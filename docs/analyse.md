@@ -21,7 +21,7 @@ Détail technique des fichiers : `data/resumes/effectifs_repas.md`.
 - **Sport** : parc temporaire (jeudi midi, optionnel) pouvant contenir des résidents de plusieurs parcs ; leur repas passe du parc d'origine au parc Sport pour ce service (même plat, autre chariot).
 
 ## Sorties attendues (A4 imprimables)
-1. **Feuille chef** (production, par jour + service) : par parc, nb de repas (résidents + salariés), détail par régime/texture/option, doubles portions (ex. 8 entrées, 10 plats, 8 desserts).
+1. **Feuille cuisine** (production, par jour + service) : par parc, nb de repas (résidents + salariés), détail par régime/texture/option, doubles portions (ex. 8 entrées, 10 plats, 8 desserts).
 2. **Feuille chariot** (par parc, jour + service) : totaux à charger + assiettes individuelles à identifier (nom, texture, régime, étiquette).
 3. Totaux globaux incluant nettoyage et direction.
 

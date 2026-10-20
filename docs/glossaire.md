@@ -8,6 +8,7 @@
 | Client | La MAS, qui saisit les effectifs hebdomadaires. |
 | Prestataire / nous | L'équipe de restauration (l'utilisateur) qui reçoit l'effectif et prépare. |
 | Chef | Cuisinier qui lit la feuille de production. |
+| Feuille cuisine | Feuille de production A4 paysage (par jour et service) lue en cuisine. Anciennement « feuille chef ». |
 | Convive | Résident ou salarié qui mange. |
 | Régime | Contrainte alimentaire impérative (sans porc, diabétique…). |
 | Texture | Haché, mixé. |

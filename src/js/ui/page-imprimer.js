@@ -6,8 +6,10 @@
   function choix() {
     var c = App.ui.impression;
     if (!c || !Array.isArray(c.jours)) {
-      c = App.ui.impression = { chef: true, chariot: true, jours: M.JOURS.map(function (j) { return j.id; }), services: M.IDS_SERVICES.slice() };
+      c = App.ui.impression = { cuisine: true, chariot: true, jours: M.JOURS.map(function (j) { return j.id; }), services: M.IDS_SERVICES.slice() };
     }
+    // Ancien nom « feuille chef » mémorisé dans le navigateur.
+    if (c.cuisine === undefined) { c.cuisine = c.chef !== false; delete c.chef; }
     return c;
   }
 
@@ -45,7 +47,7 @@
         h('div', { class: 'carte choix-impression' },
           h('div', { class: 'rangee' },
             h('span', { class: 'gras' }, 'Feuilles :'),
-            h('label', { class: 'choix' + (c.chef ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.chef, onchange: function () { c.chef = !c.chef; maj(); } }), 'Feuille chef'),
+            h('label', { class: 'choix' + (c.cuisine ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.cuisine, onchange: function () { c.cuisine = !c.cuisine; maj(); } }), 'Feuille cuisine'),
             h('label', { class: 'choix' + (c.chariot ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.chariot, onchange: function () { c.chariot = !c.chariot; maj(); } }), 'Feuilles chariot'),
             h('span', { class: 'gras', style: 'margin-left:16px' }, 'Services :'),
             M.SERVICES.map(function (x) {

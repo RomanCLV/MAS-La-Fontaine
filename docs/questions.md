@@ -2,10 +2,10 @@
 
 Pour chaque question : hypothèse par défaut entre parenthèses. Réponse : `R:` sous la question, puis reporter dans `produit.md` / `decisions.md`.
 
-## A. Règles de calcul (feuille chef)
+## A. Règles de calcul (feuille cuisine)
 1. **Double plat / double portion** : +1 plat chaud seulement (8 entrées, 10 plats, 8 desserts) ? Ou aussi double entrée / dessert pour certains ? (Hyp. : plat seul par défaut, paramétrable par entrée / plat / dessert.)
    R:
-2. **Double légumes vert** : portion de légumes en plus, sans plat supplémentaire. La feuille chef doit-elle seulement l'indiquer ou le compter à part ?
+2. **Double légumes vert** : portion de légumes en plus, sans plat supplémentaire. La feuille cuisine doit-elle seulement l'indiquer ou le compter à part ?
    R:
 3. **Haché et mixé** : portions produites séparément du « normal ». Un mixé est-il toujours aussi « sans résidus » ? Le « mixé tout le froid » de Lude est-il une texture à part ?
    R:
@@ -63,5 +63,5 @@ Pour chaque question : hypothèse par défaut entre parenthèses. Réponse : `R:
     R:
 25. **Nom du projet** ? Et « épade » = EHPAD ?
     R:
-26. **Priorité** : une seule livraison en premier — feuille chef, feuille chariot, ou gestion des résidents côté client ?
+26. **Priorité** : une seule livraison en premier — feuille cuisine, feuille chariot, ou gestion des résidents côté client ?
     R:
