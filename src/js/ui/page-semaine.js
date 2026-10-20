@@ -95,7 +95,18 @@
         return C.feuilleJour(d, s, c).parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0].c;
       });
     }
-    function majCarres() { calculer(); majs.forEach(function (f) { f(); }); }
+    // Une ligne de texture apparaît ou disparaît (ex. salariés en texture par défaut) : re-rendu complet.
+    function majCarres() {
+      calculer();
+      if (texturesPresentes().join() !== textures.map(function (g) { return g.id; }).join()) App.rendre();
+      else majs.forEach(function (f) { f(); });
+    }
+    // Textures avec au moins un plat dans le parc sur un service affiché (les autres lignes sont masquées).
+    function texturesPresentes() {
+      return M.parNature(d, 'texture').filter(function (g) {
+        return comptes.some(function (n) { return n.tex[g.id]; });
+      }).map(function (g) { return g.id; });
+    }
     calculer();
     function ligneCarres(libelle, note, valeur, style, titre, fin) {
       return h('div', { class: 'g g-carres' + (fin ? ' fin-carres' : ''), style: gabarit },
@@ -118,12 +129,9 @@
           return h('div', { class: 'gc ' + bord(c) }, carre);
         }));
     }
-    // Puis une ligne par texture (en plats, double plat = 2) : texture par défaut, « toujours affichées »
-    // et celles qui ont au moins un plat dans le parc sur un service affiché. Normal + Haché + … = plats du parc.
-    var texDef = M.textureDefaut(d);
-    var textures = M.parNature(d, 'texture').filter(function (g) {
-      return g.id === texDef || g.toujoursVisible !== false || comptes.some(function (n) { return n.tex[g.id]; });
-    });
+    // Puis une ligne par texture présente (en plats, double plat = 2). Normal + Haché + … = plats du parc.
+    var presentes = texturesPresentes();
+    var textures = M.parNature(d, 'texture').filter(function (g) { return presentes.indexOf(g.id) >= 0; });
     var carres = [
       ligneCarres('Plats ' + parc.nom, 'ce parc', function (k) { return comptes[k].total; }, null,
         'Plats ' + parc.nom + ' (résidents présents hors activités, doubles plats, salariés du parc)', !textures.length)
