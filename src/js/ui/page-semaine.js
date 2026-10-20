@@ -100,8 +100,9 @@
     function ligneCarres(libelle, note, valeur, style, titre, fin) {
       return h('div', { class: 'g g-carres' + (fin ? ' fin-carres' : ''), style: gabarit },
         h('div', { class: 'gc colle0' }),
-        h('div', { class: 'gc gauche gras colle1', style: 'grid-column:span 2' }, libelle),
-        h('div', { class: 'gnote', style: 'grid-column:span ' + cols.length }, note),
+        // Étiquette collée = colonne du nom seulement (sinon elle masque les premiers services en défilant).
+        h('div', { class: 'gc gauche gras colle1 etiquette', title: libelle }, libelle),
+        h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + 1) }, note),
         h('div'),
         vis.map(function (c, k) {
           var carre = h('span', { style: style });
@@ -223,8 +224,8 @@
     function ligneNombres(libelle, note, fond, lire, ecrire, separe) {
       return h('div', { class: 'g g-sal' + (separe ? ' separe' : ''), style: gabarit + ';background:' + fond },
         h('div', { class: 'gc colle0', style: 'background:' + fond }),
-        h('div', { class: 'gc gauche gras colle1', style: 'grid-column:span 2;background:' + fond }, libelle),
-        h('div', { class: 'gnote', style: 'grid-column:span ' + cols.length }, note),
+        h('div', { class: 'gc gauche gras colle1 etiquette', style: 'background:' + fond, title: libelle }, libelle),
+        h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + 1) }, note),
         h('div'),
         vis.map(function (c) {
           var v = lire(c);
