@@ -85,7 +85,16 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .message-ok{background:#e3f2e1;color:#1b5e20;border:1px solid #9ccc9c}
 .message-attention{background:#fff8e6;color:#6b3f00;border:1px solid #d9b26a}
 .message-action{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.accueil{max-width:760px;margin:40px auto;gap:14px}
+.accueil{width:100%;max-width:760px;margin:40px auto;gap:14px}
+.accueil-groupe{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--trait);padding-top:12px}
+.accueil-groupe h2{margin:0;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--gris)}
+.tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.tuile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:76px;padding:12px 14px;border:1px solid var(--gris);border-radius:8px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.tuile:hover{border-color:var(--bleu);background:var(--bleu-clair)}
+.tuile-titre{font-size:16px;font-weight:700}
+.tuile-detail{font-size:13px;color:#555}
+.tuile-principale{border:2px solid var(--bleu)}
+.tuile-principale .tuile-titre{color:var(--bleu)}
 .note-haut{border-top:1px dashed #999;padding-top:8px}
 .badge{background:#555;color:#fff;border-radius:6px;padding:2px 10px;font-size:13px;font-weight:700}
 .pastille-couleur{width:14px;height:14px;border-radius:3px;border:1px solid #444;display:inline-block;flex:none}

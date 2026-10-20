@@ -10,11 +10,22 @@
     App.remplacerDonnees(M.baseVide(), 'base vide');
   }
 
-  // Bouton « Ouvrir un fichier… » (input file caché derrière un vrai bouton).
-  function boutonFichier(texte, principal, surFichier) {
-    var input = h('input', { type: 'file', accept: '.json,application/json', class: 'cache', 'aria-hidden': 'true', tabindex: '-1',
+  // Champ fichier caché : un vrai bouton appelle .click() dessus.
+  function champFichier(surFichier) {
+    return h('input', { type: 'file', accept: '.json,application/json', class: 'cache', 'aria-hidden': 'true', tabindex: '-1',
       onchange: function (e) { var f = e.target.files[0]; e.target.value = ''; if (f) surFichier(f); } });
+  }
+
+  // Bouton « Ouvrir un fichier… ».
+  function boutonFichier(texte, principal, surFichier) {
+    var input = champFichier(surFichier);
     return h('span', null, input, h('button', { class: 'btn btn-grand' + (principal ? ' btn-principal' : ''), onclick: function () { input.click(); } }, texte));
+  }
+
+  // Grand bouton de l'accueil : titre + une ligne d'explication.
+  function tuile(titre, detail, onclick, principale) {
+    return h('button', { class: 'tuile' + (principale ? ' tuile-principale' : ''), onclick: onclick },
+      h('span', { class: 'tuile-titre' }, titre), h('span', { class: 'tuile-detail' }, detail));
   }
 
   function lire(f) {
@@ -34,15 +45,26 @@
     titre: function () { return 'Accueil'; },
     rendu: function () {
       var e = App.etat.import || {};
+      var fichier = champFichier(lire);
+      // Deux familles : reprendre des données existantes (plus tard : depuis Excel) / créer une base neuve.
       return h('div', { class: 'page' },
         h('div', { class: 'carte accueil' },
           h('h1', null, 'Bienvenue'),
           h('p', null, 'Aucune donnée dans ce navigateur pour l’instant. Pour commencer :'),
+          e.lecture ? h('div', { class: 'message', role: 'status' }, 'Lecture de ' + e.nom + '…') : null,
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
-          h('div', { class: 'rangee' },
-            boutonFichier('Ouvrir un fichier reçu (.json)…', true, lire),
-            h('button', { class: 'btn btn-grand', onclick: repartirDeZero }, 'Commencer avec une base vide'),
-            h('button', { class: 'btn btn-grand', onclick: function () { App.remplacerDonnees(M.baseMasLaFontaine(), 'base MAS La Fontaine'); } }, 'Commencer avec MAS La Fontaine'))));
+          h('section', { class: 'accueil-groupe', 'aria-labelledby': 'acc-reprendre' },
+            h('h2', { id: 'acc-reprendre' }, 'Reprendre des données existantes'),
+            h('div', { class: 'tuiles' },
+              fichier,
+              tuile('Ouvrir un fichier reçu…', 'Fichier .json exporté par l’application (par le client ou le prestataire).',
+                function () { fichier.click(); }, true))),
+          h('section', { class: 'accueil-groupe', 'aria-labelledby': 'acc-creer' },
+            h('h2', { id: 'acc-creer' }, 'Créer une nouvelle base'),
+            h('div', { class: 'tuiles' },
+              tuile('MAS La Fontaine', 'Les 7 parcs et l’activité Sport du jeudi midi, prêts à remplir.',
+                function () { App.remplacerDonnees(M.baseMasLaFontaine(), 'base MAS La Fontaine'); }),
+              tuile('Base vide', 'Aucun parc ni résident. Textures, régimes et options par défaut.', repartirDeZero)))));
     }
   };
 
