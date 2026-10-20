@@ -103,10 +103,12 @@
       else majs.forEach(function (f) { f(); });
     }
     // Textures avec au moins un plat dans le parc sur un service affiché (les autres lignes sont masquées).
+    // Seule la texture par défaut : aucune ligne (elle répéterait « Plats <parc> »).
     function texturesPresentes() {
-      return M.parNature(d, 'texture').filter(function (g) {
+      var ids = M.parNature(d, 'texture').filter(function (g) {
         return comptes.some(function (n) { return n.tex[g.id]; });
       }).map(function (g) { return g.id; });
+      return ids.length === 1 && ids[0] === M.textureDefaut(d) ? [] : ids;
     }
     calculer();
     // style et titre : texte, ou fonction du n° de créneau affiché k.

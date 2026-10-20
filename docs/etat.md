@@ -53,6 +53,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Options « +1 plat » **cumulables** (double plat + gros gourmand = 3 plats) : grille Semaine, feuille cuisine (« + Plats en plus »), chariot (EQ 3, « ×3 »). Libellé de l'effet : « +1 plat chaud (EQ +1) ». 116 tests verts ; vérifié dans le navigateur intégré.
 - Chariot d'activité : chaque étiquette rappelle le parc du résident (« PARC AMBOISE », couleur du parc). 118 tests verts ; vérifié dans le navigateur intégré.
 - Grille Semaine : ligne **« En activité »** sous les carrés (plats des résidents du parc partis en activité, retirés de « Plats <parc> »). 119 tests verts ; vérifié dans le navigateur intégré.
+- Grille Semaine : pas de ligne de texture quand seule la texture par défaut (Normal) a des plats (doublon de « Plats <parc> »).
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.

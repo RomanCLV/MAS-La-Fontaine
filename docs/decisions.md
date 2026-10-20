@@ -125,3 +125,6 @@
 
 ## 2026-10-21 — Grille Semaine : ligne « En activité »
 - Sous « Plats <parc> » et les textures : plats des résidents du parc partis en activité (comptés dans l'activité, donc retirés du parc). Ligne affichée seulement s'il y en a sur un service affiché. Raison : comprendre pourquoi les plats du parc sont moins nombreux que les présents.
+
+## 2026-10-21 — Grille Semaine : pas de ligne Normal seule
+- Si la seule texture avec des plats dans le parc est la texture par défaut, sa ligne n'est pas affichée (mêmes nombres que « Plats <parc> »). Dès qu'une autre texture apparaît, toutes les lignes reviennent. Raison : demande utilisateur.
