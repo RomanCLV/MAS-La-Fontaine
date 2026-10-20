@@ -30,6 +30,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (6e lot, 2026-10-20)
 - Semaine : Nettoyage séparé en « Nettoyage » (standard) et « Nettoyage sans viande » ; fichiers version 2 (anciens fichiers migrés).
+- Menu Pages réordonné : Semaine, Parcs, Régimes, Résidents, Activités | Importer, Exporter | Options. « Imprimer » retiré du menu (bouton sur la page Semaine).
 - Semaine : ligne « Plats témoins » (par service) → colonne TÉMOINS de la feuille chef, ajoutée au total à produire. 69 tests verts.
 
 ## Non vérifié (à faire par l'utilisateur)

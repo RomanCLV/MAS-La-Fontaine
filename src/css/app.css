@@ -44,6 +44,7 @@ h1{font-size:22px;margin:0}
 .menu-item:hover{background:#f6f4ee}
 .menu-item.courant{font-weight:700}
 .menu-note{font-size:12px;color:#555;font-weight:400}
+.menu-sep{border-top:2px solid var(--trait)}
 .menu-titre{font-size:12px;font-weight:700;color:#555;padding:8px 14px 4px;background:#faf9f5;border-bottom:1px solid #eee}
 .menu-ferme{font-size:13px}
 

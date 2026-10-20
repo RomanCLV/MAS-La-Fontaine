@@ -4,15 +4,17 @@
   var M = R.Modele, S = R.Stockage, h = R.h, O = R.Outils;
   R.Pages = R.Pages || {};
 
+  // null = séparateur dans le menu Pages.
   var MENU = [
-    { type: 'semaine', nom: 'Semaine (saisie)' },
-    { type: 'residents', nom: 'Résidents' },
+    { type: 'semaine', nom: 'Semaine' },
     { type: 'parcs', nom: 'Parcs' },
-    { type: 'activites', nom: 'Activités' },
     { type: 'regimes', nom: 'Régimes' },
-    { type: 'import', nom: 'Fichier : importer' },
-    { type: 'export', nom: 'Fichier : exporter' },
-    { type: 'imprimer', nom: 'Imprimer' },
+    { type: 'residents', nom: 'Résidents' },
+    { type: 'activites', nom: 'Activités' },
+    null,
+    { type: 'import', nom: 'Fichier : Importer' },
+    { type: 'export', nom: 'Fichier : Exporter' },
+    null,
     { type: 'options', nom: 'Options' }
   ];
   var MAX_FERMES = 8;
@@ -250,6 +252,7 @@
     var actifType = (App.ongletActif() || {}).type;
     return h('div', { class: 'menu-pages', role: 'menu' },
       MENU.map(function (p) {
+        if (!p) return h('div', { class: 'menu-sep', role: 'separator' });
         var ouvert = App.ui.onglets.some(function (o) { return o.type === p.type; });
         return h('button', { class: 'menu-item' + (actifType === p.type ? ' courant' : ''), role: 'menuitem',
           onclick: function () { App.ouvrir(p.type); } },

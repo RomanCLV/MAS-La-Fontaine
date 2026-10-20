@@ -51,7 +51,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 
 ### 5 bis. Interface (layout global)
 - Application à **onglets** (façon IDE) : onglets ouverts en haut, accès aux onglets fermés (menu « Pages » + « Fermés récemment »), plusieurs fiches ouvertes en même temps. Les onglets ouverts sont **restaurés** à la réouverture de l'app.
-- Pages distinctes : **Semaine (saisie)**, **Résidents**, **Parcs**, **Activités**, **Régimes**, **Fichier** (import et export séparés).
+- Pages distinctes, dans cet ordre du menu Pages : **Semaine**, **Parcs**, **Régimes**, **Résidents**, **Activités** | **Fichier : Importer**, **Fichier : Exporter** | **Options** (séparateurs entre les groupes). Imprimer s'ouvre depuis la page Semaine (« Imprimer cette semaine »).
 - Saisie semaine : alertes manager **au-dessus** de la grille (pas sur le côté, pour garder la largeur) ; régimes en **lecture seule** dans la grille ; au survol d'une ligne, bouton stylo qui ouvre la fiche du résident dans un **nouvel onglet** (pas de changement de page).
 
 ### 6. Fichier et sauvegarde
