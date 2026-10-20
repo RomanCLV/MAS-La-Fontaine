@@ -65,5 +65,5 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 2. Commit de la phase 5 (après accord).
 
 ## Retours V1 (9e lot, 2026-10-20)
-- Semaine : ligne « Total à produire » en carrés sous les en-têtes (total de la MAS par service).
+- Semaine : ligne « Total à produire » en carrés sous les en-têtes (total de la MAS par service), puis une ligne de carrés par texture, fond = couleur de la texture. Vérifié dans le navigateur intégré.
 - Résidents : avec un filtre actif (nom, parc, archivés), le titre affiche aussi le nombre de résidents affichés (« · 3 actifs · 1 affiché »).
