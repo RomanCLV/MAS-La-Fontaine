@@ -89,12 +89,18 @@
     // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
     // (résidents présents hors partis en activité, plats en plus, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
-    var colonnes, comptes, majs = [];
+    // horsParcs : plats Sodexo + Direction + Nettoyage + Plats témoins (ligne de total sous les lignes « tous parcs »).
+    var HORS_PARCS = ['sodexo', 'direction', 'autres', 'temoins'];
+    var colonnes, comptes, horsParcs, majs = [];
     function calculer() {
-      colonnes = vis.map(function (c) {
-        return C.feuilleJour(d, s, c).parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0];
+      var feuilles = vis.map(function (c) { return C.feuilleJour(d, s, c); });
+      colonnes = feuilles.map(function (f) {
+        return f.parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0];
       });
       comptes = colonnes.map(function (col) { return col.c; });
+      horsParcs = feuilles.map(function (f) {
+        return f.colonnes.reduce(function (n, col) { return n + (HORS_PARCS.indexOf(col.type) >= 0 ? col.c.total : 0); }, 0);
+      });
     }
     // Une ligne de texture apparaît ou disparaît (ex. salariés en texture par défaut) : re-rendu complet.
     function majCarres() {
@@ -308,8 +314,11 @@
       ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
       ligneNombres('Nettoyage', 'tous parcs', '#e4edf7', ne.lire, ne.ecrire),
       ligneNombres('Nettoyage sans viande', 'tous parcs', '#e4edf7', nv.lire, nv.ecrire),
-      ligneNombres('Plats témoins', 'à produire en plus', '#e4edf7', te.lire, te.ecrire)
+      ligneNombres('Plats témoins', 'à produire en plus', '#e4edf7', te.lire, te.ecrire),
+      ligneCarres('Total hors parcs', 'Sodexo + Direction + Nettoyage + Témoins', function (k) { return horsParcs[k]; }, null,
+        'Total hors parcs (Sodexo, Direction, Nettoyage, Nettoyage sans viande, Plats témoins)')
     ];
+    lignesSal[lignesSal.length - 1].classList.add('total-hors-parcs');
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
       h('div', { class: 'legende' },

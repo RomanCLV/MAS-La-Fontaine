@@ -128,3 +128,6 @@
 
 ## 2026-10-21 — Grille Semaine : pas de ligne Normal seule
 - Si la seule texture avec des plats dans le parc est la texture par défaut, sa ligne n'est pas affichée (mêmes nombres que « Plats <parc> »). Dès qu'une autre texture apparaît, toutes les lignes reviennent. Raison : demande utilisateur.
+
+## 2026-10-21 — Grille Semaine : total hors parcs
+- Ligne de carrés « Total hors parcs » par service = Sodexo + Direction + Nettoyage (avec sans viande) + Plats témoins. Les salariés du parc restent dans « Plats <parc> ». Raison : demande utilisateur.
