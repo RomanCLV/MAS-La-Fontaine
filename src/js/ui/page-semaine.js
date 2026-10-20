@@ -86,10 +86,15 @@
           M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + M.service(sc.service).court));
       }));
 
-    // Carrés sous les en-têtes : total à produire de toute la MAS par service (même calcul que la feuille cuisine).
+    // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
+    // (résidents présents hors partis en activité, doubles plats, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
-    var feuilles, majs = [];
-    function calculer() { feuilles = vis.map(function (c) { return C.feuilleJour(d, s, c); }); }
+    var comptes, majs = [];
+    function calculer() {
+      comptes = vis.map(function (c) {
+        return C.feuilleJour(d, s, c).parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0].c;
+      });
+    }
     function majCarres() { calculer(); majs.forEach(function (f) { f(); }); }
     calculer();
     function ligneCarres(libelle, note, valeur, style, titre, fin) {
@@ -113,17 +118,17 @@
         }));
     }
     // Puis une ligne par texture (en plats, double plat = 2) : texture par défaut, « toujours affichées »
-    // et celles qui ont au moins un plat sur un service affiché. Normal + Haché + … = total.
+    // et celles qui ont au moins un plat dans le parc sur un service affiché. Normal + Haché + … = plats du parc.
     var texDef = M.textureDefaut(d);
     var textures = M.parNature(d, 'texture').filter(function (g) {
-      return g.id === texDef || g.toujoursVisible !== false || feuilles.some(function (f) { return f.total.tex[g.id]; });
+      return g.id === texDef || g.toujoursVisible !== false || comptes.some(function (n) { return n.tex[g.id]; });
     });
     var carres = [
-      ligneCarres('Total à produire', 'tous parcs', function (k) { return feuilles[k].total.total; }, null,
-        'Total à produire (tous parcs, Sodexo, direction, nettoyage, témoins)', !textures.length)
+      ligneCarres('Plats ' + parc.nom, 'ce parc', function (k) { return comptes[k].total; }, null,
+        'Plats ' + parc.nom + ' (résidents présents hors activités, doubles plats, salariés du parc)', !textures.length)
     ].concat(textures.map(function (g, i) {
-      return ligneCarres(g.nom, '', function (k) { return feuilles[k].total.tex[g.id] || 0; },
-        'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), 'Texture ' + g.nom + ' (tous parcs)', i === textures.length - 1);
+      return ligneCarres(g.nom, '', function (k) { return comptes[k].tex[g.id] || 0; },
+        'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), 'Texture ' + g.nom + ' (' + parc.nom + ')', i === textures.length - 1);
     }));
 
     // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde.

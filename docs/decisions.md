@@ -105,3 +105,4 @@
 ## 2026-10-20 — Carrés de quantité (grille Semaine)
 - Sous les en-têtes : ligne « Total à produire » = un carré par service avec le total de toute la MAS (même chiffre que TOTAL À PRODUIRE de la feuille cuisine), identique sur chaque onglet de parc. Raison : faciliter la communication des quantités (choix utilisateur).
 - Puis une ligne de carrés par texture (fond = couleur de la texture), comptée en plats comme la feuille cuisine (Normal + Haché + … = total). Textures montrées : par défaut, « Toujours affichées », et toute texture ayant au moins un plat sur un service affiché (sinon la somme serait fausse). Raison : la texture est essentielle (choix utilisateur).
+- Correction utilisateur : les carrés comptent le **parc affiché**, pas la MAS. Ligne « Plats <parc> » = colonne du parc sur la feuille cuisine (résidents présents hors partis en activité + doubles plats + salariés du parc) ; textures idem, pour ce parc.
