@@ -5,9 +5,10 @@ Fichiers : `src/js/data/modele.js` (`Recueil.Modele`), `stockage.js` (`Recueil.S
 ## modele.js (pur)
 - Constantes : `VERSION`, `APP`, `JOURS`, `SERVICES` (petit déjeuner `presenceSeule`, midi, soir ; `court` = libellé court), `IDS_SERVICES`, `CRENEAUX` (21), `TEXTURE_DEFAUT` (`normal`), `REGIME_SANS_PORC` (`sans_porc`, salariés « sans porc »), `REGIME_NETTOYAGE` (`sans_viande`, ligne « Nettoyage sans viande »).
 - Dates ISO `AAAA-MM-JJ` calculées en UTC (pas de décalage d'heure d'été) : `ajouterJours`, `dateDuCreneau`, `idSemaine` (n° ISO), `lundiDe`.
+- `concerne(g, serviceId)` : l'élément du référentiel compte-t-il pour ce service (`g.services`, défaut `SERVICES_REGIME_DEFAUT` = midi + soir ; inconnu = oui).
 - `groupesRegimes(donnees, filtre?)` : référentiel régimes rangé en groupes Textures / Régimes / Options (non vides).
 - Création : `nouvelId`, `semaineVide(debut)`, `semaineSuivante(semaine)` (copie salariés/Sodexo/direction/nettoyage/nettoyage sans viande/plats témoins, pas les présences ni activités), `residentVide(parcId)`.
-- `migrer(objet)` : vérifie `app`, refuse une version plus récente, complète les champs manquants (tableaux, `etablissement`, `abrege`…), convertit un nombre Sodexo en `{standard, sansPorc}` ; fichier version 1 : `nettoyage` (alors tout sans viande) déplacé dans `nettoyageSansViande` ; avant la version 3 : une absence « midi et soir » couvre aussi le petit déjeuner (« midi seul » / « soir seul » inchangées). Renvoie une **copie** ; lève une `Error` en français si le fichier n'est pas un recueil.
+- `migrer(objet)` : vérifie `app`, refuse une version plus récente, complète les champs manquants (tableaux, `etablissement`, `abrege`…), convertit un nombre Sodexo en `{standard, sansPorc}` ; fichier version 1 : `nettoyage` (alors tout sans viande) déplacé dans `nettoyageSansViande` ; avant la version 3 : une absence « midi et soir » couvre aussi le petit déjeuner (« midi seul » / « soir seul » inchangées) ; avant la version 4 : `regimes[].services` = midi + soir (pots gourmands : petit déjeuner). Renvoie une **copie** ; lève une `Error` en français si le fichier n'est pas un recueil.
 - `nomAffiche(resident)` = « NOM Prénom ».
 
 ## stockage.js

@@ -202,6 +202,50 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(v3.residents[0].absences[0].services, ['midi', 'soir'], 'Version 3 : absence « midi et soir » conservée telle quelle');
   });
 
+  groupe('Services concernés par les régimes / options', function () {
+    var d = jeu(), s = d.semaines[0], refs = M.refs(d);
+    egal([refs.normal.services, refs.diabetique.services, refs.double_plat.services], [['midi', 'soir'], ['midi', 'soir'], ['midi', 'soir']],
+      'Ancien fichier : tout concerne midi et soir');
+    var v3 = M.migrer({ app: M.APP, version: 3, referentiels: { regimes: [{ id: 'pots_gourmands', nom: 'Pots', nature: 'option', affecte: 'information' }] } });
+    egal(v3.referentiels.regimes[0].services, ['petitdej'], 'Version 3 : pots gourmands → petit déjeuner seulement');
+    var v4 = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: [{ id: 'x', nature: 'regime', services: ['soir', 'petitdej', 'zzz'] }, { id: 'y', nature: 'regime', services: [] }] } });
+    egal(v4.referentiels.regimes.map(function (g) { return g.services; }), [['petitdej', 'soir'], []], 'Version 4 : services conservés (ordre et valeurs nettoyés)');
+
+    // Option « information » au petit déjeuner seulement (pots gourmands).
+    d.referentiels.regimes.push({ id: 'pots', nom: 'Pots gourmands', nature: 'option', affecte: 'information', couleur: '#eee', services: ['petitdej'] });
+    d.residents[0].optionIds.push('pots');
+    var pd = C.feuilleJour(d, s, 'lun_petitdej'), mi = C.feuilleJour(d, s, 'lun_midi');
+    egal([col(pd, 'p1').c.opt.pots, pd.total.opt.pots, mi.total.opt.pots], [1, 1, undefined], 'Pots gourmands comptés au petit déjeuner (par parc), pas à midi');
+    egal(C.particularites(d, 'lun_petitdej', col(pd, 'p1')).map(function (x) { return [x.regime.id, x.noms]; }), [['pots', ['A']]],
+      'Chariot du petit déjeuner : pots gourmands, avec le nom');
+    egal(C.chariot(d, s, 'lun_midi', col(mi, 'p1')).normauxSimples, 1, 'À midi, A reste un normal simple (pots non concernés)');
+
+    // Diabétique décoché pour le soir.
+    refs.diabetique.services = ['midi'];
+    egal([C.feuilleJour(d, s, 'lun_midi').total.reg.diabetique, C.feuilleJour(d, s, 'lun_soir').total.reg.diabetique], [2, undefined],
+      'Diabétique compté à midi (B, double plat = 2), pas le soir');
+    var so = C.feuilleJour(d, s, 'lun_soir');
+    egal(C.chariot(d, s, 'lun_soir', col(so, 'p1')).etiquettes[0].tags.map(function (g) { return g.id; }), ['double_plat', 'enrichi'],
+      'Étiquette du soir sans la pastille diabétique');
+
+    // Texture Haché décochée pour le soir : B compté en texture par défaut ; Normal + Haché + Mixé = total.
+    refs.hache.services = ['midi'];
+    so = C.feuilleJour(d, s, 'lun_soir');
+    var t = so.total.tex;
+    egal([t.normal, t.hache, t.mixe], [4, undefined, 1], 'Soir : B (haché, 2 plats) compté en normal');
+    egal((t.normal || 0) + (t.hache || 0) + (t.mixe || 0), so.total.total, 'Somme des textures = total à produire');
+
+    // Sans porc décoché pour midi : les salariés sans porc ne sont plus comptés dans le régime.
+    refs.sans_porc.services = ['soir'];
+    egal(C.feuilleJour(d, s, 'lun_midi').total.reg.sans_porc, undefined, 'Sans porc non concerné à midi : ni résidents ni salariés');
+
+    // Double plat coché pour le petit déjeuner : pas de double (service « présence seulement »).
+    refs.double_plat.services = ['petitdej', 'midi', 'soir'];
+    egal(col(C.feuilleJour(d, s, 'lun_petitdej'), 'p1').c.doublesPlats, 0, 'Petit déjeuner : jamais de double plat');
+    egal(C.ventilation(d, C.feuilleJour(d, s, 'lun_soir').total, 'soir').map(function (v) { return v.id; }).indexOf('diabetique'), -1,
+      'Ventilation du soir sans diabétique');
+  });
+
   groupe('Feuille chariot', function () {
     var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_midi');
     var ch = C.chariot(d, d.semaines[0], 'lun_midi', col(f, 'p1'));

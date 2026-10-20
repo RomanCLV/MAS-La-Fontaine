@@ -4,6 +4,7 @@
 - `Feuilles.chariots(donnees, semaine, creneau)` → une ou plusieurs `.feuille` par parc et par activité ayant un volume > 0 (maquette `ChariotA`) : en-tête coloré, collectif (bacs), étiquettes 6 par page (page suivante si besoin).
 - `Feuilles.construire(donnees, semaine, {cuisine, chariot, jours, services})` → fragment avec toutes les feuilles dans l'ordre jour × service.
 - Impression : `#impression` (hors de l'application) reçoit les feuilles puis `window.print()`. CSS : `@page { size: A4 landscape; margin: 0 }`, saut de page entre feuilles, couleurs forcées (`print-color-adjust: exact`).
-- Petit déjeuner (présence seulement) : feuille cuisine réduite à la section REPAS (sans doubles plats ni pastilles « Sur ces N plats »), total en « petits déj. » ; feuille chariot simple (`chariotSimple`) : bacs Résidents et Salariés, pas d'étiquettes.
+- Lignes textures / régimes / options : seulement celles qui concernent le service ; groupe vide non affiché. Options « information » (pots gourmands) : groupe « INFORMATIONS (hors production) », quantité par zone.
+- Petit déjeuner (présence seulement) : section REPAS (sans doubles plats ni pastilles « Sur ces N plats ») + éléments cochés pour ce service, total en « petits déj. » ; feuille chariot simple (`chariotSimple`) : bacs Résidents et Salariés, encadré « Particularités » (élément, nombre, noms), pas d'étiquettes.
 - Aucune alerte, aucun texte « manager » sur les feuilles.
-- Pots gourmands : absents de la feuille cuisine (information, hors production) ; affichés en pastille sur l'étiquette du résident.
+- Pots gourmands : petit déjeuner seulement (par défaut) ; groupe INFORMATIONS de la feuille cuisine et encadré Particularités du chariot.

@@ -31,15 +31,16 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
 - L'interface ne calcule rien elle-même : elle appelle `Calc`.
 - Alertes : calculées par `Calc.alertes`, affichées uniquement en mode manager, **jamais** dans `Feuilles`.
 
-## Schéma JSON (version 3 ; version 1 = `src/data/recueil_base_s42.json`, migrée à l'import)
+## Schéma JSON (version 4 ; version 1 = `src/data/recueil_base_s42.json`, migrée à l'import)
 ```
 {
-  app: "recueil-alimentation-mas-la-fontaine", version: 3,   // v1 : nettoyage = tout sans viande ; v2 : pas de petit déjeuner (migrés) exporteLe: "AAAA-MM-JJ",
+  app: "recueil-alimentation-mas-la-fontaine", version: 4,   // v1 : nettoyage = tout sans viande ; v2 : pas de petit déjeuner (migrés) exporteLe: "AAAA-MM-JJ",
   etablissement: "MAS La Fontaine",                       // ajouté par la migration si absent
   referentiels: {
     parcs:   [{ id, nom, couleur, ordre }],
     regimes: [{ id, nom, abrege?, nature: "texture"|"regime"|"option", couleur,
-                affecte?: "plat"|"legumes"|"information" }]   // options seulement
+                affecte?: "plat"|"legumes"|"information",     // options seulement
+                services: ["midi","soir"] }]                  // services concernés ; v≤3 : midi+soir (pots gourmands : petitdej)
   },
   residents: [{ id, nom, prenom, parcId, textureId, regimeIds[], optionIds[], consigne, archive,
                 absences: [{ debut, fin, services: ["petitdej","midi","soir"] }] }],  // dates incluses ; v2 « midi+soir » → + petitdej
@@ -56,7 +57,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   }]
 }
 ```
-Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `petitdej midi soir` (21 créneaux). Petit déjeuner = service « présence seulement » (`presenceSeule`) : on compte les présents, sans doubles plats, textures, régimes ni options.
+Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `petitdej midi soir` (21 créneaux). Petit déjeuner = service « présence seulement » (`presenceSeule`) : on compte les présents, sans double plat ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
 
 ## Règles de calcul (résumé, détail dans `calc.md`)
 - Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1.

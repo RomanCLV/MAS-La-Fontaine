@@ -189,7 +189,11 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .ligne-ref{display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd;padding:6px 0;font-size:15px}
 .ligne-reg{display:grid;gap:0 10px;align-items:center;border-bottom:1px solid #ddd;padding:4px 0;font-size:14px;min-height:44px}
 .ligne-reg.entete{font-size:12px;font-weight:700;color:var(--gris);border-bottom:2px solid var(--gris);min-height:0;padding-bottom:4px}
-.ligne-reg input:not([type=color]),.ligne-reg select{width:100%}
+.ligne-reg input:not([type=color]):not([type=checkbox]),.ligne-reg select{width:100%}
+.titre-carte{font-size:17px;margin:0 0 2px}
+.services-reg{display:flex;gap:4px;flex-wrap:wrap}
+.services-reg .choix{min-height:32px;padding:0 6px;font-size:13px;gap:4px}
+.effet-reg{display:flex;flex-direction:column;gap:4px}
 .edition{background:#fffbe8}
 .actions-visibles{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 

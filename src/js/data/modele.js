@@ -3,8 +3,9 @@
 (function (R) {
   'use strict';
 
-  var VERSION = 3; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
+  var VERSION = 4; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
                    // 3 : service petit déjeuner (absences « midi et soir » étendues au petit déjeuner)
+                   // 4 : services concernés par chaque texture / régime / option (regimes[].services)
   var APP = 'recueil-alimentation-mas-la-fontaine';
 
   var JOURS = [
@@ -33,6 +34,9 @@
   var REGIME_SANS_PORC = 'sans_porc';   // salariés « sans porc »
   var REGIME_NETTOYAGE = 'sans_viande'; // ligne « Nettoyage sans viande » (halal : œufs/poisson)
   var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
+  // Services concernés par défaut par une texture / un régime / une option (avant la version 4 : midi et soir).
+  var SERVICES_REGIME_DEFAUT = ['midi', 'soir'];
+  var SERVICES_POTS_GOURMANDS = ['petitdej']; // alternative du petit déjeuner (retour utilisateur 2026-10-20)
 
   function creneau(jour, service) { return jour + '_' + service; }
   function decoupeCreneau(c) {
@@ -131,6 +135,7 @@
     }
     var ancienne = (+entree.version || 1) < 2;
     var sansPetitDej = (+entree.version || 1) < 3;
+    var sansServicesRegimes = (+entree.version || 1) < 4;
     var d = copie(entree);
     d.version = VERSION;
     d.etablissement = d.etablissement || 'MAS La Fontaine';
@@ -143,6 +148,10 @@
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
       n.nature = (g.nature === 'texture' || g.nature === 'option') ? g.nature : 'regime';
       if (n.nature === 'option') n.affecte = g.affecte || '';
+      // Avant la version 4 : tout concernait midi et soir (petit déjeuner sans régimes), sauf les pots gourmands.
+      n.services = sansServicesRegimes
+        ? (n.id === 'pots_gourmands' ? SERVICES_POTS_GOURMANDS : SERVICES_REGIME_DEFAUT).slice()
+        : IDS_SERVICES.filter(function (x) { return tableau(g.services).indexOf(x) >= 0; });
       return n;
     });
     d.residents = tableau(d.residents).map(function (r) {
@@ -217,6 +226,10 @@
       return { nature: gr.nature, nom: gr.nom, regimes: parNature(donnees, gr.nature).filter(function (g) { return !filtre || filtre(g); }) };
     }).filter(function (gr) { return gr.regimes.length; });
   }
+  // La texture / le régime / l'option g compte-t-il pour ce service ? (identifiant inconnu : oui)
+  function concerne(g, serviceId) {
+    return !g || (g.services || SERVICES_REGIME_DEFAUT).indexOf(serviceId) >= 0;
+  }
   function textureDefaut(donnees) {
     var t = parNature(donnees, 'texture');
     var n = t.filter(function (g) { return g.id === TEXTURE_DEFAUT; })[0];
@@ -226,11 +239,12 @@
   R.Modele = {
     VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
     TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
+    SERVICES_REGIME_DEFAUT: SERVICES_REGIME_DEFAUT,
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
     nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer,
-    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut
+    refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne
   };
 })(window.Recueil = window.Recueil || {});

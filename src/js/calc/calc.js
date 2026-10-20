@@ -47,36 +47,52 @@
   }
   function plus(table, cle, n) { if (n) table[cle] = (table[cle] || 0) + n; }
 
-  function aDoublePlat(resident, refs) {
-    return resident.optionIds.some(function (id) { return refs[id] && refs[id].affecte === 'plat'; });
+  // Régimes / options d'un résident qui comptent pour ce service (cases « Services » de la page Régimes).
+  // service absent : tous.
+  function regimesDu(resident, refs, service) {
+    return resident.regimeIds.filter(function (id) { return !service || M.concerne(refs[id], service); });
+  }
+  function optionsDu(resident, refs, service) {
+    return resident.optionIds.filter(function (id) { return !service || M.concerne(refs[id], service); });
+  }
+  // Texture du résident à ce service : la sienne si elle concerne le service, sinon la texture par défaut
+  // si elle le concerne, sinon aucune ('').
+  function textureDu(resident, refs, service, texDef) {
+    if (!service || M.concerne(refs[resident.textureId], service)) return resident.textureId;
+    return texDef && M.concerne(refs[texDef], service) ? texDef : '';
+  }
+
+  // Service « présence seulement » (petit déjeuner) : jamais de double plat.
+  function aDoublePlat(resident, refs, service) {
+    if (service && M.service(service).presenceSeule) return false;
+    return optionsDu(resident, refs, service).some(function (id) { return refs[id] && refs[id].affecte === 'plat'; });
   }
   // Nombre de plats chauds d'un résident : 1, ou 2 avec « double plat ».
-  function poids(resident, refs) { return aDoublePlat(resident, refs) ? 2 : 1; }
+  function poids(resident, refs, service) { return aDoublePlat(resident, refs, service) ? 2 : 1; }
 
-  // seul : service « présence seulement » (petit déjeuner) → on compte la personne, sans double plat ni textures/régimes.
-  function ajouterResident(cpt, resident, refs, seul) {
+  // Seuls la texture, les régimes et les options qui concernent le service sont comptés.
+  function ajouterResident(cpt, resident, refs, service, texDef) {
     cpt.residents += 1;
-    if (seul) return;
-    var w = poids(resident, refs);
+    var w = poids(resident, refs, service);
     if (w === 2) cpt.doublesPlats += 1;
-    plus(cpt.tex, resident.textureId, w);
-    resident.regimeIds.forEach(function (id) { plus(cpt.reg, id, w); });
-    resident.optionIds.forEach(function (id) {
+    var t = textureDu(resident, refs, service, texDef);
+    if (t) plus(cpt.tex, t, w);
+    regimesDu(resident, refs, service).forEach(function (id) { plus(cpt.reg, id, w); });
+    optionsDu(resident, refs, service).forEach(function (id) {
       var a = refs[id] ? refs[id].affecte : '';
       plus(cpt.opt, id, (a === 'plat' || a === 'legumes' || a === 'information') ? 1 : w);
     });
   }
 
   // Convives « salariés » : texture par défaut ; sansPorc compté en régime sans porc ; regimeSup pour le nettoyage sans viande.
-  // textureDefaut vide : service « présence seulement », pas de textures ni régimes.
-  function ajouterConvives(cpt, standard, sansPorc, textureDefaut, regimeSup) {
+  // Chacun seulement s'il concerne le service (petit déjeuner : en général aucun).
+  function ajouterConvives(cpt, standard, sansPorc, refs, service, texDef, regimeSup) {
     standard = standard || 0; sansPorc = sansPorc || 0;
     cpt.salStd += standard;
     cpt.salSansPorc += sansPorc;
-    if (!textureDefaut) return;
-    plus(cpt.tex, textureDefaut, standard + sansPorc);
-    plus(cpt.reg, M.REGIME_SANS_PORC, sansPorc);
-    if (regimeSup) plus(cpt.reg, regimeSup, standard + sansPorc);
+    if (M.concerne(refs[texDef], service)) plus(cpt.tex, texDef, standard + sansPorc);
+    if (M.concerne(refs[M.REGIME_SANS_PORC], service)) plus(cpt.reg, M.REGIME_SANS_PORC, sansPorc);
+    if (regimeSup && M.concerne(refs[regimeSup], service)) plus(cpt.reg, regimeSup, standard + sansPorc);
   }
 
   function finir(cpt) {
@@ -98,8 +114,9 @@
   // ---------- Feuille cuisine : colonnes d'un créneau ----------
   function feuilleJour(donnees, semaine, c) {
     var refs = M.refs(donnees);
-    var seul = !!M.service(M.decoupeCreneau(c).service).presenceSeule;
-    var texDef = seul ? '' : M.textureDefaut(donnees);
+    var sv = M.decoupeCreneau(c).service;
+    var seul = !!M.service(sv).presenceSeule;
+    var texDef = M.textureDefaut(donnees);
     var activites = activitesDuCreneau(semaine, c);
     var colParc = {}, colAct = {};
     var colonnes = [];
@@ -108,7 +125,7 @@
       var col = { id: p.id, type: 'parc', nom: p.nom, couleur: p.couleur, c: compteursVides(), residents: [], partis: [] };
       var sal = ((semaine.salaries || {})[p.id] || {})[c] || {};
       col.salaries = { standard: sal.standard || 0, sansPorc: sal.sansPorc || 0 };
-      ajouterConvives(col.c, col.salaries.standard, col.salaries.sansPorc, texDef);
+      ajouterConvives(col.c, col.salaries.standard, col.salaries.sansPorc, refs, sv, texDef);
       colParc[p.id] = col;
       colonnes.push(col);
     });
@@ -128,7 +145,7 @@
       var col = act ? colAct[act.id] : colParc[r.parcId];
       if (!col) return; // parc inconnu : ignoré (signalé dans la page Résidents)
       if (act && colParc[r.parcId]) colParc[r.parcId].partis.push({ resident: r, activite: act });
-      ajouterResident(col.c, r, refs, seul);
+      ajouterResident(col.c, r, refs, sv, texDef);
       col.residents.push(r);
     });
     colonnes.forEach(function (col) { finir(col.c); });
@@ -138,39 +155,40 @@
 
     var sod = (semaine.sodexo || {})[c] || {};
     var sodexo = { id: 'sodexo', type: 'sodexo', nom: 'Cuisiniers', couleur: '#ffffff', c: compteursVides() };
-    ajouterConvives(sodexo.c, sod.standard, sod.sansPorc, texDef);
+    ajouterConvives(sodexo.c, sod.standard, sod.sansPorc, refs, sv, texDef);
     finir(sodexo.c);
 
     var direction = { id: 'direction', type: 'direction', nom: 'Direction', couleur: '#ffffff', c: compteursVides() };
-    ajouterConvives(direction.c, (semaine.direction || {})[c] || 0, 0, texDef);
+    ajouterConvives(direction.c, (semaine.direction || {})[c] || 0, 0, refs, sv, texDef);
     finir(direction.c);
 
     var nettoyage = { id: 'nettoyage', type: 'autres', nom: 'Nettoyage', couleur: '#ffffff', c: compteursVides() };
-    ajouterConvives(nettoyage.c, (semaine.nettoyage || {})[c] || 0, 0, texDef);
-    ajouterConvives(nettoyage.c, (semaine.nettoyageSansViande || {})[c] || 0, 0, texDef, M.REGIME_NETTOYAGE);
+    ajouterConvives(nettoyage.c, (semaine.nettoyage || {})[c] || 0, 0, refs, sv, texDef);
+    ajouterConvives(nettoyage.c, (semaine.nettoyageSansViande || {})[c] || 0, 0, refs, sv, texDef, M.REGIME_NETTOYAGE);
     finir(nettoyage.c);
 
     // Plats témoins (échantillons à conserver) : nombre donné par le client, texture par défaut, sans régime.
     var temoins = { id: 'temoins', type: 'temoins', nom: 'Plats témoins', couleur: '#ffffff', c: compteursVides() };
     temoins.c.temoins = (semaine.temoins || {})[c] || 0;
-    if (texDef) plus(temoins.c.tex, texDef, temoins.c.temoins);
+    if (M.concerne(refs[texDef], sv)) plus(temoins.c.tex, texDef, temoins.c.temoins);
     finir(temoins.c);
 
     var total = { id: 'total', type: 'total', nom: 'TOTAL À PRODUIRE', couleur: '#111111',
       c: additionner([totalParcs.c, sodexo.c, direction.c, nettoyage.c, temoins.c]) };
 
     return {
-      creneau: c, activites: activites, presenceSeule: seul,
+      creneau: c, service: sv, activites: activites, presenceSeule: seul,
       parcs: colonnes,                 // parcs puis activités
       colonnes: colonnes.concat([totalParcs, sodexo, direction, nettoyage, temoins, total]),
       total: total.c
     };
   }
 
-  // « Sur ces N plats : … » — textures hors défaut, régimes, options d'assiette (sans « affecte »).
-  function ventilation(donnees, cpt) {
+  // « Sur ces N plats : … » — textures hors défaut, régimes, options d'assiette (sans « affecte ») qui concernent le service.
+  function ventilation(donnees, cpt, service) {
     var texDef = M.textureDefaut(donnees);
     return donnees.referentiels.regimes.filter(function (g) {
+      if (service && !M.concerne(g, service)) return false;
       if (g.nature === 'texture') return g.id !== texDef;
       if (g.nature === 'option') return !g.affecte;
       return true;
@@ -184,28 +202,45 @@
   function chariot(donnees, semaine, c, col) {
     var refs = M.refs(donnees);
     var texDef = M.textureDefaut(donnees);
+    var sv = M.decoupeCreneau(c).service;
     var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], legumes: 0 };
     col.residents.forEach(function (r) {
-      var opts = r.optionIds.filter(function (id) { return refs[id]; });
-      var regs = r.regimeIds.filter(function (id) { return refs[id]; });
-      var simple = r.textureId === texDef && opts.length === 0 && !(r.consigne || '').trim();
+      var opts = optionsDu(r, refs, sv).filter(function (id) { return refs[id]; });
+      var regs = regimesDu(r, refs, sv).filter(function (id) { return refs[id]; });
+      var tex = textureDu(r, refs, sv, texDef) || texDef;
+      var simple = tex === texDef && opts.length === 0 && !(r.consigne || '').trim();
       if (simple && regs.length === 0) res.normauxSimples += 1;
       else if (simple && regs.length === 1 && regs[0] === M.REGIME_SANS_PORC) res.sansPorcSeuls += 1;
       else {
         res.etiquettes.push({
           resident: r, nom: M.nomAffiche(r), qui: 'RÉSIDENT',
-          texture: refs[r.textureId] || { id: r.textureId, nom: r.textureId, couleur: '#ffffff' },
+          texture: refs[tex] || { id: tex, nom: tex, couleur: '#ffffff' },
           tags: regs.concat(opts).map(function (id) { return refs[id]; }),
-          consigne: (r.consigne || '').trim(), eq: poids(r, refs)
+          consigne: (r.consigne || '').trim(), eq: poids(r, refs, sv)
         });
       }
-      if (aDoublePlat(r, refs)) res.doubles.push(M.nomAffiche(r));
+      if (aDoublePlat(r, refs, sv)) res.doubles.push(M.nomAffiche(r));
       opts.forEach(function (id) { if (refs[id].affecte === 'legumes') res.legumes += 1; });
     });
     res.salaries = col.salaries || { standard: 0, sansPorc: 0 };
     res.volume = col.c.total;
     res.partis = col.partis || [];
     return res;
+  }
+
+  // Chariot d'un service « présence seulement » : textures hors défaut, régimes et options qui concernent le service,
+  // avec les résidents concernés. Renvoie [{ regime, noms[] }] (vides exclus), ordre du référentiel.
+  function particularites(donnees, c, col) {
+    var refs = M.refs(donnees);
+    var texDef = M.textureDefaut(donnees);
+    var sv = M.decoupeCreneau(c).service;
+    return donnees.referentiels.regimes.filter(function (g) { return g.id !== texDef && M.concerne(g, sv); }).map(function (g) {
+      var noms = col.residents.filter(function (r) {
+        if (g.nature === 'texture') return textureDu(r, refs, sv, texDef) === g.id;
+        return (g.nature === 'option' ? optionsDu(r, refs, sv) : regimesDu(r, refs, sv)).indexOf(g.id) >= 0;
+      }).map(M.nomAffiche);
+      return { regime: g, noms: noms };
+    }).filter(function (x) { return x.noms.length; });
   }
 
   // ---------- Alertes (manager seulement) ----------
@@ -252,8 +287,8 @@
   R.Calc = {
     estAbsentFiche: estAbsentFiche, presence: presence, presenceParDefaut: presenceParDefaut,
     activitesDuCreneau: activitesDuCreneau, activiteDe: activiteDe, residentsActifs: residentsActifs,
-    poids: poids, aDoublePlat: aDoublePlat, compteursVides: compteursVides, additionner: additionner,
-    feuilleJour: feuilleJour, ventilation: ventilation, chariot: chariot,
+    poids: poids, aDoublePlat: aDoublePlat, regimesDu: regimesDu, optionsDu: optionsDu, textureDu: textureDu, compteursVides: compteursVides, additionner: additionner,
+    feuilleJour: feuilleJour, ventilation: ventilation, chariot: chariot, particularites: particularites,
     alertes: alertes, alertesVisibles: alertesVisibles, libelleCreneaux: libelleCreneaux
   };
 })(window.Recueil = window.Recueil || {});

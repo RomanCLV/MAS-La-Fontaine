@@ -13,7 +13,7 @@
   function baseVide() {
     var dem = R.DONNEES_DEMARRAGE;
     return M.migrer({ app: M.APP, version: M.VERSION, etablissement: dem.etablissement,
-      referentiels: { parcs: [], regimes: M.copie(dem.referentiels.regimes) }, residents: [], presetsActivites: [], semaines: [] });
+      referentiels: { parcs: [], regimes: M.migrer(dem).referentiels.regimes }, residents: [], presetsActivites: [], semaines: [] });
   }
   function repartirDeZero() {
     if (App.donnees && !window.confirm('Repartir de zéro ?\n\nLa copie de travail est remplacée par une base vide : aucun parc, aucun résident, ' +

@@ -13,11 +13,12 @@ Compteurs par colonne : `residents`, `doublesPlats`, `salStd`, `salSansPorc`, `t
 - Poids d'un résident = 1 + 1 s'il a l'option « plat » (double plat).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.
 - Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille cuisine), texture par défaut, sans régime, compris dans `total`.
-- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : résident = 1 (pas de double plat) ; salariés, Sodexo, direction, nettoyage, témoins comptés en nombre ; `tex`, `reg`, `opt` vides.
+- Services concernés (`regimes[].services`, `Modele.concerne`) : seuls la texture, les régimes et options qui concernent le service sont comptés (`regimesDu`, `optionsDu`). Texture non concernée → texture par défaut si elle l'est, sinon rien (`textureDu`). Idem pour salariés / Sodexo / direction / nettoyage / témoins (texture par défaut, sans porc, sans viande).
+- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : jamais de double plat ; par défaut rien n'y est coché sauf les pots gourmands. `particularites(donnees, c, col)` : éléments concernés avec les noms (chariot du petit déjeuner).
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 
 ## Ventilation — `ventilation(donnees, compteurs)`
-Liste « sur N plats » : textures hors défaut, régimes, options sans `affecte` (enrichi, panée).
+Liste « sur N plats » : textures hors défaut, régimes, options sans `affecte` (enrichi, panée), qui concernent le service.
 
 ## Chariot — `chariot(donnees, semaine, creneau, colonne)`
 - Collectif : salariés standard ; bac sans porc = salariés sans porc + résidents « sans porc seuls » (texture par défaut, seul régime sans porc, aucune option ni consigne) ; résidents « normaux simples ».

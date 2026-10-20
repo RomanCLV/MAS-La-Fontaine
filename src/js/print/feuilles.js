@@ -47,8 +47,11 @@
         }));
     }
     function groupe(libelle) { return h('div', { class: 'fc-groupe' }, libelle); }
+    // Seulement ce qui concerne le service (cases « Services » de la page Régimes).
     function lignesNature(nature, filtre) {
-      return donnees.referentiels.regimes.filter(function (g) { return g.nature === nature && (!filtre || filtre(g)); });
+      return donnees.referentiels.regimes.filter(function (g) {
+        return g.nature === nature && M.concerne(g, f.service) && (!filtre || filtre(g));
+      });
     }
 
     var lignes = [
@@ -60,25 +63,37 @@
       ligne('Plats témoins', function (x) { return x.temoins; }),
       ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' })
     ];
-    // Petit déjeuner (présence seulement) : ni textures, ni régimes, ni options.
-    if (!f.presenceSeule) {
+    // Groupes vides (rien de coché pour ce service, ex. petit déjeuner) : non affichés.
+    var textures = lignesNature('texture');
+    if (textures.length) {
       lignes.push(groupe('TEXTURES (tous convives)'));
-      lignesNature('texture').forEach(function (g) {
+      textures.forEach(function (g) {
         var defaut = g.id === texDef;
         lignes.push(ligne(defaut ? g.nom : g.nom.toUpperCase(), function (x) { return x.tex[g.id] || 0; },
           defaut ? {} : { classe: 'fc-texture', fond: g.couleur }));
       });
+    }
+    var regimes = lignesNature('regime');
+    if (regimes.length) {
       lignes.push(groupe('RÉGIMES (tous convives)'));
-      lignesNature('regime').forEach(function (g) {
+      regimes.forEach(function (g) {
         lignes.push(ligne(nomCourt(g), function (x) { return x.reg[g.id] || 0; }));
       });
-      var options = lignesNature('option', function (g) { return g.affecte !== 'plat' && g.affecte !== 'information'; });
-      if (options.length) {
-        lignes.push(groupe('OPTIONS'));
-        options.forEach(function (g) {
-          lignes.push(ligne(nomCourt(g) + (g.affecte === 'legumes' ? ' (à part)' : ''), function (x) { return x.opt[g.id] || 0; }));
-        });
-      }
+    }
+    var options = lignesNature('option', function (g) { return g.affecte !== 'plat' && g.affecte !== 'information'; });
+    if (options.length) {
+      lignes.push(groupe('OPTIONS'));
+      options.forEach(function (g) {
+        lignes.push(ligne(nomCourt(g) + (g.affecte === 'legumes' ? ' (à part)' : ''), function (x) { return x.opt[g.id] || 0; }));
+      });
+    }
+    // Options « information » (ex. pots gourmands) : quantité par zone, hors production.
+    var infos = lignesNature('option', function (g) { return g.affecte === 'information'; });
+    if (infos.length) {
+      lignes.push(groupe('INFORMATIONS (hors production)'));
+      infos.forEach(function (g) {
+        lignes.push(ligne(nomCourt(g), function (x) { return x.opt[g.id] || 0; }));
+      });
     }
 
     var sousTitre = [donnees.etablissement, 'Semaine ' + M.numeroSemaine(semaine.debut).numero];
@@ -104,7 +119,7 @@
           col.type === 'activite' ? col.nom.toUpperCase() + ' (activité)' : col.nom);
       }));
 
-    var regle = f.presenceSeule ? 'Petit déjeuner : présences seulement (pas de textures ni régimes). Total parc = résidents + salariés.'
+    var regle = f.presenceSeule ? 'Petit déjeuner : présences, et seulement les régimes / options cochés pour ce service. Total parc = résidents + salariés.'
       : 'Total parc = résidents + doubles plats + salariés.';
     var pied = f.activites.length
       ? 'Colonne ' + f.activites.map(function (a) { return a.nom; }).join(', ') +
@@ -121,7 +136,7 @@
           h('div', { class: 'fc-grand-val' }, total, ' ', h('span', null, unite(f))))),
       f.presenceSeule ? null : h('div', { class: 'fc-ventil' },
         h('span', { class: 'fc-ventil-lab' }, 'Sur ces ' + total + ' plats :'),
-        C.ventilation(donnees, f.total).map(function (v) {
+        C.ventilation(donnees, f.total, f.service).map(function (v) {
           return h('span', { class: 'fc-chip', style: 'background:' + v.couleur + ';color:' + O.texteSur(v.couleur) },
             v.nature === 'texture' ? v.nom.toUpperCase() : nomCourt(v), ' ', h('b', null, v.valeur));
         })),
@@ -176,12 +191,14 @@
       h('div', { class: 'ch-bac-desc' }, desc));
   }
 
-  // Chariot d'un service « présence seulement » (petit déjeuner) : des nombres, pas d'étiquettes.
+  // Chariot d'un service « présence seulement » (petit déjeuner) : des nombres, pas d'étiquettes ;
+  // à droite, les régimes / options cochés pour ce service, avec les noms (ex. pots gourmands).
   function chariotSimple(donnees, semaine, c, col) {
     var cpt = col.c;
     var sal = cpt.salStd + cpt.salSansPorc;
     var detail = [O.pluriel(cpt.residents, 'résident')];
     if (sal) detail.push(O.pluriel(sal, 'salarié'));
+    var parts = C.particularites(donnees, c, col);
     return [h('div', { class: 'feuille feuille-chariot' },
       enteteChariot(semaine, c, col, infoChariot(donnees, col), 'PETITS DÉJ.', cpt.total, detail.join(' + ')),
       h('div', { class: 'ch-corps' },
@@ -189,9 +206,14 @@
           h('div', { class: 'ch-bandeau' }, 'PETIT DÉJEUNER · à charger'),
           h('div', { class: 'ch-bacs' },
             bac('Résidents', cpt.residents, cpt.residents ? 'Présents à ce service' : 'Aucun cette fois'),
-            col.type === 'activite' ? null : bac('Salariés', sal, sal ? 'Salariés du parc' : 'Aucun cette fois')))),
+            col.type === 'activite' ? null : bac('Salariés', sal, sal ? 'Salariés du parc' : 'Aucun cette fois'))),
+        parts.length ? h('div', { class: 'ch-collectif ch-parts' },
+          h('div', { class: 'ch-bandeau' }, 'PARTICULARITÉS · ce service'),
+          h('div', { class: 'ch-bacs' }, parts.map(function (x) {
+            return bac(nomCourt(x.regime), x.noms.length, x.noms.join(', '));
+          }))) : null),
       h('div', { class: 'ch-pied' },
-        h('span', null, 'Petit déjeuner : présences seulement (pas de textures ni régimes).'),
+        h('span', null, 'Petit déjeuner : présences, et seulement les régimes / options cochés pour ce service.'),
         h('span', null, libelleCourt(c))))];
   }
 

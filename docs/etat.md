@@ -37,6 +37,10 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Service **Petit déjeuner** (présences seulement) : grille, absences par service, feuilles cuisine/chariot simplifiées ; fichiers version 3. Filtre « Services affichés » sur la page Semaine. 78 tests verts ; vérifié dans le navigateur intégré.
 - « Feuille chef » renommée « feuille cuisine » (docs, appli, titre imprimé).
 
+## Retours V1 (8e lot, 2026-10-20)
+- **Services concernés** par chaque texture / régime / option (cases sur la page Régimes) ; pots gourmands = petit déjeuner seulement (quantité par zone sur la feuille cuisine, noms sur le chariot). Fichiers version 4.
+- Page Régimes en trois tableaux : Textures, Régimes, Options. 91 tests verts ; vérifié dans le navigateur intégré.
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.
@@ -47,7 +51,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Équipe Sodexo : saisie **standard + sans porc** (comme les salariés de parc). Correct ?
 - Chariots imprimés pour les **parcs et activités** seulement (pas Sodexo / Direction / Nettoyage). Correct ?
 - Étiquette « Salarié » de la maquette : non produite (les salariés ne sont saisis qu'en nombres standard / sans porc). Faut-il des salariés avec régime individuel ?
-- Questions plus anciennes toujours ouvertes : zone du nettoyage (« Autres »), pots gourmands (pastille sur l'étiquette seulement), étiquettes par repas ou par résident.
+- Questions plus anciennes toujours ouvertes : zone du nettoyage (« Autres »), étiquettes par repas ou par résident.
 
 ## Prochaines actions
 1. Utilisateur : tests ci-dessus + réponses aux questions → corrections.

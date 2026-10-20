@@ -72,3 +72,10 @@
 - Absences : une case par service. Fichiers d'avant (version ≤ 2) : une absence « midi et soir » couvre aussi le petit déjeuner. Format de fichier version 3.
 - Page Semaine : filtre « Services affichés » = simple affichage (les données restent), au moins un service, mémorisé dans le navigateur.
 - « Feuille chef » renommée **« feuille cuisine »** partout (docs, appli, titre imprimé). Raison : demande utilisateur.
+
+## 2026-10-20 — Services concernés par les régimes et page Régimes
+- Chaque texture / régime / option a des **services concernés** (cases P.-déj. / Midi / Soir, cochables directement sur la page Régimes). Un élément décoché n'est ni compté ni affiché pour ce service (feuille cuisine, chariot, pastilles). Format de fichier version 4. Raison : demande utilisateur.
+- Fichiers d'avant (version ≤ 3) : tout concerne midi et soir (comportement d'avant), sauf **pots gourmands → petit déjeuner seulement** (alternative du petit déjeuner).
+- Texture décochée pour un service : le résident est compté dans la texture par défaut (si elle concerne le service), pour garder Normal + Haché + Mixé = total. Petit déjeuner : jamais de double plat.
+- Options « information » (pots gourmands) : nouveau groupe « INFORMATIONS (hors production) » de la feuille cuisine = quantité par zone, sur les services cochés (réponse 4 : « quantité sur telle zone »). Chariot du petit déjeuner : encadré « Particularités » avec les noms.
+- Page Régimes en **trois tableaux** (Textures, Régimes, Options), chacun avec son bouton d'ajout ; flèches ↑↓ au sein du tableau. Raison : demande utilisateur.
