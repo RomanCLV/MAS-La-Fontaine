@@ -65,7 +65,7 @@
     });
   }
 
-  // Convives « salariés » : texture par défaut ; sansPorc compté en régime sans porc ; regimeSup pour le nettoyage.
+  // Convives « salariés » : texture par défaut ; sansPorc compté en régime sans porc ; regimeSup pour le nettoyage sans viande.
   function ajouterConvives(cpt, standard, sansPorc, textureDefaut, regimeSup) {
     standard = standard || 0; sansPorc = sansPorc || 0;
     cpt.salStd += standard;
@@ -141,7 +141,8 @@
     finir(direction.c);
 
     var nettoyage = { id: 'nettoyage', type: 'autres', nom: 'Nettoyage', couleur: '#ffffff', c: compteursVides() };
-    ajouterConvives(nettoyage.c, (semaine.nettoyage || {})[c] || 0, 0, texDef, M.REGIME_NETTOYAGE);
+    ajouterConvives(nettoyage.c, (semaine.nettoyage || {})[c] || 0, 0, texDef);
+    ajouterConvives(nettoyage.c, (semaine.nettoyageSansViande || {})[c] || 0, 0, texDef, M.REGIME_NETTOYAGE);
     finir(nettoyage.c);
 
     var total = { id: 'total', type: 'total', nom: 'TOTAL À PRODUIRE', couleur: '#111111',

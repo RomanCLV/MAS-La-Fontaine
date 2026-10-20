@@ -31,10 +31,10 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
 - L'interface ne calcule rien elle-même : elle appelle `Calc`.
 - Alertes : calculées par `Calc.alertes`, affichées uniquement en mode manager, **jamais** dans `Feuilles`.
 
-## Schéma JSON (version 1, repris de `src/data/recueil_base_s42.json`)
+## Schéma JSON (version 2 ; version 1 = `src/data/recueil_base_s42.json`, migrée à l'import)
 ```
 {
-  app: "recueil-alimentation-mas-la-fontaine", version: 1, exporteLe: "AAAA-MM-JJ",
+  app: "recueil-alimentation-mas-la-fontaine", version: 2,   // v1 : nettoyage = tout sans viande (migré) exporteLe: "AAAA-MM-JJ",
   etablissement: "MAS La Fontaine",                       // ajouté par la migration si absent
   referentiels: {
     parcs:   [{ id, nom, couleur, ordre }],
@@ -50,7 +50,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
     activites:  [{ id, nom, jour, service, participantIds[], presetId|null, couleur }],  // couleur : défaut M.COULEUR_ACTIVITE (bleu #2d6cb5)
     salaries:   { <parcId>: { <créneau>: { standard, sansPorc } } },
     sodexo:     { <créneau>: { standard, sansPorc } },
-    direction:  { <créneau>: n },  nettoyage: { <créneau>: n },
+    direction:  { <créneau>: n },  nettoyage: { <créneau>: n },  nettoyageSansViande: { <créneau>: n },
     alertesTraitees: [{ cle, statut: "voulu"|"ignore" }]
   }]
 }

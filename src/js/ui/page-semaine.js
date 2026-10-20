@@ -194,14 +194,15 @@
       };
     }
     var a = salarie('standard'), b = salarie('sansPorc'), so = sodexo('standard'), sp = sodexo('sansPorc');
-    var di = simple('direction'), ne = simple('nettoyage');
+    var di = simple('direction'), ne = simple('nettoyage'), nv = simple('nettoyageSansViande');
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),
       ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire),
       ligneNombres('Salariés SODEXO standard', 'tous parcs', '#e4edf7', so.lire, so.ecrire, true),
       ligneNombres('Salariés SODEXO sans porc', 'tous parcs', '#e4edf7', sp.lire, sp.ecrire),
       ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
-      ligneNombres('Nettoyage', 'tous parcs · sans viande', '#e4edf7', ne.lire, ne.ecrire)
+      ligneNombres('Nettoyage', 'tous parcs', '#e4edf7', ne.lire, ne.ecrire),
+      ligneNombres('Nettoyage sans viande', 'tous parcs', '#e4edf7', nv.lire, nv.ecrire)
     ];
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },

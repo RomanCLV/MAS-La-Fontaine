@@ -16,7 +16,7 @@
     if (g.nature === 'regime') {
       var t = 'Compté sur tous les convives';
       if (g.id === M.REGIME_SANS_PORC) t += ' ; inclut les salariés « sans porc »';
-      if (g.id === M.REGIME_NETTOYAGE) t += ' ; inclut l’équipe nettoyage';
+      if (g.id === M.REGIME_NETTOYAGE) t += ' ; inclut la ligne « Nettoyage sans viande »';
       return t;
     }
     return (EFFETS.filter(function (e) { return e.v === (g.affecte || ''); })[0] || EFFETS[0]).nom;

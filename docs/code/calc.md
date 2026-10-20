@@ -12,7 +12,7 @@ Colonnes : chaque parc (résidents actifs présents **hors** participants d'acti
 Compteurs par colonne : `residents`, `doublesPlats`, `salStd`, `salSansPorc`, `total` (= somme des 4), `tex{}`, `reg{}`, `opt{}`.
 - Poids d'un résident = 1 + 1 s'il a l'option « plat » (double plat).
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat », « legumes » et « information » += 1 (nombre de personnes) ; autres (enrichi, panée) += poids.
-- Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = standard + `reg.sans_viande`.
+- Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne.
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 
 ## Ventilation — `ventilation(donnees, compteurs)`

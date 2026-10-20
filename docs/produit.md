@@ -34,7 +34,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - **Salariés par parc** : standard / sans porc, par jour et service. Total parc = résidents (doubles plats inclus, ex. 8 résidents → volume 10) + salariés.
 - **Équipe Sodexo (cuisiniers)** : équipe globale en plus des parcs, hors parcs, par jour et service.
 - **Direction client** (2-3, lundi-vendredi, midi uniquement) : indépendante des parcs, ajout au total.
-- **Nettoyage** (5, sans viande) : hors parcs (zone à confirmer).
+- **Nettoyage** : deux lignes, standard et sans viande (halal) ; hors parcs (zone à confirmer).
 - Ces lignes (Direction, Salariés Sodexo, Nettoyage) sont aussi saisies dans l'écran de saisie client, pour savoir qui est là chaque jour.
 
 ### 4. Activités (ex-« Sport »)

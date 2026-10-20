@@ -3,7 +3,7 @@
 (function (R) {
   'use strict';
 
-  var VERSION = 1;
+  var VERSION = 2; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
   var APP = 'recueil-alimentation-mas-la-fontaine';
 
   var JOURS = [
@@ -27,7 +27,7 @@
   // Identifiants du référentiel utilisés par les calculs.
   var TEXTURE_DEFAUT = 'normal';
   var REGIME_SANS_PORC = 'sans_porc';   // salariés « sans porc »
-  var REGIME_NETTOYAGE = 'sans_viande'; // équipe nettoyage (halal : œufs/poisson)
+  var REGIME_NETTOYAGE = 'sans_viande'; // ligne « Nettoyage sans viande » (halal : œufs/poisson)
   var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
 
   function creneau(jour, service) { return jour + '_' + service; }
@@ -84,7 +84,7 @@
     var lundi = lundiDe(debut);
     return {
       id: idSemaine(lundi), debut: lundi, presences: {}, activites: [],
-      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, alertesTraitees: []
+      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, alertesTraitees: []
     };
   }
 
@@ -96,6 +96,7 @@
     s.sodexo = copie(semaine.sodexo || {});
     s.direction = copie(semaine.direction || {});
     s.nettoyage = copie(semaine.nettoyage || {});
+    s.nettoyageSansViande = copie(semaine.nettoyageSansViande || {});
     return s;
   }
 
@@ -123,6 +124,7 @@
     if (+entree.version > VERSION) {
       throw new Error('Ce fichier vient d\'une version plus récente de l\'application (version ' + entree.version + ').');
     }
+    var ancienne = (+entree.version || 1) < 2;
     var d = copie(entree);
     d.version = VERSION;
     d.etablissement = d.etablissement || 'MAS La Fontaine';
@@ -159,7 +161,7 @@
           return { id: a.id || nouvelId('a'), nom: a.nom || 'Activité', jour: a.jour || 'lun', service: a.service || 'midi',
             participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
-        salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {},
+        salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {},
         alertesTraitees: tableau(s.alertesTraitees)
       };
       // Sodexo : ancien format possible = un nombre par créneau.
@@ -168,7 +170,10 @@
         n.sodexo[c] = typeof v === 'object' && v ? { standard: nombre(v.standard), sansPorc: nombre(v.sansPorc) } : { standard: nombre(v), sansPorc: 0 };
       });
       Object.keys(objet(s.direction)).forEach(function (c) { n.direction[c] = nombre(s.direction[c]); });
-      Object.keys(objet(s.nettoyage)).forEach(function (c) { n.nettoyage[c] = nombre(s.nettoyage[c]); });
+      // Version 1 : tout le nettoyage était « sans viande » → passe dans nettoyageSansViande.
+      var nettoyageSV = ancienne ? s.nettoyage : s.nettoyageSansViande;
+      if (!ancienne) Object.keys(objet(s.nettoyage)).forEach(function (c) { n.nettoyage[c] = nombre(s.nettoyage[c]); });
+      Object.keys(objet(nettoyageSV)).forEach(function (c) { n.nettoyageSansViande[c] = nombre(nettoyageSV[c]); });
       return n;
     });
     d.semaines.sort(function (a, b) { return a.debut < b.debut ? -1 : 1; });

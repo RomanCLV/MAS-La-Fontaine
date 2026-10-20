@@ -133,6 +133,10 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_midi');
     egal(col(f, 'nettoyage').c.reg.sans_viande, 5, 'Nettoyage = 5 sans viande');
     egal(col(f, 'nettoyage').c.salStd, 5, 'Nettoyage en ligne salariés standard');
+    var d2 = M.migrer({ app: M.APP, version: 2, referentiels: d.referentiels,
+      semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] });
+    var n2 = col(C.feuilleJour(d2, d2.semaines[0], 'lun_midi'), 'nettoyage').c;
+    egal([n2.total, n2.reg.sans_viande, n2.tex.normal], [5, 3, 5], 'Nettoyage 2 standard + 3 sans viande = 5, dont 3 sans viande');
     egal(col(f, 'direction').c.tex.normal, 3, 'Direction en texture normale');
     egal(col(f, 'totalParcs').c.reg.sans_viande, undefined, 'Nettoyage hors total parcs');
     egal(f.total.reg.sans_porc, 1 + 1 + 1, 'Sans porc = résident C + salarié parc + Sodexo');
@@ -177,6 +181,11 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(m.semaines[0].debut, '2026-10-12', 'Début ramené au lundi');
     egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo nombre → {standard, sansPorc}');
     egal(Array.isArray(m.residents) && Array.isArray(m.presetsActivites), true, 'Tableaux manquants créés');
+    var v1 = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 5 } }] }).semaines[0];
+    egal([v1.nettoyage, v1.nettoyageSansViande], [{}, { lun_midi: 5 }], 'Version 1 : nettoyage → nettoyage sans viande');
+    var v2 = M.migrer({ app: M.APP, version: 2, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] }).semaines[0];
+    egal([v2.nettoyage, v2.nettoyageSansViande], [{ lun_midi: 2 }, { lun_midi: 3 }], 'Version 2 : nettoyage et sans viande conservés');
+    egal(M.semaineSuivante(v2).nettoyageSansViande, { lun_midi: 3 }, 'Semaine suivante : reprend le nettoyage sans viande');
     var refus = 0;
     try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
     try { M.migrer({ app: M.APP, version: 99 }); } catch (e) { refus++; }

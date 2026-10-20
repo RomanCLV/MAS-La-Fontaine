@@ -28,6 +28,9 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Page **Options** (menu Pages) : zone « Données en cache » + bouton « Vider le cache local » (retour à l’accueil).
 - Accueil : bouton « Charger les données de démarrage » retiré (reste dans Importer).
 
+## Retours V1 (6e lot, 2026-10-20)
+- Semaine : Nettoyage séparé en « Nettoyage » (standard) et « Nettoyage sans viande » ; fichiers version 2 (anciens fichiers migrés).
+
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.

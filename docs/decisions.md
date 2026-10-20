@@ -61,3 +61,6 @@
 - Fichiers de données de l'appli dans `src/data/` (JSON de démarrage déplacé depuis `data/`) ; le code n'accède plus à `../data`. Raison : demande utilisateur, `src/` autonome.
 - Saisie des présences par « presser-glisser-relâcher » : la valeur inverse de la première case est appliquée au rectangle survolé. Raison : demande utilisateur (saisie plus rapide).
 - `src/data/` ignoré par git (données résidents réelles) ; le JSON de démarrage n'y est plus versionné, seule sa copie fictive `src/js/data/demarrage.js` l'est. Raison : demande utilisateur, données personnelles/santé.
+
+## 2026-10-20 — Nettoyage et plats témoins
+- Nettoyage en deux lignes : « Nettoyage » (standard) et « Nettoyage sans viande ». Anciens fichiers (version 1) : leur nettoyage passe en sans viande (c'était la règle). Format de fichier version 2. Raison : demande utilisateur.
