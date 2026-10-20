@@ -4,7 +4,7 @@
   var M = R.Modele, h = R.h, O = R.Outils, App = R.App;
   var TABLES = [
     { nature: 'texture', titre: 'Textures', ajout: '+ Ajouter une texture' },
-    { nature: 'regime', titre: 'Régimes', ajout: '+ Ajouter un régime' },
+    { nature: 'regime', titre: 'Régimes & Allergies', ajout: '+ Ajouter un régime' },
     { nature: 'option', titre: 'Options', ajout: '+ Ajouter une option' }
   ];
   var NATURES = [{ v: 'regime', nom: 'Régime' }, { v: 'option', nom: 'Option' }]; // passage régime ↔ option
@@ -173,7 +173,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('div', { class: 'titre-ligne' }, h('h1', null, 'Régimes, textures et options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Régimes, allergies, textures et options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
           h('div', { class: 'petit' }, 'Services concernés : décochés, l’élément n’apparaît pas sur les feuilles de ce service ' +
             '(ex. pots gourmands : petit déjeuner seulement).')),
         TABLES.map(table));
