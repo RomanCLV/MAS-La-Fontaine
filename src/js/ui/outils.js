@@ -63,6 +63,12 @@
     return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
   function pluriel(n, mot, motPluriel) { return n + ' ' + (n > 1 ? (motPluriel || mot + 's') : mot); }
+  // « 2 semaines (S42, S43) · 30 résidents actifs · 5 parcs »
+  function resumeDonnees(d) {
+    var s = d.semaines.map(function (x) { return 'S' + M.numeroSemaine(x.debut).numero; }).join(', ');
+    return pluriel(d.semaines.length, 'semaine') + ' (' + s + ') · ' + pluriel(d.residents.filter(function (r) { return !r.archive; }).length, 'résident actif', 'résidents actifs') +
+      ' · ' + pluriel(d.referentiels.parcs.length, 'parc');
+  }
 
   // Colonnes des tableaux résidents (textures, régimes, options) : groupes = Modele.groupesRegimes.
   // colonnes : liste à plat ; debut(g) : vrai pour la 1re colonne d'un groupe (trait de séparation) ;
@@ -84,6 +90,6 @@
   R.h = h;
   R.Outils = {
     iconeCrayon: iconeCrayon, texteSur: texteSur, dateLongue: dateLongue, dateCourte: dateCourte,
-    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, MOIS: MOIS, colonnesGroupees: colonnesGroupees
+    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, resumeDonnees: resumeDonnees, MOIS: MOIS, colonnesGroupees: colonnesGroupees
   };
 })(window.Recueil = window.Recueil || {});

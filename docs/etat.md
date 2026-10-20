@@ -2,7 +2,7 @@
 
 **Phase courante** : 5 Code — **V1 écrite, à tester par l'utilisateur** (2026-10-19).
 Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techniques dans `technique.md`).
-**Dernière MAJ** : 2026-10-19
+**Dernière MAJ** : 2026-10-20
 
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
@@ -23,6 +23,9 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (4e lot, 2026-10-19)
 - Colonnes groupées Textures / Régimes / Options (grille Semaine, Tableau résidents). Boutons Importer / Exporter dans la barre du haut. « Repartir de zéro » (base vide).
+
+## Retours V1 (5e lot, 2026-10-20)
+- Page **Options** (menu Pages) : zone « Données en cache » + bouton « Vider le cache local » (retour à l’accueil).
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : charger les données de démarrage, saisir, fermer, rouvrir → données et onglets restaurés.

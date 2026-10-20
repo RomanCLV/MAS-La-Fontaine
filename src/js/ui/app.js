@@ -12,7 +12,8 @@
     { type: 'regimes', nom: 'Régimes' },
     { type: 'import', nom: 'Fichier : importer' },
     { type: 'export', nom: 'Fichier : exporter' },
-    { type: 'imprimer', nom: 'Imprimer' }
+    { type: 'imprimer', nom: 'Imprimer' },
+    { type: 'options', nom: 'Options' }
   ];
   var MAX_FERMES = 8;
 
@@ -33,17 +34,7 @@
   App.demarrer = function () {
     App.donnees = S.chargerCopie();
     App.meta = S.meta();
-    var ui = S.lireUi();
-    App.ui = {
-      onglets: Array.isArray(ui.onglets) ? ui.onglets : [],
-      actif: ui.actif || '',
-      fermes: Array.isArray(ui.fermes) ? ui.fermes : [],
-      manager: !!ui.manager,
-      semaine: ui.semaine || '',
-      parcActif: ui.parcActif || '',
-      residentsVue: ui.residentsVue || 'liste',
-      impression: ui.impression || null
-    };
+    App.ui = etatUi(S.lireUi());
     if (App.donnees) App.nettoyerOnglets();
     document.addEventListener('click', function (e) {
       if (App.menuOuvert && !e.target.closest('.menu-pages, .btn-pages')) { App.menuOuvert = false; App.rendre(); }
@@ -57,6 +48,19 @@
     });
     App.rendre();
   };
+
+  function etatUi(ui) {
+    return {
+      onglets: Array.isArray(ui.onglets) ? ui.onglets : [],
+      actif: ui.actif || '',
+      fermes: Array.isArray(ui.fermes) ? ui.fermes : [],
+      manager: !!ui.manager,
+      semaine: ui.semaine || '',
+      parcActif: ui.parcActif || '',
+      residentsVue: ui.residentsVue || 'liste',
+      impression: ui.impression || null
+    };
+  }
 
   // Retire les onglets dont l'objet n'existe plus ; garantit un onglet ouvert.
   App.nettoyerOnglets = function () {
@@ -185,6 +189,21 @@
     App.ui.actif = 'semaine:' + derniere.id;
     App.sauverUi();
     App.rendre(true);
+  };
+
+  // Efface tout ce que l'application garde dans ce navigateur, puis retour à l'écran d'accueil.
+  // Renvoie false si le navigateur a refusé.
+  App.viderCache = function () {
+    if (!S.vider()) return false;
+    App.donnees = null;
+    App.meta = {};
+    App.brouillons = {};
+    App.etat = {};
+    App.menuOuvert = false;
+    App.erreurSauvegarde = false;
+    App.ui = etatUi({});
+    App.rendre(true);
+    return true;
   };
 
   App.marquerExporte = function () {

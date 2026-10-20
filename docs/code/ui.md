@@ -10,6 +10,7 @@
 | `page-activites.js` | Activités de la semaine (nom, couleur, jour, service, participants), presets (charger, mettre à jour, enregistrer ; gardent la couleur). La couleur entoure les cases de la grille Semaine (variable CSS `--act`), la puce et la légende. Un résident = une activité par service : changer de jour/service ou charger un preset retire (avec message) les participants déjà pris ailleurs ; un doublon restant (en rouge) bloque l’enregistrement |
 | `page-fichier.js` | Accueil, page Importer, page Exporter (choix de la semaine envoyée → nom du fichier) |
 | `page-imprimer.js` | Choix semaine/jours/services/type, aperçu, impression |
+| `page-options.js` | Options › « Données en cache » : contenu, origine, dates, place occupée ; « Vider le cache local » (confirmation, avertit si non exporté) → `App.viderCache()` efface `recueil.donnees/meta/ui` et revient à l’accueil |
 
 ## Principes
 - Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.

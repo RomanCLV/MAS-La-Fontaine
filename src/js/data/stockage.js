@@ -33,6 +33,22 @@
   function lireUi() { return lire(CLE_UI) || {}; }
   function sauverUi(ui) { ecrire(CLE_UI, ui); }
 
+  // Cache local = tout ce que l'application garde dans ce navigateur (copie de travail, infos, affichage).
+  // Taille approximative en caractères (≈ octets) ; vider() efface tout.
+  function tailleCache() {
+    var n = 0;
+    [CLE_DONNEES, CLE_META, CLE_UI].forEach(function (cle) {
+      try { n += (window.localStorage.getItem(cle) || '').length; } catch (e) { /* stockage bloqué */ }
+    });
+    return n;
+  }
+  function vider() {
+    try {
+      [CLE_DONNEES, CLE_META, CLE_UI].forEach(function (cle) { window.localStorage.removeItem(cle); });
+      return true;
+    } catch (e) { return false; }
+  }
+
   function lireFichier(file) {
     return new Promise(function (ok, ko) {
       var lecteur = new FileReader();
@@ -90,7 +106,7 @@
   function enregistrerLie(donnees) { return ecrireFichierLie(donnees); }
 
   R.Stockage = {
-    chargerCopie: chargerCopie, sauverCopie: sauverCopie, meta: meta, lireUi: lireUi, sauverUi: sauverUi,
+    chargerCopie: chargerCopie, sauverCopie: sauverCopie, meta: meta, lireUi: lireUi, sauverUi: sauverUi, tailleCache: tailleCache, vider: vider,
     lireFichier: lireFichier, texteExport: texteExport, nomExport: nomExport, telecharger: telecharger,
     fichierLieDisponible: fichierLieDisponible, nomFichierLie: nomFichierLie,
     enregistrerSous: enregistrerSous, enregistrerLie: enregistrerLie

@@ -22,12 +22,6 @@
     App.remplacerDonnees(baseVide(), 'base vide');
   }
 
-  function resume(d) {
-    var s = d.semaines.map(function (x) { return 'S' + M.numeroSemaine(x.debut).numero; }).join(', ');
-    return O.pluriel(d.semaines.length, 'semaine') + ' (' + s + ') · ' + O.pluriel(d.residents.filter(function (r) { return !r.archive; }).length, 'résident actif', 'résidents actifs') +
-      ' · ' + O.pluriel(d.referentiels.parcs.length, 'parc');
-  }
-
   // Bouton « Ouvrir un fichier… » (input file caché derrière un vrai bouton).
   function boutonFichier(texte, principal, surFichier) {
     var input = h('input', { type: 'file', accept: '.json,application/json', class: 'cache', 'aria-hidden': 'true', tabindex: '-1',
@@ -79,7 +73,7 @@
             e.lecture ? h('div', { class: 'petit' }, 'Lecture de ' + e.nom + '…') : null,
             e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
             e.donnees ? h('div', { class: 'encadre' },
-              h('div', { class: 'gras' }, e.nom), h('div', null, resume(e.donnees)),
+              h('div', { class: 'gras' }, e.nom), h('div', null, O.resumeDonnees(e.donnees)),
               h('div', { class: 'rangee' },
                 h('button', { class: 'btn btn-principal', onclick: function () { var d = e.donnees, n = e.nom; App.etat.import = null; App.remplacerDonnees(d, n); } },
                   'Remplacer la copie de travail'),
@@ -87,7 +81,7 @@
             m.nonExporte ? h('div', { class: 'message message-attention' }, 'Attention : la copie actuelle a des modifications non exportées. Exportez-la d’abord si vous voulez les garder.') : null),
           h('div', { class: 'carte carte-etape' },
             h('span', { class: 'etape' }, '2 · Copie de travail actuelle'),
-            h('div', null, resume(App.donnees)),
+            h('div', null, O.resumeDonnees(App.donnees)),
             h('div', { class: 'petit' }, 'Origine : ' + (m.fichier || 'inconnue') + (m.importeLe ? ' · importée le ' + O.dateCourte(new Date(m.importeLe).toISOString().slice(0, 10)) : '')),
             h('div', { class: 'petit' }, 'Enregistrée dans ce navigateur' + (m.sauveLe ? ' à ' + O.heure(m.sauveLe) : '') + '. Exportez régulièrement.'),
             h('div', { class: 'rangee' },
