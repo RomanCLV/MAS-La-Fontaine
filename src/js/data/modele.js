@@ -269,10 +269,29 @@
       return nouveau;
     });
   }
-  // Base vide + parcs MAS La Fontaine.
+  // Presets d'activité du preset MAS La Fontaine (sans participants : ils dépendent des résidents).
+  var PRESETS_ACTIVITES_MAS_LA_FONTAINE = [
+    { nom: 'Sport', jours: ['jeu'], services: ['midi'], couleur: COULEUR_ACTIVITE }
+  ];
+  // Presets d'activité du preset absents de donnees (comparaison par nom).
+  function presetsActivitesManquants(donnees) {
+    return PRESETS_ACTIVITES_MAS_LA_FONTAINE.filter(function (p) {
+      return !donnees.presetsActivites.some(function (x) { return memeNom(x.nom, p.nom); });
+    });
+  }
+  // Ajoute les presets d'activité manquants (existants inchangés) ; renvoie les presets ajoutés.
+  function ajouterPresetsActivites(donnees) {
+    return presetsActivitesManquants(donnees).map(function (p) {
+      var nouveau = { id: nouvelId('preset'), nom: p.nom, jours: p.jours.slice(), services: p.services.slice(), participantIds: [], couleur: p.couleur };
+      donnees.presetsActivites.push(nouveau);
+      return nouveau;
+    });
+  }
+  // Base vide + parcs et presets d'activité MAS La Fontaine.
   function baseMasLaFontaine() {
     var d = baseVide();
     ajouterParcsPreset(d);
+    ajouterPresetsActivites(d);
     return d;
   }
 
@@ -329,7 +348,9 @@
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
     nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer, baseVide: baseVide,
-    PARCS_MAS_LA_FONTAINE: PARCS_MAS_LA_FONTAINE, parcsPresetManquants: parcsPresetManquants, ajouterParcsPreset: ajouterParcsPreset, baseMasLaFontaine: baseMasLaFontaine,
+    PARCS_MAS_LA_FONTAINE: PARCS_MAS_LA_FONTAINE, parcsPresetManquants: parcsPresetManquants, ajouterParcsPreset: ajouterParcsPreset,
+    PRESETS_ACTIVITES_MAS_LA_FONTAINE: PRESETS_ACTIVITES_MAS_LA_FONTAINE, presetsActivitesManquants: presetsActivitesManquants,
+    ajouterPresetsActivites: ajouterPresetsActivites, baseMasLaFontaine: baseMasLaFontaine,
     refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne,
     aRegime: aRegime, colonneAffichee: colonneAffichee
   };

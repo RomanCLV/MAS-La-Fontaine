@@ -47,7 +47,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Question : masquer sur la feuille cuisine les régimes / options à 0 pour le service ?
 - Commit f3b8710. Puis : case **« Toujours affiché »** par texture / régime / option (page Régimes, info-bulle) ; grille Semaine = colonnes toujours affichées + celles présentes chez un résident du parc. Défaut : les 14 éléments d'avant cochés, les 12 nouveaux non ; fichiers existants : tout coché. 96 tests verts ; vérifié dans le navigateur intégré. Commit 3d115f1.
 - « Mixé lisse » retiré de la liste par défaut (Mixé veut déjà dire lisse).
-- Preset **MAS La Fontaine** : 7 parcs ajoutés depuis l'accueil (« Commencer avec MAS La Fontaine ») ou la page Parcs (manquants seulement). 103 tests verts ; vérifié dans le navigateur intégré.
+- Preset **MAS La Fontaine** : 7 parcs ajoutés depuis l'accueil (« Commencer avec MAS La Fontaine ») ou la page Parcs (manquants seulement). Commit e9d022f. Puis preset d'activité **Sport jeudi midi** (accueil MAS + bouton page Activités). 108 tests verts ; vérifié dans le navigateur intégré.
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.

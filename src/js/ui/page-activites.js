@@ -138,7 +138,13 @@
               if (!window.confirm('Supprimer le preset « ' + p.nom + ' » ? Les activités déjà créées ne changent pas.')) return;
               App.modifier(function () { d.presetsActivites = d.presetsActivites.filter(function (x) { return x.id !== p.id; }); });
             } }, '×'));
-        }));
+        }),
+        // Preset MAS La Fontaine : ajoute les presets d'activité manquants (Sport jeudi midi).
+        M.presetsActivitesManquants(d).length ? h('button', { class: 'btn', style: 'align-self:flex-start', onclick: function () {
+          var noms = M.presetsActivitesManquants(d).map(function (p) { return p.nom; }).join(', ');
+          if (!window.confirm('Ajouter les presets MAS La Fontaine manquants ?\n\n' + noms + '\n\nLes presets existants ne sont pas modifiés.')) return;
+          App.modifier(function () { M.ajouterPresetsActivites(d); });
+        } }, 'Ajouter les presets MAS La Fontaine') : null);
 
       // ---- Formulaire ----
       var droite;

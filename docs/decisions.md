@@ -96,3 +96,4 @@
 - Client principal : ses 7 parcs (AMBOISE, BONAGUIL, COLLIOURE, LUDE, MIRANDE, SULLY, ALHAMBRA, avec leurs couleurs) sont intégrés au code. Raison : demande utilisateur.
 - Accès : accueil « Commencer avec MAS La Fontaine » + page Parcs « Ajouter les parcs MAS La Fontaine ». Parcs déjà présents (même nom) : on n'ajoute que les manquants, rien n'est modifié ni supprimé.
 - Le preset ne contient que les parcs (textures / régimes / options = listes par défaut).
+- Ajout : preset d'activité **Sport, jeudi midi** (sans participant, couleur par défaut). Accueil MAS : inclus ; page Activités : « Ajouter les presets MAS La Fontaine » s'il manque (même nom). Raison : demande utilisateur.

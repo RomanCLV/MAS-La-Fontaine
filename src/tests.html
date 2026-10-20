@@ -311,6 +311,19 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal([M.parc(e, 'lude').nom, M.parc(e, 'lude_2').nom, e.referentiels.parcs[7].ordre], ['Autre', 'LUDE', 8], 'Identifiant déjà pris : suffixe _2 ; ordre à la suite');
   });
 
+  groupe('Preset MAS La Fontaine (activité Sport)', function () {
+    var d = M.baseMasLaFontaine();
+    egal(d.presetsActivites.map(function (p) { return [p.nom, p.jours, p.services, p.participantIds, p.couleur]; }),
+      [['Sport', ['jeu'], ['midi'], [], M.COULEUR_ACTIVITE]], 'Base MAS : preset Sport, jeudi midi, sans participant');
+    egal(M.migrer(M.copie(d)).presetsActivites[0].nom, 'Sport', 'Preset conservé à la relecture du fichier');
+    egal(M.ajouterPresetsActivites(d).length, 0, 'Réappliquer : rien à ajouter');
+    var e = M.baseVide();
+    e.presetsActivites.push({ id: 'x', nom: 'sport', jours: ['mar'], services: ['soir'], participantIds: ['r1'], couleur: '#ff0000' });
+    egal([M.presetsActivitesManquants(e).length, M.ajouterPresetsActivites(e).length, e.presetsActivites[0].jours], [0, 0, ['mar']],
+      'Preset « sport » existant reconnu par son nom et laissé tel quel');
+    egal(M.baseVide().presetsActivites.length, 0, 'Base vide : toujours aucun preset');
+  });
+
   var r = document.getElementById('resume');
   r.textContent = nbKo ? nbKo + ' test(s) en échec sur ' + (nbOk + nbKo) : 'Tous les tests passent (' + nbOk + ')';
   r.className = nbKo ? 'ko' : 'ok';
