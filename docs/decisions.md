@@ -79,3 +79,9 @@
 - Texture décochée pour un service : le résident est compté dans la texture par défaut (si elle concerne le service), pour garder Normal + Haché + Mixé = total. Petit déjeuner : jamais de double plat.
 - Options « information » (pots gourmands) : nouveau groupe « INFORMATIONS (hors production) » de la feuille cuisine = quantité par zone, sur les services cochés (réponse 4 : « quantité sur telle zone »). Chariot du petit déjeuner : encadré « Particularités » avec les noms.
 - Page Régimes en **trois tableaux** (Textures, Régimes, Options), chacun avec son bouton d'ajout ; flèches ↑↓ au sein du tableau. Raison : demande utilisateur.
+
+## 2026-10-20 — Fin des données de démarrage, listes par défaut
+- `recueil_base_s42.json` et sa copie `demarrage.js` **abandonnés** (plus aucune référence dans l'appli). Remplace les décisions antérieures sur les « données de démarrage ». Raison : demande utilisateur.
+- Base vide (accueil ou « Repartir de zéro ») = **liste par défaut** des textures / régimes / options écrite dans le code (`Modele.REGIMES_DEFAUT`), mêmes éléments, couleurs et services qu'avant ; rangée par groupe. Les modifications faites dans la page Régimes ne changent pas cette liste.
+- Listes par défaut enrichies (choix utilisateur sur propositions) : textures Normal, Haché (= « coupé », vocabulaire client), Tendre, Mouliné, Mixé, Mixé lisse ; régimes : les 6 existants + Végétarien (ni viande ni poisson, ≠ Sans viande), Sans sel, Pauvre en potassium / protéines, Sans gluten, Sans lactose, Allergie lait, Allergie œufs, Allergie arachides, Allergie fruits à coque (pas de Halal : « Sans porc » suffit) ; options : les 5 existantes + Demi-portion (assiette individuelle). Services : midi + soir (pots gourmands : petit déjeuner). Ordre des textures modifiable (↑↓ page Régimes).
+- Feuille cuisine : avec beaucoup d'éléments, les lignes rapetissent pour tenir sur la page (rien n'est coupé).

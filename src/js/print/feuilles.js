@@ -20,6 +20,16 @@
   // Nom trop long pour la colonne de libellés : abrégé du référentiel s'il existe.
   function nomCourt(g) { return g.nom.length > 26 && g.abrege ? g.abrege : g.nom; }
 
+  // Hauteur des lignes du tableau en « lignes simples » (total et textures : 1,4 ; bandeau de groupe : 0,9).
+  // Sert à réduire les lignes si elles ne tiennent pas dans la page (feuilles.css, --n).
+  function hauteurLignes(lignes) {
+    return lignes.reduce(function (n, l) {
+      if (!l) return n;
+      var k = l.classList;
+      return n + (k.contains('fc-groupe') ? 0.9 : k.contains('fc-total') || k.contains('fc-texture') ? 1.4 : 1);
+    }, 0).toFixed(1);
+  }
+
   // ---------------- Feuille cuisine ----------------
   function cuisine(donnees, semaine, c) {
     var f = C.feuilleJour(donnees, semaine, c);
@@ -140,7 +150,7 @@
           return h('span', { class: 'fc-chip', style: 'background:' + v.couleur + ';color:' + O.texteSur(v.couleur) },
             v.nature === 'texture' ? v.nom.toUpperCase() : nomCourt(v), ' ', h('b', null, v.valeur));
         })),
-      h('div', { class: 'fc-table' }, zones, entetes, lignes),
+      h('div', { class: 'fc-table', style: '--n:' + hauteurLignes(lignes) }, zones, entetes, lignes),
       h('div', { class: 'fc-pied' }, h('span', null, pied), h('span', null, libelleCourt(c))));
   }
 

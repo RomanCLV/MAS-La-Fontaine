@@ -21,5 +21,5 @@
 - Barre du haut : état d’enregistrement, « Modifications non exportées », boutons **Importer** et **Exporter** (toujours visibles), Mode manager.
 - Mode manager : bouton de la barre du haut ; seul effet = afficher les alertes de présence au-dessus de la grille (bandeau masqué s’il n’y en a aucune, sauf alertes masquées à réafficher).
 - Présence : presser une case inverse sa valeur ; glisser étend cette même valeur au rectangle entre la première case et la case survolée ; relâcher enregistre (une seule sauvegarde), Échap annule. Clavier : Entrée/Espace inverse une case. Si la nouvelle valeur égale la valeur par défaut (fiche), la saisie est effacée.
-- Pas de données au démarrage → écran d'accueil : « Ouvrir un fichier reçu » ou « Commencer avec une base vide » (les données de démarrage restent chargeables depuis Importer).
-- Base vide (accueil, ou Importer › « Repartir de zéro », avec confirmation) : garde seulement les textures/régimes/options des données de démarrage ; aucun parc, résident, preset ; une semaine = la semaine en cours.
+- Pas de données au démarrage → écran d'accueil : « Ouvrir un fichier reçu » ou « Commencer avec une base vide ».
+- Base vide (accueil, ou Importer › « Repartir de zéro », avec confirmation) : textures/régimes/options = liste par défaut du code (`Modele.REGIMES_DEFAUT`) ; aucun parc, résident, preset ; une semaine = la semaine en cours.

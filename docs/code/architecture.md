@@ -9,9 +9,8 @@ src/index.html            application (charge les scripts dans l'ordre ci-dessou
 src/tests.html            tests des calculs (ouvrir dans le navigateur)
 src/css/app.css           écrans
 src/css/feuilles.css      feuilles A4 paysage (aperçu écran + impression)
-src/js/data/modele.js     constantes, dates, création d'objets, migration   → data.md
+src/js/data/modele.js     constantes, listes par défaut, dates, création, migration → data.md
 src/js/data/stockage.js   copie de travail (localStorage), import/export JSON → data.md
-src/js/data/demarrage.js  copie intégrée de src/data/recueil_base_s42.json    → data.md
 src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
 src/js/print/feuilles.js  feuille cuisine + feuille chariot (HTML imprimable)   → print.md
 src/js/ui/*.js            outils DOM, application à onglets, une page par fichier → ui.md
@@ -31,7 +30,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
 - L'interface ne calcule rien elle-même : elle appelle `Calc`.
 - Alertes : calculées par `Calc.alertes`, affichées uniquement en mode manager, **jamais** dans `Feuilles`.
 
-## Schéma JSON (version 4 ; version 1 = `src/data/recueil_base_s42.json`, migrée à l'import)
+## Schéma JSON (version 4 ; versions 1 à 3 migrées à l'import)
 ```
 {
   app: "recueil-alimentation-mas-la-fontaine", version: 4,   // v1 : nettoyage = tout sans viande ; v2 : pas de petit déjeuner (migrés) exporteLe: "AAAA-MM-JJ",

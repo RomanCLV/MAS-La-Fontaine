@@ -21,7 +21,6 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 <div id="sortie"></div>
 
 <script src="js/data/modele.js"></script>
-<script src="js/data/demarrage.js"></script>
 <script src="js/calc/calc.js"></script>
 <script>
 (function () {
@@ -257,7 +256,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(ch.volume, 7, 'Volume du chariot = total du parc');
   });
 
-  groupe('Migration et données de démarrage', function () {
+  groupe('Migration', function () {
     var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: 4 } }] });
     egal(m.semaines[0].debut, '2026-10-12', 'Début ramené au lundi');
     egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo nombre → {standard, sansPorc}');
@@ -271,12 +270,20 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
     try { M.migrer({ app: M.APP, version: 99 }); } catch (e) { refus++; }
     egal(refus, 2, 'Fichier étranger ou trop récent refusé');
-    var d = M.migrer(Recueil.DONNEES_DEMARRAGE), s = d.semaines[0];
-    egal(d.residents.length, 62, '62 résidents');
-    var f = C.feuilleJour(d, s, 'lun_midi');
-    egal(col(f, 'totalParcs').c.total, 61 + 12 + 4, 'S42 lundi midi : total parcs = 61 résidents + 12 doubles + 4 salariés');
-    egal(f.total.total, 77 + 3 + 5, 'S42 lundi midi : total à produire = 85');
-    egal(C.feuilleJour(d, s, 'lun_soir').total.total, 74, 'S42 lundi soir : 62 + 12 = 74');
+  });
+
+  groupe('Base vide (listes par défaut)', function () {
+    var d = M.baseVide();
+    egal([d.referentiels.parcs.length, d.residents.length, d.presetsActivites.length, d.semaines.length], [0, 0, 0, 1],
+      'Aucun parc, résident ni preset ; une semaine');
+    egal(d.referentiels.regimes.length, M.REGIMES_DEFAUT.length, 'Textures / régimes / options par défaut repris');
+    var ids = d.referentiels.regimes.map(function (g) { return g.id; });
+    egal([M.TEXTURE_DEFAUT, M.REGIME_SANS_PORC, M.REGIME_NETTOYAGE, 'double_plat', 'pots_gourmands'].filter(function (id) { return ids.indexOf(id) < 0; }), [],
+      'Identifiants utilisés par les calculs présents');
+    egal(M.refs(d).pots_gourmands.services, ['petitdej'], 'Pots gourmands : petit déjeuner seulement');
+    egal(M.refs(d).double_plat.affecte, 'plat', 'Double plat : affecte le plat');
+    d.referentiels.regimes[0].nom = 'Modifié';
+    egal(M.baseVide().referentiels.regimes[0].nom, 'Normal', 'Une nouvelle base vide repart de la liste d’origine');
   });
 
   var r = document.getElementById('resume');

@@ -7,12 +7,11 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
 - `src/index.html` : application complète (onglets restaurés, Semaine, Résidents, fiche, Parcs, Régimes, Activités + presets, Importer, Exporter, Imprimer, alertes manager). Aucune dépendance.
-- `src/tests.html` : 58 tests de calcul, tous verts (totaux, double plat, activité, direction/nettoyage, alertes, chariot, migration, données S42).
+- `src/tests.html` : 58 tests de calcul, tous verts (totaux, double plat, activité, direction/nettoyage, alertes, chariot, migration, base vide).
 - Vérifié dans le navigateur intégré (Chromium, via un petit serveur local de test) : toutes les pages, aller-retour export/import JSON, rendu d'impression A4 (règles `@page` actives, 297 × 210 mm).
-- Données de démarrage : couleurs et ordre des colonnes alignés sur les maquettes ; copie intégrée `src/js/data/demarrage.js`.
 
 ## Retours V1 traités (2026-10-19, 7 commits)
-- Résidents : vue Tableau (édition texture/régimes/options sans fiche). Textes de debug retirés. JSON de démarrage dans `src/data/`. Selects sans « ▾ ». Activités : jour sans date, parcs centrés. Indicateur « Modifications non enregistrées ».
+- Résidents : vue Tableau (édition texture/régimes/options sans fiche). Textes de debug retirés. Selects sans « ▾ ». Activités : jour sans date, parcs centrés. Indicateur « Modifications non enregistrées ».
 - Vérifié dans le navigateur intégré (Chromium) ; 58 tests verts. À revoir par l'utilisateur dans Firefox.
 
 ## Retours V1 (2e lot, 2026-10-19, 3 commits)
@@ -26,7 +25,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (5e lot, 2026-10-20)
 - Page **Options** (menu Pages) : zone « Données en cache » + bouton « Vider le cache local » (retour à l’accueil).
-- Accueil : bouton « Charger les données de démarrage » retiré (reste dans Importer).
 
 ## Retours V1 (6e lot, 2026-10-20)
 - Semaine : Nettoyage séparé en « Nettoyage » (standard) et « Nettoyage sans viande » ; fichiers version 2 (anciens fichiers migrés).
@@ -42,8 +40,14 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Page Régimes en trois tableaux : Textures, Régimes, Options. 91 tests verts ; vérifié dans le navigateur intégré.
 - Fiche résident : trois groupes Texture / Régimes et allergies / Options.
 
+## Retours V1 (9e lot, 2026-10-20)
+- Fichier de démarrage `recueil_base_s42.json` supprimé (et `demarrage.js`, bouton « Recharger les données de démarrage »). Base vide = **listes par défaut** du code (`REGIMES_DEFAUT`). 93 tests verts ; vérifié dans le navigateur intégré.
+- Listes par défaut enrichies (choix utilisateur) : 6 textures, 15 régimes et allergies, 6 options (+ Demi-portion).
+- Feuille cuisine : lignes réduites automatiquement si elles ne tiennent pas dans la page A4 (sinon coupées, constaté avec 27 éléments).
+- Question : masquer sur la feuille cuisine les régimes / options à 0 pour le service ?
+
 ## Non vérifié (à faire par l'utilisateur)
-1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide (données de démarrage : page Importer), saisir, fermer, rouvrir → données et onglets restaurés.
+1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.
 2. **Impression réelle** (page Imprimer) : vérifier paysage, 1 feuille par page, couleurs (cocher « Imprimer les arrière-plans » si besoin), et en PDF.
 3. Export → fichier `.json` ; import du même fichier sur un autre poste/navigateur.
 
