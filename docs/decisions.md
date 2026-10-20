@@ -101,3 +101,6 @@
 ## 2026-10-20 — Sodexo sans porc retiré
 - Grille Semaine : plus de ligne « Salariés SODEXO sans porc » ; la ligne standard est renommée « Salariés SODEXO ». Raison : demande utilisateur.
 - Anciennes données : un sans porc Sodexo déjà saisi est compté en standard à l'ouverture (le nombre de repas ne change pas).
+
+## 2026-10-20 — Carrés de quantité (grille Semaine)
+- Sous les en-têtes : ligne « Total à produire » = un carré par service avec le total de toute la MAS (même chiffre que TOTAL À PRODUIRE de la feuille cuisine), identique sur chaque onglet de parc. Raison : faciliter la communication des quantités (choix utilisateur).

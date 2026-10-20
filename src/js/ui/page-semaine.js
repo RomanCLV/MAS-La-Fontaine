@@ -86,6 +86,37 @@
           M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + M.service(sc.service).court));
       }));
 
+    // Carrés sous les en-têtes : total à produire de toute la MAS par service (même calcul que la feuille cuisine).
+    // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
+    var feuilles, majs = [];
+    function calculer() { feuilles = vis.map(function (c) { return C.feuilleJour(d, s, c); }); }
+    function majCarres() { calculer(); majs.forEach(function (f) { f(); }); }
+    calculer();
+    function ligneCarres(libelle, note, valeur, style, titre, fin) {
+      return h('div', { class: 'g g-carres' + (fin ? ' fin-carres' : ''), style: gabarit },
+        h('div', { class: 'gc colle0' }),
+        h('div', { class: 'gc gauche gras colle1', style: 'grid-column:span 2' }, libelle),
+        h('div', { class: 'gnote', style: 'grid-column:span ' + cols.length }, note),
+        h('div'),
+        vis.map(function (c, k) {
+          var carre = h('span', { style: style });
+          function maj() {
+            var n = valeur(k), t = titre + ' · ' + C.libelleCreneaux([c]) + ' : ' + O.pluriel(n, 'plat');
+            carre.className = 'carre' + (n ? '' : ' vide');
+            carre.title = t;
+            carre.setAttribute('aria-label', t);
+            carre.textContent = n ? String(n) : '';
+          }
+          maj();
+          majs.push(maj);
+          return h('div', { class: 'gc ' + bord(c) }, carre);
+        }));
+    }
+    var carres = [
+      ligneCarres('Total à produire', 'tous parcs', function (k) { return feuilles[k].total.total; }, null,
+        'Total à produire (tous parcs, Sodexo, direction, nettoyage, témoins)', true)
+    ];
+
     // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde.
     // Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
     function appliquer(cases, v) {
@@ -190,6 +221,7 @@
               var n = Math.max(0, Math.floor(+e.target.value || 0));
               e.target.value = n ? String(n) : '';
               App.modifier(function () { ecrire(c, n); }, { sansRendu: true });
+              majCarres();
             }
           }));
         }));
@@ -244,7 +276,7 @@
           h('button', { class: 'btn', onclick: function () { App.ouvrir('residents'); } }, 'Voir tous les résidents'),
           h('button', { class: 'btn btn-principal', onclick: function () { R.PageResident.nouveau(parc.id); } }, '+ Ajouter un résident à ' + parc.nom))),
       h('div', { class: 'defil', 'data-defil': 'grille' },
-        h('div', { class: 'grille' }, bandeaux, entete, lignes, lignesSal)));
+        h('div', { class: 'grille' }, bandeaux, entete, carres, lignes, lignesSal)));
   }
 
   // Supprime la semaine s (après confirmation) et affiche la semaine voisine. La dernière semaine ne peut pas être supprimée.
