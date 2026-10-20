@@ -173,7 +173,7 @@
 
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
-          h('div', { class: 'titre-ligne' }, h('h1', null, 'Régimes & Allergies, Textures et Options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
+          h('div', { class: 'titre-ligne' }, h('h1', null, 'Textures, Régimes & Allergies et Options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
           h('div', { class: 'petit' }, 'Services concernés : décochés, l’élément n’apparaît pas sur les feuilles de ce service ' +
             '(ex. pots gourmands : petit déjeuner seulement).')),
         TABLES.map(table));
