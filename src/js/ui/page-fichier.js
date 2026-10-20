@@ -41,7 +41,8 @@
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
           h('div', { class: 'rangee' },
             boutonFichier('Ouvrir un fichier reçu (.json)…', true, lire),
-            h('button', { class: 'btn btn-grand', onclick: repartirDeZero }, 'Commencer avec une base vide'))));
+            h('button', { class: 'btn btn-grand', onclick: repartirDeZero }, 'Commencer avec une base vide'),
+            h('button', { class: 'btn btn-grand', onclick: function () { App.remplacerDonnees(M.baseMasLaFontaine(), 'base MAS La Fontaine'); } }, 'Commencer avec MAS La Fontaine'))));
     }
   };
 

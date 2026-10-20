@@ -91,3 +91,8 @@
 - Défaut : les 14 éléments d'avant cochés, les nouveaux non ; nouvel élément ajouté : non coché. Champ absent (fichiers existants) = coché, donc rien ne change pour eux (pas de nouvelle version de fichier).
 - Hors champ : Résidents › Tableau garde toutes les colonnes (sert à cocher les régimes) ; feuilles imprimées inchangées. Texture par défaut (Normal) : jamais de colonne, pas de case.
 - « Mixé lisse » retiré de la liste par défaut : pour le client, « Mixé » veut déjà dire lisse. Raison : demande utilisateur.
+
+## 2026-10-20 — Preset « MAS La Fontaine » (parcs)
+- Client principal : ses 7 parcs (AMBOISE, BONAGUIL, COLLIOURE, LUDE, MIRANDE, SULLY, ALHAMBRA, avec leurs couleurs) sont intégrés au code. Raison : demande utilisateur.
+- Accès : accueil « Commencer avec MAS La Fontaine » + page Parcs « Ajouter les parcs MAS La Fontaine ». Parcs déjà présents (même nom) : on n'ajoute que les manquants, rien n'est modifié ni supprimé.
+- Le preset ne contient que les parcs (textures / régimes / options = listes par défaut).

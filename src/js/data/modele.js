@@ -241,6 +241,41 @@
       residents: [], presetsActivites: [], semaines: [] });
   }
 
+  // Preset « MAS La Fontaine » (client principal) : ses parcs, dans l'ordre. Appliqué depuis l'accueil ou la page Parcs.
+  var PARCS_MAS_LA_FONTAINE = [
+    { id: 'amboise', nom: 'AMBOISE', couleur: '#ffff00' },
+    { id: 'bonaguil', nom: 'BONAGUIL', couleur: '#fcd5b4' },
+    { id: 'collioure', nom: 'COLLIOURE', couleur: '#b1a0c7' },
+    { id: 'lude', nom: 'LUDE', couleur: '#538dd5' },
+    { id: 'mirande', nom: 'MIRANDE', couleur: '#92d050' },
+    { id: 'sully', nom: 'SULLY', couleur: '#7dffb8' },
+    { id: 'alhambra', nom: 'ALHAMBRA', couleur: '#bfbfbf' }
+  ];
+  function memeNom(a, b) { return a.trim().toUpperCase() === b.trim().toUpperCase(); }
+  // Parcs du preset absents de donnees (comparaison par nom, sans tenir compte des majuscules).
+  function parcsPresetManquants(donnees) {
+    return PARCS_MAS_LA_FONTAINE.filter(function (p) {
+      return !donnees.referentiels.parcs.some(function (x) { return memeNom(x.nom, p.nom); });
+    });
+  }
+  // Ajoute à la fin les parcs manquants du preset (parcs existants inchangés) ; renvoie les parcs ajoutés.
+  function ajouterParcsPreset(donnees) {
+    var parcs = donnees.referentiels.parcs;
+    return parcsPresetManquants(donnees).map(function (p) {
+      var id = p.id, n = 2;
+      while (parcs.some(function (x) { return x.id === id; })) id = p.id + '_' + n++;
+      var nouveau = { id: id, nom: p.nom, couleur: p.couleur, ordre: parcs.length + 1 };
+      parcs.push(nouveau);
+      return nouveau;
+    });
+  }
+  // Base vide + parcs MAS La Fontaine.
+  function baseMasLaFontaine() {
+    var d = baseVide();
+    ajouterParcsPreset(d);
+    return d;
+  }
+
   // ---- Accès pratiques ----
   function refs(donnees) {
     var m = {};
@@ -294,6 +329,7 @@
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
     nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer, baseVide: baseVide,
+    PARCS_MAS_LA_FONTAINE: PARCS_MAS_LA_FONTAINE, parcsPresetManquants: parcsPresetManquants, ajouterParcsPreset: ajouterParcsPreset, baseMasLaFontaine: baseMasLaFontaine,
     refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne,
     aRegime: aRegime, colonneAffichee: colonneAffichee
   };

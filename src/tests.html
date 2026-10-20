@@ -296,6 +296,21 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(M.baseVide().referentiels.regimes[0].nom, 'Normal', 'Une nouvelle base vide repart de la liste d’origine');
   });
 
+  groupe('Preset MAS La Fontaine (parcs)', function () {
+    var d = M.baseMasLaFontaine();
+    egal(d.referentiels.parcs.map(function (p) { return p.nom + ' ' + p.ordre; }),
+      ['AMBOISE 1', 'BONAGUIL 2', 'COLLIOURE 3', 'LUDE 4', 'MIRANDE 5', 'SULLY 6', 'ALHAMBRA 7'], 'Base MAS : 7 parcs dans l’ordre');
+    egal(M.parc(d, 'lude').couleur, '#538dd5', 'Couleur du LUDE');
+    egal([d.residents.length, d.referentiels.regimes.length], [0, M.REGIMES_DEFAUT.length], 'Sinon identique à une base vide');
+    egal(M.ajouterParcsPreset(d).length, 0, 'Réappliquer : rien à ajouter');
+    var e = M.baseVide();
+    e.referentiels.parcs.push({ id: 'p1', nom: 'Sully ', couleur: '#000000', ordre: 1 }, { id: 'lude', nom: 'Autre', couleur: '#111111', ordre: 2 });
+    egal(M.parcsPresetManquants(e).length, 6, 'Parc existant reconnu par son nom (majuscules, espaces)');
+    M.ajouterParcsPreset(e);
+    egal([e.referentiels.parcs.length, e.referentiels.parcs[0].couleur, e.referentiels.parcs[0].nom], [8, '#000000', 'Sully '], 'Ajout des manquants, existants inchangés');
+    egal([M.parc(e, 'lude').nom, M.parc(e, 'lude_2').nom, e.referentiels.parcs[7].ordre], ['Autre', 'LUDE', 8], 'Identifiant déjà pris : suffixe _2 ; ordre à la suite');
+  });
+
   var r = document.getElementById('resume');
   r.textContent = nbKo ? nbKo + ' test(s) en échec sur ' + (nbOk + nbKo) : 'Tous les tests passent (' + nbOk + ')';
   r.className = nbKo ? 'ko' : 'ok';
