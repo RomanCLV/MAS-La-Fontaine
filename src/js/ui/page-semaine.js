@@ -416,7 +416,8 @@
             var n = d.residents.filter(function (r) { return !r.archive && r.parcId === p.id; }).length;
             return h('button', { class: 'onglet-parc' + (actif ? ' actif' : ''), role: 'tab', 'aria-selected': actif ? 'true' : 'false',
               style: actif ? 'background:' + p.couleur + ';color:' + O.texteSur(p.couleur) : '',
-              onclick: function () { App.etat.rechercheSemaine = ''; App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } }, p.nom + ' (' + n + ')');
+              onclick: function () { App.etat.rechercheSemaine = ''; App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } },
+              h('span', { class: 'pastille-couleur', style: 'background:' + p.couleur, 'aria-hidden': 'true' }), p.nom + ' (' + n + ')');
           }),
           recherche ? h('button', { class: 'onglet-parc actif onglet-recherche', role: 'tab', 'aria-selected': 'true' },
             'Recherche « ' + recherche.trim() + ' » (' + residentsTrouves(d, recherche).length + ')') : null,

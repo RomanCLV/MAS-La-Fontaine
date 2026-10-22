@@ -123,6 +123,7 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .onglets-parcs{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;margin-bottom:-12px}
 .onglet-parc{padding:7px 14px;font-size:14px;background:#faf9f5;border:1px solid var(--trait);border-radius:6px 6px 0 0;cursor:pointer;min-height:36px}
 .onglet-parc.actif{font-weight:700;border-bottom-color:transparent}
+.onglet-parc .pastille-couleur{margin-right:6px;vertical-align:-2px}
 .onglet-recherche{background:var(--encre);color:#fff;cursor:default}
 .recherche-semaine{margin-left:auto;align-self:center;width:240px;margin-bottom:6px}
 .carte-grille{background:#fff;border:1px solid var(--trait);border-top:6px solid #ccc;padding:10px;display:flex;flex-direction:column;gap:8px}
