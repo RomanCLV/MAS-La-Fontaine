@@ -137,3 +137,6 @@
 
 ## 2026-10-22 — Fin du « Mode manager »
 - Bouton retiré ; les alertes de présence sont toujours affichées au-dessus de la grille Semaine (toujours jamais sur les impressions). Raison : le mode ne servait qu'à afficher les alertes.
+
+## 2026-10-22 — « Fermés récemment » sans les pages fixes
+- Seules les pages hors menu (fiches résidents, Imprimer) y apparaissent ; les pages du menu Pages, Semaine comprise, en sont exclues (les semaines se rouvrent par le choix « Semaine »). Raison : demande utilisateur, la liste se remplissait de pages toujours accessibles.

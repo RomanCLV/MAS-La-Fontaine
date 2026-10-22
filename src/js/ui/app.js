@@ -32,6 +32,9 @@
   function cle(o) { return o.type + (o.id ? ':' + o.id : ''); }
   App.cle = cle;
 
+  // Page fixe = page du menu Pages (Semaine comprise) : jamais dans « Fermés récemment », on la rouvre par le menu.
+  function fixe(o) { return MENU.some(function (p) { return p && p.type === o.type; }); }
+
   // ---------- Démarrage ----------
   App.demarrer = function () {
     App.donnees = S.chargerCopie();
@@ -81,7 +84,7 @@
       return true;
     }
     App.ui.onglets = App.ui.onglets.filter(existe);
-    App.ui.fermes = App.ui.fermes.filter(existe);
+    App.ui.fermes = App.ui.fermes.filter(function (o) { return existe(o) && !fixe(o); });
     if (!App.ui.onglets.length) App.ui.onglets.push({ type: 'semaine', id: App.ui.semaine });
     if (!App.ui.onglets.some(function (o) { return cle(o) === App.ui.actif; })) definirActif(cle(App.ui.onglets[0]));
   };
@@ -120,7 +123,7 @@
     if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
     delete App.brouillons[k];
     App.ui.onglets.splice(i, 1);
-    if (o.type !== 'resident' || M.resident(App.donnees, o.id)) {
+    if (!fixe(o) && (o.type !== 'resident' || M.resident(App.donnees, o.id))) {
       App.ui.fermes = [o].concat(App.ui.fermes.filter(function (x) { return cle(x) !== k; })).slice(0, MAX_FERMES);
     }
     if (!App.ui.onglets.length) App.ui.onglets.push({ type: 'semaine', id: App.ui.semaine });

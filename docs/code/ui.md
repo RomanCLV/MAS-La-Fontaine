@@ -13,7 +13,7 @@
 | `page-options.js` | Options › « Données en cache » : contenu, origine, dates, place occupée ; « Vider le cache local » (confirmation, avertit si non exporté) → `App.viderCache()` efface `recueil.donnees/meta/ui` et revient à l’accueil |
 
 ## Principes
-- Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.
+- Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » (pages hors menu seulement : fiches, Imprimer ; voir `fixe()`) mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.
 - Semaine courante (`App.ui.semaine`, utilisée par Exporter, Imprimer, Activités) : toute activation d'un onglet Semaine la met à jour (`definirActif`, y compris quand la fermeture d'un onglet en affiche un autre). Exporter et Imprimer affichent un choix « Semaine » qui la modifie.
 - Chaque page = `Recueil.Pages[type] = { titre(onglet), rendu(onglet) }`. Toute modification passe par `App.modifier(fn)` : applique, sauvegarde, re-rend (option `sansRendu` pour les champs numériques, pour garder le focus).
 - Brouillons (fiche résident, tableau des résidents, activité, édition de parc/régime) : en mémoire jusqu'à « Enregistrer ». Chaque page déclare `modifie(onglet)` / `abandonner(onglet)` ; `App.indicateur()` affiche « Modifications non enregistrées » près du titre et `•` sur l'onglet ; confirmation avant de fermer l'onglet, de changer d'élément édité ou de quitter le navigateur. Pendant la frappe : `App.signalerModif()` (sans re-rendu, garde le focus).

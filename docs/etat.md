@@ -77,3 +77,4 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (10e lot, 2026-10-22)
 - Barre d'onglets : bouton « + » (ouvre le menu des pages sous le bouton). Vérifié dans le navigateur intégré.
+- « Fermés récemment » : seulement les pages hors menu (fiches résidents, Imprimer) ; les pages du menu (Semaine comprise) n'y apparaissent plus. Vérifié dans le navigateur intégré.
