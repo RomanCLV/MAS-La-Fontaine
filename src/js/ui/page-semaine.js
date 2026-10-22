@@ -246,7 +246,7 @@
           var w = C.poids(r, refs, M.decoupeCreneau(c).service);
           var titre = [M.nomAffiche(r) + ' · ' + C.libelleCreneaux([c]) + ' : ' + (p.valeur ? 'présent' : 'absent')];
           if (p.valeur && w > 1) titre.push(w + ' plats (options en plus)');
-          if (p.source === 'absence') titre.push('absence enregistrée dans la fiche');
+          if (p.source === 'absence') titre.push('absence planifiée (fiche du résident)');
           if (act) titre.push('participe à : ' + act.nom);
           return h('button', {
             class: 'pc ' + bord(c) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
@@ -322,7 +322,8 @@
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
       h('div', { class: 'legende' },
-        h('span', { class: 'pc-ex abs-fiche' }), 'Absence (fiche)',
+        h('span', { class: 'pc-ex' }, '1'), 'Présent et consommant 1 repas',
+        h('span', { class: 'pc-ex abs-fiche' }, '0'), 'Absence planifiée',
         s.activites.length ? s.activites.map(function (a) {
           return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
         }) : [h('span', { class: 'pc-ex act' }), 'Activité']),
