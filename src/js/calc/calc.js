@@ -250,7 +250,7 @@
     }).filter(function (x) { return x.noms.length; });
   }
 
-  // ---------- Alertes (manager seulement) ----------
+  // ---------- Alertes (écran seulement, jamais sur les feuilles imprimées) ----------
   function alertes(donnees, semaine) {
     var liste = [];
     var fin = M.ajouterJours(semaine.debut, 6);

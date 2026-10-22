@@ -1,4 +1,4 @@
-/* Page Semaine (saisie client) : alertes manager, activités, grille des présences par parc. */
+/* Page Semaine (saisie client) : alertes, activités, grille des présences par parc. */
 (function (R) {
   'use strict';
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
@@ -373,7 +373,7 @@
           } }, 'Créer la semaine suivante'),
           h('button', { class: 'btn', onclick: function () { App.ui.semaine = s.id; App.ouvrir('imprimer'); } }, 'Imprimer cette semaine'),
           d.semaines.length > 1 ? h('button', { class: 'btn btn-danger', onclick: function () { supprimer(d, s); } }, 'Supprimer cette semaine') : null),
-        App.ui.manager ? alertes(d, s) : null,
+        alertes(d, s),
         activites(s),
         filtreServices(),
         parc ? [

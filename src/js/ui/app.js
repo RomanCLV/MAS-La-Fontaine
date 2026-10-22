@@ -56,7 +56,6 @@
       onglets: Array.isArray(ui.onglets) ? ui.onglets : [],
       actif: ui.actif || '',
       fermes: Array.isArray(ui.fermes) ? ui.fermes : [],
-      manager: !!ui.manager,
       semaine: ui.semaine || '',
       parcActif: ui.parcActif || '',
       residentsVue: ui.residentsVue || 'liste',
@@ -224,12 +223,6 @@
 
   App.sauverUi = function () { S.sauverUi(App.ui); };
 
-  App.basculerManager = function () {
-    App.ui.manager = !App.ui.manager;
-    App.sauverUi();
-    App.rendre();
-  };
-
   // ---------- Rendu ----------
   function barre() {
     var etat;
@@ -248,10 +241,8 @@
       App.donnees && App.meta.nonExporte ? h('button', { class: 'etat etat-attention', onclick: function () { App.ouvrir('export'); } },
         'Modifications non exportées') : null,
       App.donnees ? h('div', { class: 'barre-fichier' },
-        h('button', { class: 'btn-manager', onclick: function () { App.ouvrir('import'); } }, 'Importer'),
-        h('button', { class: 'btn-manager', onclick: function () { App.ouvrir('export'); } }, 'Exporter')) : null,
-      App.donnees ? h('button', { class: 'btn-manager' + (App.ui.manager ? ' actif' : ''), 'aria-pressed': App.ui.manager ? 'true' : 'false',
-        onclick: App.basculerManager }, 'Mode manager : ' + (App.ui.manager ? 'oui' : 'non')) : null,
+        h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('import'); } }, 'Importer'),
+        h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('export'); } }, 'Exporter')) : null,
       App.menuOuvert ? menuPages() : null);
   }
 
