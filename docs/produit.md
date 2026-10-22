@@ -53,7 +53,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 ### 5 bis. Interface (layout global)
 - Application à **onglets** (façon IDE) : onglets ouverts en haut, accès aux onglets fermés (menu « Pages » + « Fermés récemment »), plusieurs fiches ouvertes en même temps. Les onglets ouverts sont **restaurés** à la réouverture de l'app.
 - Pages distinctes, dans cet ordre du menu Pages : **Semaine**, **Parcs**, **Régimes**, **Résidents**, **Activités** | **Fichier : Importer**, **Fichier : Exporter** | **Options** (séparateurs entre les groupes). Imprimer s'ouvre depuis la page Semaine (« Imprimer cette semaine »).
-- Saisie semaine : filtre « Services affichés » (petit déjeuner / midi / soir) pour masquer des colonnes ; les données restent. Alertes manager **au-dessus** de la grille (pas sur le côté, pour garder la largeur) ; régimes en **lecture seule** dans la grille ; au survol d'une ligne, bouton stylo qui ouvre la fiche du résident dans un **nouvel onglet** (pas de changement de page).
+- Saisie semaine : filtre « Services affichés » (petit déjeuner / midi / soir) pour masquer des colonnes ; les données restent. Alertes **au-dessus** de la grille (pas sur le côté, pour garder la largeur) ; régimes en **lecture seule** dans la grille ; au survol d'une ligne, bouton stylo qui ouvre la fiche du résident dans un **nouvel onglet** (pas de changement de page).
 
 ### 6. Fichier et sauvegarde
 - Échange par **fichier JSON** (client exporte, prestataire importe). Pas de serveur.
@@ -61,10 +61,10 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - Ouverture : dernier fichier mémorisé ; lecture seule par défaut ; bouton **Éditer** crée une copie avant modification.
 - Sécurité : "le plus simple possible" (pas de chiffrement en V1).
 
-### 7. Alertes (pour le manager uniquement, jamais sur les impressions)
+### 7. Alertes (à l’écran, jamais sur les impressions)
 - Uniquement sur les présences/absences : présent alors qu'absent (fiche), aucune présence sans absence enregistrée. Pas d'alerte de régime (texture unique, régimes non éditables dans la saisie).
 - Chaque alerte peut être « C'est voulu » ou « Ignorée » : elle disparaît (réaffichage possible). Pertinence avant quantité.
-- Mode manager et derniers onglets ouverts : mémorisés dans un fichier `recueil.ini` à côté de l'app (à confirmer phase 4).
+- Toujours affichées sur la page Semaine (le « Mode manager » a été retiré le 2026-10-22). Derniers onglets ouverts : mémorisés dans le navigateur.
 
 ## Hors périmètre V1 (plus tard)
 - Lecture du menu (`menu 26.xls`, extrait du logiciel SOL de Sodexo) : règle métier future = si porc au menu, prévoir sans porc ; **tous les jours** prévoir sans viande (halal) et sans produit de la mer. Pas d'analyse des recettes/ingrédients (ex. "sauté Marengo" ambigu).

@@ -11,7 +11,7 @@ Principe directeur : **zéro dépendance externe, zéro installation** → rien 
 | Navigateur cible | **Firefox, Chrome, Edge** (comportement identique) | Gratuits | Oui | Aucune fonction réservée à un navigateur |
 | Échange de fichier | **Importer** (`<input type=file>`) et **Exporter** (téléchargement `.json`) — identiques partout. Bonus facultatif Chrome/Edge : lier un fichier (API *File System Access*) pour l'enregistrer sans re-télécharger | Standard intégré | Oui | Seul comportement commun à Firefox/Chrome/Edge |
 | Format de données | **JSON** (un fichier = une semaine + référentiels), champ `version` pour migrer plus tard | Standard ouvert | Oui | Décision produit |
-| **Copie de travail** (autosauvegarde continue), onglets ouverts, mode manager | `IndexedDB` / `localStorage` du navigateur (stockage persistant, pas le cache) | Intégré | Oui | À la réouverture : données et onglets restaurés sans rouvrir de fichier |
+| **Copie de travail** (autosauvegarde continue), onglets ouverts | `IndexedDB` / `localStorage` du navigateur (stockage persistant, pas le cache) | Intégré | Oui | À la réouverture : données et onglets restaurés sans rouvrir de fichier |
 | Impression | CSS `@page { size: A4 landscape }` + `window.print()` (une feuille par jour × service, saut de page CSS) ; PDF possible via « Enregistrer au format PDF » du navigateur | Intégré | Oui | Pas de lib PDF |
 | Couleurs / pastilles | Variables CSS alimentées par les référentiels | — | Oui | Couleurs administrables |
 | Tests | Fichier `tests.html` ouvert dans le navigateur (fonctions de calcul des totaux testées avec des `assert` maison) | — | Oui | Les totaux sont le risque n°1 |
@@ -26,7 +26,7 @@ Principe directeur : **zéro dépendance externe, zéro installation** → rien 
 ## Points à confirmer (hypothèse par défaut retenue)
 1. **Zone du nettoyage** → colonne « Autres » (comme sur les maquettes).
 2. **Archiver vs supprimer** → archiver = masqué des listes et de la saisie, conservé dans le fichier (réactivable) ; supprimer = retiré définitivement, avec confirmation.
-3. **`recueil.ini`** → **abandonné** (une page web ne peut pas écrire à côté d'elle). Copie de travail, onglets et mode manager sont dans le stockage du navigateur. **L'import crée la copie de travail sans toucher au fichier original** (remplace « lecture seule / Éditer »). Limites : vider les données du site efface la copie → exporter régulièrement (rappel dans l'appli) ; déplacer le dossier de l'appli peut, sous Firefox, faire perdre la copie.
+3. **`recueil.ini`** → **abandonné** (une page web ne peut pas écrire à côté d'elle). Copie de travail et onglets sont dans le stockage du navigateur. **L'import crée la copie de travail sans toucher au fichier original** (remplace « lecture seule / Éditer »). Limites : vider les données du site efface la copie → exporter régulièrement (rappel dans l'appli) ; déplacer le dossier de l'appli peut, sous Firefox, faire perdre la copie.
 4. Poste client : Windows ; navigateur quelconque (Firefox inclus) ; JSON sur clé USB, dossier réseau ou mail.
 
 ## Risques connus

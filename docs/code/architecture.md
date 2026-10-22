@@ -28,7 +28,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
 ```
 - `Calc` et `Modele` n'accèdent jamais au DOM ni au stockage : testables dans `tests.html`.
 - L'interface ne calcule rien elle-même : elle appelle `Calc`.
-- Alertes : calculées par `Calc.alertes`, affichées uniquement en mode manager, **jamais** dans `Feuilles`.
+- Alertes : calculées par `Calc.alertes`, affichées au-dessus de la grille Semaine, **jamais** dans `Feuilles`.
 
 ## Schéma JSON (version 4 ; versions 1 à 3 migrées à l'import)
 ```
@@ -70,5 +70,5 @@ Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `p
 |---|---|---|
 | data | `docs/code/data.md` | Modèle, migration, stockage, import/export |
 | calc | `docs/code/calc.md` | Calculs purs et leurs règles métier |
-| ui | `docs/code/ui.md` | Onglets, pages, alertes, mode manager |
+| ui | `docs/code/ui.md` | Onglets, pages, alertes |
 | print | `docs/code/print.md` | Feuille cuisine, feuille chariot, impression |

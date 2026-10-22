@@ -6,7 +6,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
-- `src/index.html` : application complète (onglets restaurés, Semaine, Résidents, fiche, Parcs, Régimes, Activités + presets, Importer, Exporter, Imprimer, alertes manager). Aucune dépendance.
+- `src/index.html` : application complète (onglets restaurés, Semaine, Résidents, fiche, Parcs, Régimes, Activités + presets, Importer, Exporter, Imprimer, alertes). Aucune dépendance.
 - `src/tests.html` : 58 tests de calcul, tous verts (totaux, double plat, activité, direction/nettoyage, alertes, chariot, migration, base vide).
 - Vérifié dans le navigateur intégré (Chromium, via un petit serveur local de test) : toutes les pages, aller-retour export/import JSON, rendu d'impression A4 (règles `@page` actives, 297 × 210 mm).
 

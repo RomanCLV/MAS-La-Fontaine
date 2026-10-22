@@ -13,7 +13,7 @@ Fichiers : `src/js/data/modele.js` (`Recueil.Modele`), `stockage.js` (`Recueil.S
 - `nomAffiche(resident)` = « NOM Prénom ».
 
 ## stockage.js
-- Copie de travail : `localStorage['recueil.donnees']` (+ `recueil.meta` : date de sauvegarde, fichier d'origine, modifié depuis l'export). État de l'interface (onglets, fermés récemment, mode manager, choix d'impression, services affichés dans la grille Semaine) : `lireUi` / `sauverUi` dans `recueil.ui`. `tailleCache()` (≈ octets des 3 clés) et `vider()` (efface les 3 clés) pour la page Options.
+- Copie de travail : `localStorage['recueil.donnees']` (+ `recueil.meta` : date de sauvegarde, fichier d'origine, modifié depuis l'export). État de l'interface (onglets, fermés récemment, choix d'impression, services affichés dans la grille Semaine) : `lireUi` / `sauverUi` dans `recueil.ui`. `tailleCache()` (≈ octets des 3 clés) et `vider()` (efface les 3 clés) pour la page Options.
 - `lireFichier(file)` → Promise de données migrées. `telecharger(donnees, nom)` : export par lien de téléchargement (tous navigateurs). `nomExport(donnees, semaine)` → `MLF S42 - 12 au 18 oct 2026.json`.
 - Bonus Chrome/Edge : `enregistrerSous` / `enregistrerLie` via File System Access (`showSaveFilePicker`) si disponible ; le fichier lié n'est gardé qu'en mémoire (session).
 
