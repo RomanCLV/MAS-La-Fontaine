@@ -25,7 +25,7 @@
     ui: null,
     brouillons: {},   // brouillons non enregistrés, par clé d'onglet
     etat: {},         // états d'écran temporaires (filtres, éditions en ligne…)
-    menuOuvert: false,
+    menuOuvert: false,   // false, 'pages' (bouton ☰ Pages) ou 'plus' (bouton + de la barre d'onglets)
     erreurSauvegarde: false
   };
 
@@ -39,7 +39,7 @@
     App.ui = etatUi(S.lireUi());
     if (App.donnees) App.nettoyerOnglets();
     document.addEventListener('click', function (e) {
-      if (App.menuOuvert && !e.target.closest('.menu-pages, .btn-pages')) { App.menuOuvert = false; App.rendre(); }
+      if (App.menuOuvert && !e.target.closest('.menu-pages, .btn-pages, .btn-plus')) { App.menuOuvert = false; App.rendre(); }
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && App.menuOuvert) { App.menuOuvert = false; App.rendre(); }
@@ -233,8 +233,8 @@
     }
     return h('div', { class: 'barre' },
       App.donnees ? h('button', {
-        class: 'btn-pages', 'aria-expanded': App.menuOuvert ? 'true' : 'false',
-        onclick: function () { App.menuOuvert = !App.menuOuvert; App.rendre(); }
+        class: 'btn-pages', 'aria-expanded': App.menuOuvert === 'pages' ? 'true' : 'false',
+        onclick: function () { App.menuOuvert = App.menuOuvert === 'pages' ? false : 'pages'; App.rendre(); }
       }, '☰ Pages ▾') : null,
       h('div', { class: 'barre-titre' }, 'Recueil Alimentation · MAS La Fontaine'),
       App.donnees ? etat : null,
@@ -243,7 +243,7 @@
       App.donnees ? h('div', { class: 'barre-fichier' },
         h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('import'); } }, 'Importer'),
         h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('export'); } }, 'Exporter')) : null,
-      App.menuOuvert ? menuPages() : null);
+      App.menuOuvert === 'pages' ? menuPages() : null);
   }
 
   function menuPages() {
@@ -275,7 +275,13 @@
           h('button', { class: 'onglet-titre', role: 'tab', 'aria-selected': actif ? 'true' : 'false', onclick: function () { App.activer(k); } },
             titreOnglet(o) + (App.modifieOnglet(o) ? ' •' : '')),
           h('button', { class: 'onglet-fermer', 'aria-label': 'Fermer l’onglet ' + titreOnglet(o), onclick: function () { App.fermer(k); } }, '×'));
-      }));
+      }),
+      // « + » : même menu que « ☰ Pages », ouvert sous le bouton.
+      h('div', { class: 'onglet-plus' },
+        h('button', { class: 'btn-plus', title: 'Ouvrir une page', 'aria-label': 'Ouvrir une page',
+          'aria-expanded': App.menuOuvert === 'plus' ? 'true' : 'false',
+          onclick: function () { App.menuOuvert = App.menuOuvert === 'plus' ? false : 'plus'; App.rendre(); } }, '+'),
+        App.menuOuvert === 'plus' ? menuPages() : null));
   }
 
   App.rendreOnglets = function () {

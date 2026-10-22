@@ -54,6 +54,10 @@ h1{font-size:22px;margin:0}
 .onglet-titre{border:0;background:transparent;padding:0 4px 0 12px;min-height:38px;cursor:pointer;font-weight:inherit;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .onglet-fermer{border:0;background:transparent;font-size:18px;color:#555;min-width:30px;min-height:38px;cursor:pointer;border-radius:4px}
 .onglet-fermer:hover{background:rgba(0,0,0,.08)}
+.onglet-plus{position:relative;align-self:center}
+.btn-plus{min-width:36px;min-height:34px;border:1px dashed var(--gris);border-radius:6px;background:transparent;font-size:20px;line-height:1;cursor:pointer;color:var(--encre)}
+.btn-plus:hover,.btn-plus[aria-expanded=true]{background:var(--onglet);border-style:solid}
+.onglet-plus .menu-pages{left:0;top:40px}
 
 /* Pages */
 .contenu{padding:0 0 24px}

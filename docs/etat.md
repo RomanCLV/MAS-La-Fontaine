@@ -2,7 +2,7 @@
 
 **Phase courante** : 5 Code — **V1 écrite, à tester par l'utilisateur** (2026-10-19).
 Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techniques dans `technique.md`).
-**Dernière MAJ** : 2026-10-20
+**Dernière MAJ** : 2026-10-22
 
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
@@ -74,3 +74,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 ## Retours V1 (9e lot, 2026-10-20)
 - Semaine : ligne « Plats <parc> » en carrés sous les en-têtes (plats du parc affiché par service, comme sa colonne de la feuille cuisine), puis une ligne de carrés par texture présente dans le parc (au moins un plat dans la semaine), fond = couleur de la texture. Vérifié dans le navigateur intégré.
 - Résidents : avec un filtre actif (nom, parc, archivés), le titre affiche aussi le nombre de résidents affichés (« · 3 actifs · 1 affiché »).
+
+## Retours V1 (10e lot, 2026-10-22)
+- Barre d'onglets : bouton « + » (ouvre le menu des pages sous le bouton). Vérifié dans le navigateur intégré.
