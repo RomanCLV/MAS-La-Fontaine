@@ -371,14 +371,16 @@
   // Supprime la semaine s (après confirmation) et affiche la semaine voisine. La dernière semaine ne peut pas être supprimée.
   function supprimer(d, s) {
     var i = d.semaines.indexOf(s);
-    if (!window.confirm('Supprimer définitivement la ' + O.titreSemaine(s).toLowerCase() +
-      ' ?\n\nToutes ses saisies (présences, activités, salariés…) seront perdues.')) return;
-    if (R.Pages.activites.abandonner) R.Pages.activites.abandonner();
-    var voisine = d.semaines[i - 1] || d.semaines[i + 1];
-    App.modifier(function () { d.semaines.splice(i, 1); }, { sansRendu: true });
-    App.ui.semaine = voisine.id;
-    App.nettoyerOnglets();
-    App.ouvrir('semaine', voisine.id);
+    App.confirmer('Supprimer définitivement la ' + O.titreSemaine(s).toLowerCase() +
+      ' ?\n\nToutes ses saisies (présences, activités, salariés…) seront perdues.', function () {
+      if (d.semaines.indexOf(s) !== i) return;
+      if (R.Pages.activites.abandonner) R.Pages.activites.abandonner();
+      var voisine = d.semaines[i - 1] || d.semaines[i + 1];
+      App.modifier(function () { d.semaines.splice(i, 1); }, { sansRendu: true });
+      App.ui.semaine = voisine.id;
+      App.nettoyerOnglets();
+      App.ouvrir('semaine', voisine.id);
+    }, { ok: 'Supprimer', danger: true });
   }
 
   R.Pages.semaine = {

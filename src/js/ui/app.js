@@ -119,7 +119,16 @@
     App.ui.onglets.forEach(function (o, n) { if (cle(o) === k) i = n; });
     if (i < 0) { delete App.brouillons[k]; return; }
     var o = App.ui.onglets[i];
-    if (App.modifieOnglet(o) && !window.confirm('Fermer cet onglet sans enregistrer les modifications ?')) return;
+    if (App.modifieOnglet(o)) {
+      App.confirmer('Fermer cet onglet sans enregistrer les modifications ?', function () { fermerSansQuestion(o, k); }, { ok: 'Fermer sans enregistrer', danger: true });
+      return;
+    }
+    fermerSansQuestion(o, k);
+  };
+  function fermerSansQuestion(o, k) {
+    var i = -1;
+    App.ui.onglets.forEach(function (x, n) { if (cle(x) === k) i = n; });
+    if (i < 0) return;
     if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
     delete App.brouillons[k];
     App.ui.onglets.splice(i, 1);
@@ -130,7 +139,7 @@
     if (App.ui.actif === k) definirActif(cle(App.ui.onglets[Math.max(0, i - 1)] || App.ui.onglets[0]));
     App.sauverUi();
     App.rendre(true);
-  };
+  }
 
   // Remplace l'identifiant d'un onglet (ex. nouveau résident enregistré).
   App.renommerOnglet = function (ancienne, o) {
@@ -158,13 +167,14 @@
     var p = o && R.Pages[o.type];
     try { return !!(p && p.modifie && p.modifie(o)); } catch (e) { return false; }
   };
-  // Avant de remplacer un brouillon : confirmation si besoin. Renvoie true si on peut continuer.
-  App.abandonner = function (o) {
+  // Avant de remplacer un brouillon : confirmation si besoin, puis suite() si on peut continuer.
+  App.abandonner = function (suite, o) {
     o = o || App.ongletActif();
-    if (!App.modifieOnglet(o)) return true;
-    if (!window.confirm('Abandonner les modifications non enregistrées ?')) return false;
-    if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
-    return true;
+    if (!App.modifieOnglet(o)) { suite(); return; }
+    App.confirmer('Abandonner les modifications non enregistrées ?', function () {
+      if (R.Pages[o.type].abandonner) R.Pages[o.type].abandonner(o);
+      suite();
+    }, { ok: 'Abandonner', danger: true });
   };
   App.indicateur = function (o) {
     return h('span', { class: 'non-enregistre', role: 'status', hidden: !App.modifieOnglet(o || App.ongletActif()) }, 'Modifications non enregistrées');
@@ -200,6 +210,41 @@
     zone.appendChild(t);
     setTimeout(function () { t.classList.add('sortie'); }, erreur ? 5000 : 2500);
     setTimeout(function () { t.remove(); }, erreur ? 5400 : 2900);
+  };
+
+  // ---------- Boîtes de dialogue ----------
+  // Remplacent window.confirm / window.alert : le navigateur propose de les bloquer (« Ne plus autoriser ce site
+  // à vous solliciter ») et confirm() répond alors toujours « non » sans rien afficher. Une page ne peut pas lire
+  // ce réglage : on affiche donc nos propres fenêtres, que le navigateur ne bloque jamais.
+  // Le texte passe par textContent ; les \n font des retours à la ligne.
+  function dialogue(texte, boutons, surFin) {
+    var fini = false;
+    function finir(choix) {
+      if (fini) return;
+      fini = true;
+      if (d.open) d.close();
+      d.remove();
+      surFin(choix);
+    }
+    // Échap ferme la fenêtre (événement close) : vaut « Annuler ».
+    var d = h('dialog', { class: 'dialogue', onclose: function () { finir(''); } },
+      h('p', { class: 'dialogue-texte' }, texte),
+      h('div', { class: 'dialogue-boutons' }, boutons.map(function (b) {
+        return h('button', { class: 'btn ' + (b.classe || ''), autofocus: b.focus, onclick: function () { finir(b.valeur); } }, b.texte);
+      })));
+    document.body.appendChild(d);
+    d.showModal();
+  }
+  // suite() n'est appelée que si l'utilisateur confirme. opts : { ok: 'Supprimer', danger: true }.
+  App.confirmer = function (texte, suite, opts) {
+    opts = opts || {};
+    dialogue(texte, [
+      { texte: 'Annuler', valeur: '', focus: !!opts.danger },
+      { texte: opts.ok || 'OK', valeur: 'ok', classe: opts.danger ? 'btn-danger-plein' : 'btn-principal', focus: !opts.danger }
+    ], function (choix) { if (choix === 'ok') suite(); });
+  };
+  App.alerte = function (texte) {
+    dialogue(texte, [{ texte: 'OK', valeur: 'ok', classe: 'btn-principal', focus: true }], function () {});
   };
 
   App.remplacerDonnees = function (donnees, origine) {

@@ -47,23 +47,26 @@
       }
       function supprimer(p) {
         var n = nbTous(p.id);
-        if (n) { window.alert('Impossible : ' + O.pluriel(n, 'résident est rattaché', 'résidents sont rattachés') + ' à ' + p.nom + ' (archivés compris). Changez-les de parc d’abord.'); return; }
-        if (!window.confirm('Supprimer le parc ' + p.nom + ' ?')) return;
-        App.modifier(function () {
-          d.referentiels.parcs = parcs.filter(function (x) { return x.id !== p.id; });
-          d.referentiels.parcs.forEach(function (x, i) { x.ordre = i + 1; });
-          d.semaines.forEach(function (s) { delete s.salaries[p.id]; });
-          App.etat.parcEdit = null;
-        });
+        if (n) { App.alerte('Impossible : ' + O.pluriel(n, 'résident est rattaché', 'résidents sont rattachés') + ' à ' + p.nom + ' (archivés compris). Changez-les de parc d’abord.'); return; }
+        App.confirmer('Supprimer le parc ' + p.nom + ' ?', function () {
+          App.modifier(function () {
+            d.referentiels.parcs = d.referentiels.parcs.filter(function (x) { return x.id !== p.id; });
+            d.referentiels.parcs.forEach(function (x, i) { x.ordre = i + 1; });
+            d.semaines.forEach(function (s) { delete s.salaries[p.id]; });
+            App.etat.parcEdit = null;
+          });
+        }, { ok: 'Supprimer', danger: true });
       }
 
       // Preset MAS La Fontaine : ajoute les parcs manquants, sans toucher aux autres.
       var manquants = M.parcsPresetManquants(d);
       function ajouterPreset() {
-        if (!App.abandonner()) return;
-        if (!window.confirm('Ajouter les parcs MAS La Fontaine manquants ?\n\n' + manquants.map(function (p) { return p.nom; }).join(', ') +
-          '\n\nLes parcs existants ne sont pas modifiés.')) return;
-        App.modifier(function () { M.ajouterParcsPreset(d); App.etat.parcEdit = null; });
+        App.abandonner(function () {
+          App.confirmer('Ajouter les parcs MAS La Fontaine manquants ?\n\n' + manquants.map(function (p) { return p.nom; }).join(', ') +
+            '\n\nLes parcs existants ne sont pas modifiés.', function () {
+            App.modifier(function () { M.ajouterParcsPreset(d); App.etat.parcEdit = null; });
+          }, { ok: 'Ajouter' });
+        });
       }
 
       function formulaire() {
@@ -90,12 +93,12 @@
                 onclick: function () { App.modifier(function () { deplacer(parcs, i, -1); parcs.forEach(function (x, n) { x.ordre = n + 1; }); }); } }, '↑'),
               h('button', { class: 'btn btn-icone', 'aria-label': 'Descendre ' + p.nom, disabled: i === parcs.length - 1,
                 onclick: function () { App.modifier(function () { deplacer(parcs, i, 1); parcs.forEach(function (x, n) { x.ordre = n + 1; }); }); } }, '↓'),
-              h('button', { class: 'btn', onclick: function () { if (App.abandonner()) { App.etat.parcEdit = edition(p.id, p.nom, p.couleur); App.rendre(); } } }, 'Modifier'),
+              h('button', { class: 'btn', onclick: function () { App.abandonner(function () { App.etat.parcEdit = edition(p.id, p.nom, p.couleur); App.rendre(); }); } }, 'Modifier'),
               h('button', { class: 'btn btn-danger', onclick: function () { supprimer(p); } }, 'Supprimer'));
           }),
           ed && !ed.id ? formulaire() : h('div', { class: 'rangee', style: 'margin-top:6px' },
             h('button', { class: 'btn', onclick: function () {
-              if (App.abandonner()) { App.etat.parcEdit = edition(null, '', '#cccccc'); App.rendre(); }
+              App.abandonner(function () { App.etat.parcEdit = edition(null, '', '#cccccc'); App.rendre(); });
             } }, '+ Ajouter un parc'),
             manquants.length ? h('button', { class: 'btn', onclick: ajouterPreset },
               manquants.length === M.PARCS_MAS_LA_FONTAINE.length ? 'Ajouter les parcs MAS La Fontaine'

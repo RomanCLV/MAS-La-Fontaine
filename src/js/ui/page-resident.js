@@ -162,10 +162,11 @@
               App.rendre();
             } }, r.archive ? 'Réactiver' : 'Archiver'),
             b.nouveau ? null : h('button', { class: 'btn btn-danger', onclick: function () {
-              if (!R.PageResidents.confirmerSuppression(r)) return;
-              b.modifie = false;
-              R.PageResidents.supprimer(r.id);
-              App.fermer(k);
+              R.PageResidents.confirmerSuppression(r, function () {
+                b.modifie = false;
+                R.PageResidents.supprimer(r.id);
+                App.fermer(k);
+              });
             } }, 'Supprimer ce résident'))));
     }
   };

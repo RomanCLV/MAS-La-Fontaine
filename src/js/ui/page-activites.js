@@ -46,18 +46,21 @@
     return JSON.stringify(e.b) !== (a ? JSON.stringify(a) : e.initial);
   }
   function abandonner() { var e = etat(); e.selection = null; e.b = null; e.erreur = ''; e.info = ''; }
-  function peutChanger() { return App.abandonner({ type: 'activites' }); }
+  // suite() après confirmation si le formulaire a des modifications non enregistrées.
+  function peutChanger(suite) { App.abandonner(suite, { type: 'activites' }); }
 
   function ouvrirActivite(id) {
-    if (!peutChanger()) return;
-    var s = App.semaineCourante();
-    charger(s.activites.filter(function (a) { return a.id === id; })[0] || null);
-    App.ouvrir('activites');
+    peutChanger(function () {
+      var s = App.semaineCourante();
+      charger(s.activites.filter(function (a) { return a.id === id; })[0] || null);
+      App.ouvrir('activites');
+    });
   }
   function nouvelle() {
-    if (!peutChanger()) return;
-    charger(null);
-    App.ouvrir('activites');
+    peutChanger(function () {
+      charger(null);
+      App.ouvrir('activites');
+    });
   }
 
   // Le preset garde sa couleur, sauf si une autre activité de la semaine l'a déjà (couleur libre de la palette).
@@ -96,11 +99,12 @@
         App.toast('Activité ' + b.nom + ' enregistrée');
       }
       function retirer() {
-        if (!window.confirm('Retirer l’activité « ' + b.nom + ' » de cette semaine ? Les participants reviennent dans leur parc.')) return;
-        App.modifier(function () {
-          s.activites = s.activites.filter(function (a) { return a.id !== b.id; });
-          e.selection = null; e.b = null;
-        });
+        App.confirmer('Retirer l’activité « ' + b.nom + ' » de cette semaine ? Les participants reviennent dans leur parc.', function () {
+          App.modifier(function () {
+            s.activites = s.activites.filter(function (a) { return a.id !== b.id; });
+            e.selection = null; e.b = null;
+          });
+        }, { ok: 'Retirer', danger: true });
       }
       function enregistrerPreset(mettreAJour) {
         if (!b.nom.trim()) { e.erreur = 'Donnez un nom à l’activité avant d’en faire un preset.'; App.rendre(); return; }
@@ -125,15 +129,16 @@
       var gauche = h('div', { class: 'carte colonne-gauche' },
         h('div', { class: 'gras grand' }, 'Semaine ' + M.numeroSemaine(s.debut).numero),
         h('select', { 'aria-label': 'Semaine', onchange: function (ev) {
-          if (peutChanger()) { App.ui.semaine = ev.target.value; abandonner(); App.sauverUi(); }
+          var id = ev.target.value;
           App.rendre();
+          peutChanger(function () { App.ui.semaine = id; abandonner(); App.sauverUi(); App.rendre(); });
         } },
           d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
         s.activites.map(function (a) {
-          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), style: 'border-left:6px solid ' + a.couleur, onclick: function () { if (peutChanger()) { charger(a); App.rendre(); } } },
+          return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), style: 'border-left:6px solid ' + a.couleur, onclick: function () { peutChanger(function () { charger(a); App.rendre(); }); } },
             h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + M.service(a.service).court + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
         }),
-        h('button', { class: 'btn', onclick: function () { if (peutChanger()) { charger(null); App.rendre(); } } }, '+ Ajouter une activité'),
+        h('button', { class: 'btn', onclick: function () { peutChanger(function () { charger(null); App.rendre(); }); } }, '+ Ajouter une activité'),
         h('div', { class: 'gras', style: 'margin-top:8px' }, 'Presets enregistrés'),
         d.presetsActivites.length ? null : h('div', { class: 'petit' }, 'Aucun preset.'),
         d.presetsActivites.map(function (p) {
@@ -142,15 +147,17 @@
               p.jours.map(function (j) { return M.jour(j) ? M.jour(j).nom.toLowerCase() : j; }).join(', ') + ' · ' + p.services.map(function (id) { return M.service(id).court; }).join(', ') + ' · ' +
               O.pluriel(p.participantIds.length, 'participant'))),
             h('button', { class: 'btn btn-icone', 'aria-label': 'Supprimer le preset ' + p.nom, title: 'Supprimer le preset', onclick: function () {
-              if (!window.confirm('Supprimer le preset « ' + p.nom + ' » ? Les activités déjà créées ne changent pas.')) return;
-              App.modifier(function () { d.presetsActivites = d.presetsActivites.filter(function (x) { return x.id !== p.id; }); });
+              App.confirmer('Supprimer le preset « ' + p.nom + ' » ? Les activités déjà créées ne changent pas.', function () {
+                App.modifier(function () { d.presetsActivites = d.presetsActivites.filter(function (x) { return x.id !== p.id; }); });
+              }, { ok: 'Supprimer', danger: true });
             } }, '×'));
         }),
         // Preset MAS La Fontaine : ajoute les presets d'activité manquants (Sport jeudi midi).
         M.presetsActivitesManquants(d).length ? h('button', { class: 'btn', style: 'align-self:flex-start', onclick: function () {
           var noms = M.presetsActivitesManquants(d).map(function (p) { return p.nom; }).join(', ');
-          if (!window.confirm('Ajouter les presets MAS La Fontaine manquants ?\n\n' + noms + '\n\nLes presets existants ne sont pas modifiés.')) return;
-          App.modifier(function () { M.ajouterPresetsActivites(d); });
+          App.confirmer('Ajouter les presets MAS La Fontaine manquants ?\n\n' + noms + '\n\nLes presets existants ne sont pas modifiés.', function () {
+            App.modifier(function () { M.ajouterPresetsActivites(d); });
+          }, { ok: 'Ajouter' });
         } }, 'Ajouter les presets MAS La Fontaine') : null);
 
       // ---- Formulaire ----

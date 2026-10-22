@@ -55,8 +55,10 @@ h1{font-size:22px;margin:0}
 .onglet-fermer{border:0;background:transparent;font-size:18px;color:#555;min-width:30px;min-height:38px;cursor:pointer;border-radius:4px}
 .onglet-fermer:hover{background:rgba(0,0,0,.08)}
 .onglet-plus{position:relative;align-self:center}
-.btn-plus{min-width:36px;min-height:34px;border:1px dashed var(--gris);border-radius:6px;background:transparent;font-size:20px;line-height:1;cursor:pointer;color:var(--encre)}
-.btn-plus:hover,.btn-plus[aria-expanded=true]{background:var(--onglet);border-style:solid}
+/* « + » dessiné en CSS (2 barres) : le glyphe de la police n'est pas centré verticalement. */
+.btn-plus{display:block;width:36px;height:34px;padding:0;border:1px dashed var(--gris);border-radius:6px;font-size:0;cursor:pointer;color:var(--encre);
+  background:linear-gradient(currentColor,currentColor) center/14px 2px no-repeat,linear-gradient(currentColor,currentColor) center/2px 14px no-repeat,transparent}
+.btn-plus:hover,.btn-plus[aria-expanded=true]{background-color:var(--onglet);border-style:solid}
 .onglet-plus .menu-pages{left:0;top:40px}
 
 /* Pages */
@@ -250,3 +252,11 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .toast.sortie{opacity:0}
 @keyframes toast-entree{from{opacity:0;transform:translateY(10px)}}
 @media print{.toasts{display:none}}
+
+/* Boîte de dialogue (remplace confirm / alert du navigateur) */
+.dialogue{max-width:min(520px,calc(100vw - 32px));border:1px solid var(--gris);border-radius:8px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.3);color:var(--encre);background:#fff}
+.dialogue::backdrop{background:rgba(0,0,0,.35)}
+.dialogue-texte{margin:0 0 18px;white-space:pre-line;font-size:15px;line-height:1.45}
+.dialogue-boutons{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.btn-danger-plein{background:var(--rouge);color:#fff;font-weight:700;border-color:var(--rouge)}
+.btn-danger-plein:hover{background:#6e1515}

@@ -16,9 +16,9 @@
       if (App.etat.residents) delete App.etat.residents.modifs[id];
     });
   }
-  function confirmerSuppression(r) {
-    return window.confirm('Supprimer définitivement ' + M.nomAffiche(r) + ' ?\nSes présences et participations seront effacées. ' +
-      'Pour le garder en réserve, utilisez plutôt « Archiver ».');
+  function confirmerSuppression(r, suite) {
+    App.confirmer('Supprimer définitivement ' + M.nomAffiche(r) + ' ?\nSes présences et participations seront effacées. ' +
+      'Pour le garder en réserve, utilisez plutôt « Archiver ».', suite, { ok: 'Supprimer', danger: true });
   }
 
   function pastille(texte, couleur, classe) {
@@ -69,7 +69,7 @@
         h('span', { class: 'actions' },
           h('button', { class: 'btn', onclick: function () { App.ouvrir('resident', r.id); } }, 'Éditer'),
           h('button', { class: 'btn', onclick: function () { App.modifier(function () { r.archive = !r.archive; }); } }, r.archive ? 'Réactiver' : 'Archiver'),
-          h('button', { class: 'btn btn-danger', onclick: function () { if (confirmerSuppression(r)) supprimer(r.id); } }, 'Supprimer')));
+          h('button', { class: 'btn btn-danger', onclick: function () { confirmerSuppression(r, function () { supprimer(r.id); }); } }, 'Supprimer')));
     });
   }
 

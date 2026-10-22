@@ -4,10 +4,12 @@
   var M = R.Modele, S = R.Stockage, h = R.h, O = R.Outils, App = R.App;
 
   function repartirDeZero() {
-    if (App.donnees && !window.confirm('Repartir de zéro ?\n\nLa copie de travail est remplacée par une base vide : aucun parc, aucun résident, ' +
+    function vider() { App.remplacerDonnees(M.baseVide(), 'base vide'); }
+    if (!App.donnees) { vider(); return; }
+    App.confirmer('Repartir de zéro ?\n\nLa copie de travail est remplacée par une base vide : aucun parc, aucun résident, ' +
       'aucune activité, seulement la semaine en cours. Les textures, régimes et options reprennent la liste par défaut.' +
-      (App.meta.nonExporte ? '\n\nAttention : la copie actuelle a des modifications non exportées, elles seront perdues.' : ''))) return;
-    App.remplacerDonnees(M.baseVide(), 'base vide');
+      (App.meta.nonExporte ? '\n\nAttention : la copie actuelle a des modifications non exportées, elles seront perdues.' : ''),
+      vider, { ok: 'Repartir de zéro', danger: true });
   }
 
   // Champ fichier caché : un vrai bouton appelle .click() dessus.

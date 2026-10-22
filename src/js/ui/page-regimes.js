@@ -105,18 +105,19 @@
           (ed.nature === 'regime' ? ' enregistré' : ' enregistrée'));
       }
       function supprimer(g) {
-        if (PROTEGES.indexOf(g.id) >= 0) { window.alert('« ' + g.nom + ' » est utilisé par les calculs : il peut être renommé mais pas supprimé.'); return; }
+        if (PROTEGES.indexOf(g.id) >= 0) { App.alerte('« ' + g.nom + ' » est utilisé par les calculs : il peut être renommé mais pas supprimé.'); return; }
         var n = utilisations(d, g);
-        if (g.nature === 'texture' && n) { window.alert('Impossible : ' + O.pluriel(n, 'résident a', 'résidents ont') + ' cette texture. Changez-la dans leur fiche d’abord.'); return; }
-        if (!window.confirm('Supprimer « ' + g.nom + ' » ?' + (n ? '\nIl sera retiré de ' + O.pluriel(n, 'résident') + '.' : ''))) return;
-        App.modifier(function () {
-          d.referentiels.regimes = liste.filter(function (x) { return x.id !== g.id; });
-          d.residents.forEach(function (r) {
-            r.regimeIds = r.regimeIds.filter(function (x) { return x !== g.id; });
-            r.optionIds = r.optionIds.filter(function (x) { return x !== g.id; });
+        if (g.nature === 'texture' && n) { App.alerte('Impossible : ' + O.pluriel(n, 'résident a', 'résidents ont') + ' cette texture. Changez-la dans leur fiche d’abord.'); return; }
+        App.confirmer('Supprimer « ' + g.nom + ' » ?' + (n ? '\nIl sera retiré de ' + O.pluriel(n, 'résident') + '.' : ''), function () {
+          App.modifier(function () {
+            d.referentiels.regimes = d.referentiels.regimes.filter(function (x) { return x.id !== g.id; });
+            d.residents.forEach(function (r) {
+              r.regimeIds = r.regimeIds.filter(function (x) { return x !== g.id; });
+              r.optionIds = r.optionIds.filter(function (x) { return x !== g.id; });
+            });
+            App.etat.regimeEdit = null;
           });
-          App.etat.regimeEdit = null;
-        });
+        }, { ok: 'Supprimer', danger: true });
       }
 
       var gabarit = 'grid-template-columns:44px minmax(0,1.4fr) minmax(0,1fr) 230px 100px minmax(0,1.6fr) 260px';
@@ -158,10 +159,11 @@
             h('button', { class: 'btn btn-icone', 'aria-label': 'Descendre ' + g.nom, disabled: dernier,
               onclick: function () { App.modifier(function () { deplacer(liste, g, 1); }); } }, '↓'),
             h('button', { class: 'btn', onclick: function () {
-              if (!App.abandonner()) return;
-              App.etat.regimeEdit = edition(g.id, g.nature, g.nom, g.abrege || '', g.couleur, g.nature, g.affecte || '',
-                g.services || M.SERVICES_REGIME_DEFAUT, g.toujoursVisible !== false);
-              App.rendre();
+              App.abandonner(function () {
+                App.etat.regimeEdit = edition(g.id, g.nature, g.nom, g.abrege || '', g.couleur, g.nature, g.affecte || '',
+                  g.services || M.SERVICES_REGIME_DEFAUT, g.toujoursVisible !== false);
+                App.rendre();
+              });
             } }, 'Éditer'),
             h('button', { class: 'btn btn-danger', onclick: function () { supprimer(g); } }, 'Supprimer')));
       }
@@ -176,9 +178,10 @@
             h('span', null, 'Effet sur la production'), h('span')),
           elts.map(function (g, i) { return ligne(g, i === 0, i === elts.length - 1); }),
           ed && !ed.id && ed.table === t.nature ? formulaire() : h('button', { class: 'btn', style: 'align-self:flex-start;margin-top:6px', onclick: function () {
-            if (!App.abandonner()) return;
-            App.etat.regimeEdit = edition(null, t.nature, '', '', '#dddddd', t.nature, '', M.SERVICES_REGIME_DEFAUT, false);
-            App.rendre();
+            App.abandonner(function () {
+              App.etat.regimeEdit = edition(null, t.nature, '', '', '#dddddd', t.nature, '', M.SERVICES_REGIME_DEFAUT, false);
+              App.rendre();
+            });
           } }, t.ajout));
       }
 

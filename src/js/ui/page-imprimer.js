@@ -23,7 +23,7 @@
   }
 
   function imprimer() {
-    if (!preparer()) { window.alert('Aucune feuille à imprimer avec ces choix.'); return; }
+    if (!preparer()) { App.alerte('Aucune feuille à imprimer avec ces choix.'); return; }
     window.print();
   }
 

@@ -18,11 +18,12 @@
       'ainsi que les onglets ouverts et les préférences d’affichage. L’application revient à l’écran d’accueil.\n\n' +
       'Les fichiers .json déjà exportés ne sont pas touchés.' +
       (m.nonExporte ? '\n\nAttention : la copie actuelle a des modifications non exportées, elles seront perdues.' : '');
-    if (!window.confirm(texte)) return;
-    if (!App.viderCache()) {
-      App.etat.options = { erreur: 'Le navigateur a refusé d’effacer le cache. Fermez les autres onglets de l’application et réessayez.' };
-      App.rendre();
-    }
+    App.confirmer(texte, function () {
+      if (!App.viderCache()) {
+        App.etat.options = { erreur: 'Le navigateur a refusé d’effacer le cache. Fermez les autres onglets de l’application et réessayez.' };
+        App.rendre();
+      }
+    }, { ok: 'Vider le cache', danger: true });
   }
 
   R.Pages.options = {
