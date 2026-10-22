@@ -2,12 +2,15 @@
 (function (R) {
   'use strict';
   var M = R.Modele, h = R.h, O = R.Outils, App = R.App;
+  // description : phrase courte sous le titre de chaque tableau, pour bien distinguer les trois natures (glossaire).
   var TABLES = [
-    { nature: 'texture', titre: 'Textures', ajout: '+ Ajouter une texture' },
-    { nature: 'regime', titre: 'Régimes & Allergies', ajout: '+ Ajouter un régime' },
-    { nature: 'option', titre: 'Options', ajout: '+ Ajouter une option' }
+    { nature: 'texture', titre: 'Textures', ajout: '+ Ajouter une texture',
+      description: 'Consistance du plat servi (haché, mixé…). Un résident a une seule texture.' },
+    { nature: 'regime', titre: 'Régimes & Allergies', ajout: '+ Ajouter un régime',
+      description: 'Contraintes alimentaires impératives : ce que le résident ne doit pas manger (sans porc, diabétique, allergies…). Plusieurs possibles.' },
+    { nature: 'option', titre: 'Options', ajout: '+ Ajouter une option',
+      description: 'Ajouts ou changements sur l’assiette (double plat, enrichi, pots gourmands…), parfois des plats en plus. Plusieurs possibles.' }
   ];
-  var NATURES = [{ v: 'regime', nom: 'Régime' }, { v: 'option', nom: 'Option' }]; // passage régime ↔ option
   var EFFETS = [
     { v: '', nom: 'Assiette individuelle (compté sur les plats)' },
     { v: 'plat', nom: '+1 plat chaud (EQ +1)' },
@@ -88,13 +91,6 @@
           var g;
           if (ed.id) {
             g = liste.filter(function (x) { return x.id === ed.id; })[0];
-            // Passage régime ↔ option : on déplace l'identifiant chez les résidents.
-            if (g.nature !== ed.nature) {
-              d.residents.forEach(function (r) {
-                var de = g.nature === 'regime' ? 'regimeIds' : 'optionIds', vers = ed.nature === 'regime' ? 'regimeIds' : 'optionIds';
-                if (r[de].indexOf(g.id) >= 0) { r[de] = r[de].filter(function (x) { return x !== g.id; }); r[vers].push(g.id); }
-              });
-            }
           } else {
             g = { id: R.Referentiel.idLibre(R.Referentiel.slug(ed.nom), liste.map(function (x) { return x.id; })) };
             liste.push(g);
@@ -125,7 +121,6 @@
 
       var gabarit = 'grid-template-columns:44px minmax(0,1.4fr) minmax(0,1fr) 230px 100px minmax(0,1.6fr) 260px';
       function formulaire() {
-        var texture = ed.nature === 'texture';
         return h('div', { class: 'ligne-reg edition', style: gabarit },
           h('input', { type: 'color', value: ed.couleur, 'aria-label': 'Couleur', oninput: function (e) { ed.couleur = e.target.value; App.signalerModif(); } }),
           h('input', { value: ed.nom, 'aria-label': 'Nom', placeholder: 'Nom', oninput: function (e) { ed.nom = e.target.value; App.signalerModif(); } }),
@@ -133,14 +128,10 @@
           casesServices(ed.services, function (id) { ed.services = basculer(ed.services, id); App.rendre(); }),
           ed.id === M.textureDefaut(d) ? sansColonne()
             : caseAffiche(ed.visible, function () { ed.visible = !ed.visible; App.rendre(); }),
-          texture ? h('span', { class: 'petit' }, effet({ id: ed.id, nature: 'texture' }))
-            : h('span', { class: 'effet-reg' },
-              h('select', { 'aria-label': 'Nature', onchange: function (e) { ed.nature = e.target.value; App.rendre(); } },
-                NATURES.map(function (n) { return h('option', { value: n.v, selected: n.v === ed.nature }, n.nom); })),
-              ed.nature === 'option'
-                ? h('select', { 'aria-label': 'Effet sur la production', onchange: function (e) { ed.affecte = e.target.value; App.signalerModif(); } },
-                  EFFETS.map(function (x) { return h('option', { value: x.v, selected: x.v === ed.affecte }, x.nom); }))
-                : h('span', { class: 'petit' }, effet({ id: ed.id, nature: 'regime' }))),
+          ed.nature === 'option'
+            ? h('select', { 'aria-label': 'Effet sur la production', onchange: function (e) { ed.affecte = e.target.value; App.signalerModif(); } },
+              EFFETS.map(function (x) { return h('option', { value: x.v, selected: x.v === ed.affecte }, x.nom); }))
+            : h('span', { class: 'petit' }, effet({ id: ed.id, nature: ed.nature })),
           h('span', { class: 'actions-visibles' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
             h('button', { class: 'btn', onclick: function () { App.etat.regimeEdit = null; App.rendre(); } }, 'Annuler'),
@@ -179,6 +170,7 @@
         var elts = liste.filter(function (g) { return g.nature === t.nature; });
         return h('div', { class: 'carte' },
           h('h2', { class: 'titre-carte' }, t.titre + ' ', h('span', { class: 'pilule' }, elts.length)),
+          h('div', { class: 'petit' }, t.description),
           h('div', { class: 'ligne-reg entete', style: gabarit }, h('span'), h('span', null, 'Nom'), h('span', null, 'Abrégé (grille)'),
             h('span', null, 'Services concernés'), h('span', { title: AIDE_AFFICHE, class: 'aide' }, 'Toujours affiché ⓘ'),
             h('span', null, 'Effet sur la production'), h('span')),

@@ -21,6 +21,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
   - *Texture* : normal, haché, mixé (même grammage ; un mixé/haché peut aussi être sans résidus).
   - *Option* : double plat (+1 plat chaud seulement), double légumes vert (compté à part), enrichi, poisson/viande panée + pâtes/riz/frites, pots gourmands (information seulement, voir plus bas).
   - Chaque option précise ce qu'elle affecte (ex. double plat → plat uniquement).
+  - Page Régimes : une phrase sous chaque tableau rappelle la différence (texture = consistance, une seule ; régime = contrainte impérative ; option = ajout/changement sur l'assiette). La nature est fixée à la création (plus de passage régime ↔ option).
 - Le **Lude** : "mixé tout le froid" = assiette dressée à part (mention d'affichage, pas une texture à part).
 
 ### 2. Résidents

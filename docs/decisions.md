@@ -140,3 +140,6 @@
 
 ## 2026-10-22 — « Fermés récemment » sans les pages fixes
 - Seules les pages hors menu (fiches résidents, Imprimer) y apparaissent ; les pages du menu Pages, Semaine comprise, en sont exclues (les semaines se rouvrent par le choix « Semaine »). Raison : demande utilisateur, la liste se remplissait de pages toujours accessibles.
+
+## 2026-10-22 — Page Régimes : descriptions, nature fixe
+- Une phrase sous chaque tableau (Textures / Régimes & Allergies / Options), reprise du glossaire. Le choix « Régime / Option » du formulaire est retiré : un élément garde la nature du tableau où il a été créé (pour en changer : le recréer dans l'autre tableau). Raison : demande utilisateur, bien dissocier les trois.

@@ -79,3 +79,4 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Barre d'onglets : bouton « + » (ouvre le menu des pages sous le bouton). Vérifié dans le navigateur intégré.
 - « Fermés récemment » : seulement les pages hors menu (fiches résidents, Imprimer) ; les pages du menu (Semaine comprise) n'y apparaissent plus. Vérifié dans le navigateur intégré.
 - **Toast** de confirmation (« ✓ Fiche de … enregistrée », etc.) après chaque bouton Enregistrer et après un export ; rouge si l'enregistrement a échoué. Vérifié dans le navigateur intégré.
+- Page Régimes : phrase de description sous Textures / Régimes & Allergies / Options ; retrait du choix « Régime / Option » dans le formulaire. Vérifié dans le navigateur intégré.
