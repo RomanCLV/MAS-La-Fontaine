@@ -105,6 +105,8 @@
           if (g.nature === 'option') g.affecte = ed.affecte; else delete g.affecte;
           App.etat.regimeEdit = null;
         });
+        App.toast({ texture: 'Texture ', regime: 'Régime ', option: 'Option ' }[ed.nature] + ed.nom.trim() +
+          (ed.nature === 'regime' ? ' enregistré' : ' enregistrée'));
       }
       function supprimer(g) {
         if (PROTEGES.indexOf(g.id) >= 0) { window.alert('« ' + g.nom + ' » est utilisé par les calculs : il peut être renommé mais pas supprimé.'); return; }

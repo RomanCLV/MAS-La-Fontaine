@@ -187,6 +187,21 @@
     else App.rendre();
   };
 
+  // Petit message en bas de l'écran, effacé après quelques secondes (hors de #app : survit aux re-rendus).
+  // Après un « Enregistrer » ; si la sauvegarde dans le navigateur a échoué, message d'erreur à la place.
+  App.toast = function (texte, erreur) {
+    if (!erreur && App.erreurSauvegarde) { texte = 'Enregistrement impossible dans ce navigateur : exportez le fichier'; erreur = true; }
+    var zone = document.getElementById('toasts');
+    if (!zone) {
+      zone = h('div', { id: 'toasts', class: 'toasts', role: 'status', 'aria-live': 'polite' });
+      document.body.appendChild(zone);
+    }
+    var t = h('div', { class: 'toast' + (erreur ? ' toast-ko' : '') }, (erreur ? '✕ ' : '✓ ') + texte);
+    zone.appendChild(t);
+    setTimeout(function () { t.classList.add('sortie'); }, erreur ? 5000 : 2500);
+    setTimeout(function () { t.remove(); }, erreur ? 5400 : 2900);
+  };
+
   App.remplacerDonnees = function (donnees, origine) {
     App.donnees = donnees;
     App.brouillons = {};

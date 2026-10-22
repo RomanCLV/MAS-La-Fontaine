@@ -88,6 +88,7 @@
           if (i >= 0) s.activites[i] = M.copie(b); else s.activites.push(M.copie(b));
           e.selection = b.id; e.erreur = ''; e.info = '';
         });
+        App.toast('Activité ' + b.nom + ' enregistrée');
       }
       function retirer() {
         if (!window.confirm('Retirer l’activité « ' + b.nom + ' » de cette semaine ? Les participants reviennent dans leur parc.')) return;
@@ -112,6 +113,7 @@
           // L'activité enregistrée garde le lien vers son preset.
           s.activites.forEach(function (a) { if (a.id === b.id) a.presetId = p.id; });
         });
+        App.toast(mettreAJour ? 'Preset mis à jour' : 'Preset enregistré');
       }
 
       // ---- Colonne de gauche ----

@@ -116,6 +116,7 @@
       });
       f.modifs = {};
     });
+    App.toast(O.pluriel(ids.length, 'résident enregistré', 'résidents enregistrés'));
   }
 
   function vueTableau(d, f) {

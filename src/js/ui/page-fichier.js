@@ -106,7 +106,7 @@
       var e = App.etat.export = App.etat.export || {};
       if (!e.nom || e.semaine !== s.id) { e.nom = S.nomExport(App.donnees, s); e.semaine = s.id; }
       var fsa = S.fichierLieDisponible();
-      function fait(texte) { e.message = texte; e.erreur = ''; App.marquerExporte(); }
+      function fait(texte) { e.message = texte; e.erreur = ''; App.marquerExporte(); App.toast('Fichier exporté'); }
       function echec(err) { if (err && err.name === 'AbortError') return; e.erreur = 'Enregistrement impossible : ' + (err && err.message); App.rendre(); }
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' }, h('h1', null, 'Fichier : exporter')),

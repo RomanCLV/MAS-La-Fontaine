@@ -82,6 +82,7 @@
         }, { sansRendu: true });
         delete App.brouillons[k];
         App.rendre();
+        App.toast('Fiche de ' + M.nomAffiche(copie) + ' enregistrée');
       }
       function annuler() {
         if (b.nouveau) { b.modifie = false; App.fermer(k); return; }
