@@ -172,6 +172,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal((t2.tex.normal || 0) + (t2.tex.hache || 0) + (t2.tex.mixe || 0), t2.total, 'Normal + Haché + Mixé = total (avec témoins)');
     egal(C.feuilleJour(d, s, 'lun_soir').total.temoins, 0, 'Lundi soir : aucun témoin saisi');
     egal(M.semaineSuivante(s).temoins, { lun_midi: 2 }, 'Semaine suivante : reprend les plats témoins');
+    egal(M.semaineSuivante({ debut: '2026-10-12', presences: { a: { sam_midi: 0, dim_soir: 0, lun_midi: 1 }, b: { lun_soir: 1 } } }).presences,
+      { a: { sam_midi: 0, dim_soir: 0 } }, 'Semaine suivante : reprend les absences cochées (0), pas les « présent » saisis');
   });
 
   groupe('Présences et alertes', function () {

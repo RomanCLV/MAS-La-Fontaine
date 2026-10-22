@@ -131,10 +131,17 @@
     };
   }
 
-  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins),
-  // pas les présences ni les activités (les presets servent à les recréer).
+  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins)
+  // et les absences cochées dans la grille (cases à 0), pas les activités (les presets servent à les recréer).
+  // Les « présent » saisis (1) ne sont pas repris : ils contredisaient une absence de fiche de cette semaine-là
+  // et masqueraient une nouvelle absence de fiche.
   function semaineSuivante(semaine) {
     var s = semaineVide(ajouterJours(semaine.debut, 7));
+    Object.keys(semaine.presences || {}).forEach(function (rid) {
+      var saisies = semaine.presences[rid] || {}, zeros = {};
+      Object.keys(saisies).forEach(function (c) { if (saisies[c] === 0) zeros[c] = 0; });
+      if (Object.keys(zeros).length) s.presences[rid] = zeros;
+    });
     s.salaries = copie(semaine.salaries || {});
     s.sodexo = copie(semaine.sodexo || {});
     s.direction = copie(semaine.direction || {});

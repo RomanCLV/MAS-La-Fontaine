@@ -51,7 +51,7 @@
 - **Hypothèse** : Sodexo saisi en `{standard, sansPorc}` par créneau (la maquette cuisine montre du sans porc Sodexo) ; ancien format nombre accepté.
 - Chariots : un par parc et par activité (volume > 0) ; 6 étiquettes par page, page suivante si besoin. Étiquette si texture ≠ normal, régime autre que « sans porc » seul, option ou consigne ; « sans porc » seul et « normaux simples » en collectif.
 - Feuilles d'un créneau à 0 plat non imprimées. Pots gourmands : pastille sur l'étiquette, absents de la feuille cuisine.
-- « Créer la semaine suivante » reprend salariés, Sodexo, direction, nettoyage ; pas les présences ni les activités (presets).
+- « Créer la semaine suivante » reprend salariés, Sodexo, direction, nettoyage ; pas les présences (voir 2026-10-22 : absences cochées reprises) ni les activités (presets).
 - Clic sur une présence : si la valeur revient à celle de la fiche, la saisie est effacée (pas de fausse alerte).
 - « Normal », « Sans porc », « Sans viande » renommables mais non supprimables (utilisés par les calculs).
 - Police Atkinson Hyperlegible utilisée seulement si installée (pas de téléchargement : hors ligne, aucune dépendance) ; sinon police système.
@@ -149,3 +149,6 @@
 
 ## 2026-10-22 — Couleur automatique des activités
 - Palette de 8 couleurs (bleu, orange, vert, violet, rose, turquoise, marron, moutarde ; pas de rouge, réservé aux absences). Nouvelle activité = première couleur que n'a aucune autre activité de la semaine ; un preset garde sa couleur sauf si elle est déjà prise. Toujours modifiable à la main. Raison : éviter plusieurs activités bleues.
+
+## 2026-10-22 — Semaine suivante : reprise des présences
+- « Créer la semaine suivante » reprend aussi les cases de présence mises à 0 dans la grille (absences habituelles, ex. retours en famille le week-end) ; à corriger ensuite si besoin. Les « présent » saisis contre une absence de fiche ne sont pas repris (ils masqueraient une nouvelle absence de fiche). Les absences de fiche s'appliquent comme d'habitude. Remplace la décision « pas les présences ». Raison : demande utilisateur, peu de changements d'une semaine à l'autre.
