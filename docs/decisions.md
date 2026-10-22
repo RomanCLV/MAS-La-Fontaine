@@ -133,7 +133,7 @@
 - Ligne de carrés « Total hors parcs » par service = Sodexo + Direction + Nettoyage (avec sans viande) + Plats témoins. Les salariés du parc restent dans « Plats <parc> ». Raison : demande utilisateur.
 
 ## 2026-10-22 — Légende de la grille Semaine
-- Légende : case verte « 1 » = « Présent et consommant 1 repas », case rouge hachurée « 0 » = « Absence planifiée » (absence de la fiche du résident). Les cases concernées de la grille passent aussi en rouge hachuré. Raison : ressembler à la feuille habituelle.
+- Légende : case verte « 1 » = « Présent et consommant 1 repas », case rouge hachurée « 0 » = « Absence planifiée » (absence de la fiche du résident). Les cases concernées de la grille passent aussi en rouge hachuré. Ajout de « 0 Absent » (case rouge unie) pour le 0 saisi à la main, qui passe d’orange à rouge. Raison : ressembler à la feuille habituelle.
 
 ## 2026-10-22 — Fin du « Mode manager »
 - Bouton retiré ; les alertes de présence sont toujours affichées au-dessus de la grille Semaine (toujours jamais sur les impressions). Raison : le mode ne servait qu'à afficher les alertes.

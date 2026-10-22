@@ -323,6 +323,7 @@
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
       h('div', { class: 'legende' },
         h('span', { class: 'pc-ex' }, '1'), 'Présent et consommant 1 repas',
+        h('span', { class: 'pc-ex absent' }, '0'), 'Absent',
         h('span', { class: 'pc-ex abs-fiche' }, '0'), 'Absence planifiée',
         s.activites.length ? s.activites.map(function (a) {
           return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
