@@ -152,3 +152,6 @@
 
 ## 2026-10-22 — Semaine suivante : reprise des présences
 - « Créer la semaine suivante » reprend aussi les cases de présence mises à 0 dans la grille (absences habituelles, ex. retours en famille le week-end) ; à corriger ensuite si besoin. Les « présent » saisis contre une absence de fiche ne sont pas repris (ils masqueraient une nouvelle absence de fiche). Les absences de fiche s'appliquent comme d'habitude. Remplace la décision « pas les présences ». Raison : demande utilisateur, peu de changements d'une semaine à l'autre.
+
+## 2026-10-22 — Activités : tout ajouter / tout retirer
+- « Cacher les absents » cochée par défaut. Boutons « Tout ajouter » / « Tout retirer » sur les résidents **affichés** (la recherche et le filtre des absents limitent donc leur effet ; un résident déjà inscrit à une autre activité du créneau n'est pas ajouté). Pas de confirmation : rien n'est enregistré avant « Enregistrer ». Raison : demande utilisateur.

@@ -3,8 +3,8 @@
   'use strict';
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
-  // q / cacherAbsents : filtres de la liste des participants (simple affichage, gardés d'une activité à l'autre).
-  function etat() { return App.etat.activites = App.etat.activites || { selection: null, b: null, q: '', cacherAbsents: false }; }
+  // q / cacherAbsents : filtres de la liste des participants (simple affichage, gardés d'une activité à l'autre). Absents cachés par défaut.
+  function etat() { return App.etat.activites = App.etat.activites || { selection: null, b: null, q: '', cacherAbsents: true }; }
 
   // Nouvelle activité : couleur de la palette pas encore prise cette semaine (pas trois activités bleues).
   function charger(a) {
@@ -213,8 +213,12 @@
 
       // Participants par parc, filtrés par nom et (option) sans les absents du créneau.
       // Un participant coché reste affiché même absent (il serait sinon compté sans qu'on le voie).
+      // « Tout ajouter » / « Tout retirer » agissent sur les résidents affichés (recherche et absents cachés respectés),
+      // sans ceux déjà inscrits à une autre activité du créneau.
       function participants() {
         var q = O.sansAccents(e.q.trim());
+        var autres = C.activitesDuCreneau(s, c).filter(function (a) { return a.id !== b.id; });
+        function autreActivite(r) { return autres.filter(function (a) { return a.participantIds.indexOf(r.id) >= 0; })[0]; }
         var visibles = groupes.map(function (g) {
           return { parc: g.parc, residents: g.residents.filter(function (r) {
             if (q && O.sansAccents(M.nomAffiche(r)).indexOf(q) < 0) return false;
@@ -222,12 +226,20 @@
           }) };
         }).filter(function (g) { return g.residents.length; });
         if (!visibles.length) return h('div', { class: 'vide-liste' }, 'Aucun résident trouvé.');
-        return visibles.map(function (g) {
+        var affiches = [].concat.apply([], visibles.map(function (g) { return g.residents; }));
+        var aAjouter = affiches.filter(function (r) { return b.participantIds.indexOf(r.id) < 0 && !autreActivite(r); }).map(function (r) { return r.id; });
+        var aRetirer = affiches.filter(function (r) { return b.participantIds.indexOf(r.id) >= 0; }).map(function (r) { return r.id; });
+        var actions = h('div', { class: 'rangee', style: 'margin-bottom:8px' },
+          h('button', { class: 'btn btn-petit', disabled: !aAjouter.length, title: 'Coche tous les résidents affichés',
+            onclick: function () { b.participantIds = b.participantIds.concat(aAjouter); App.rendre(); } }, 'Tout ajouter'),
+          h('button', { class: 'btn btn-petit', disabled: !aRetirer.length, title: 'Décoche tous les résidents affichés',
+            onclick: function () { b.participantIds = b.participantIds.filter(function (id) { return aRetirer.indexOf(id) < 0; }); App.rendre(); } }, 'Tout retirer'));
+        return [actions].concat(visibles.map(function (g) {
           return h('div', { class: 'groupe-participants' },
             h('span', { class: 'etiquette-parc gras', style: 'background:' + g.parc.couleur + ';color:' + O.texteSur(g.parc.couleur) }, g.parc.nom),
             h('div', null, g.residents.map(function (r) {
               var on = b.participantIds.indexOf(r.id) >= 0;
-              var autre = C.activitesDuCreneau(s, c).filter(function (a) { return a.id !== b.id && a.participantIds.indexOf(r.id) >= 0; })[0];
+              var autre = autreActivite(r);
               var absent = C.presence(s, r, c).valeur === 0;
               var titre = autre ? 'Déjà inscrit à « ' + autre.nom + ' » sur ce service' + (on ? ' : à décocher' : '') : (absent ? 'Absent ce jour-là : ne sera compté nulle part' : '');
               return h('button', { class: 'participant' + (on ? ' on' : '') + (absent ? ' absent' : '') + (autre && on ? ' conflit' : ''), 'aria-pressed': on ? 'true' : 'false',
@@ -237,7 +249,7 @@
                   App.rendre();
                 } }, M.nomAffiche(r) + (absent ? ' (absent)' : ''));
             })));
-        });
+        }));
       }
 
       return h('div', { class: 'page page-large' },
