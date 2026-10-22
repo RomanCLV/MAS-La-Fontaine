@@ -146,3 +146,6 @@
 
 ## 2026-10-22 — Semaine : feuille « Recherche »
 - Recherche par nom sur tous les parcs : onglet « Recherche » à la place du parc, avec une colonne Parc ; on y saisit les présences comme d'habitude. Les lignes propres à un parc (plats du parc, textures, en activité, salariés, Sodexo… hors parcs) n'y sont pas. Raison : retrouver quelqu'un sans savoir dans quel parc il est.
+
+## 2026-10-22 — Couleur automatique des activités
+- Palette de 8 couleurs (bleu, orange, vert, violet, rose, turquoise, marron, moutarde ; pas de rouge, réservé aux absences). Nouvelle activité = première couleur que n'a aucune autre activité de la semaine ; un preset garde sa couleur sauf si elle est déjà prise. Toujours modifiable à la main. Raison : éviter plusieurs activités bleues.

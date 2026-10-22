@@ -34,6 +34,8 @@
   var REGIME_SANS_PORC = 'sans_porc';   // salariés « sans porc »
   var REGIME_NETTOYAGE = 'sans_viande'; // ligne « Nettoyage sans viande » (halal : œufs/poisson)
   var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
+  // Couleurs proposées aux nouvelles activités, dans l'ordre (pas de rouge : réservé aux absences de la grille).
+  var PALETTE_ACTIVITES = [COULEUR_ACTIVITE, '#e07b00', '#2e8b3e', '#7b4bb7', '#d63c8c', '#138d90', '#8a5a2b', '#b8860b'];
   // Services concernés par défaut par une texture / un régime / une option (avant la version 4 : midi et soir).
   var SERVICES_REGIME_DEFAUT = ['midi', 'soir'];
   var SERVICES_POTS_GOURMANDS = ['petitdej']; // alternative du petit déjeuner (retour utilisateur 2026-10-20)
@@ -333,6 +335,16 @@
   function colonneAffichee(g, residents) {
     return g.toujoursVisible !== false || residents.some(function (r) { return aRegime(r, g); });
   }
+  // Couleur d'une activité de la semaine s : preferee si aucune autre activité ne l'a (idActivite exclue),
+  // sinon la première couleur de la palette encore libre ; toutes prises : on reprend la palette en boucle.
+  function couleurActiviteLibre(s, idActivite, preferee) {
+    var prises = s.activites.filter(function (a) { return a.id !== idActivite; })
+      .map(function (a) { return String(a.couleur || COULEUR_ACTIVITE).toLowerCase(); });
+    if (preferee && prises.indexOf(String(preferee).toLowerCase()) < 0) return preferee;
+    var libre = PALETTE_ACTIVITES.filter(function (c) { return prises.indexOf(c) < 0; })[0];
+    return libre || PALETTE_ACTIVITES[prises.length % PALETTE_ACTIVITES.length];
+  }
+
   function textureDefaut(donnees) {
     var t = parNature(donnees, 'texture');
     var n = t.filter(function (g) { return g.id === TEXTURE_DEFAUT; })[0];
@@ -342,6 +354,7 @@
   R.Modele = {
     VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
     TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
+    PALETTE_ACTIVITES: PALETTE_ACTIVITES, couleurActiviteLibre: couleurActiviteLibre,
     SERVICES_REGIME_DEFAUT: SERVICES_REGIME_DEFAUT, REGIMES_DEFAUT: REGIMES_DEFAUT,
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,

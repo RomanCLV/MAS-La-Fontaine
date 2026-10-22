@@ -6,10 +6,13 @@
   // q / cacherAbsents : filtres de la liste des participants (simple affichage, gardés d'une activité à l'autre).
   function etat() { return App.etat.activites = App.etat.activites || { selection: null, b: null, q: '', cacherAbsents: false }; }
 
+  // Nouvelle activité : couleur de la palette pas encore prise cette semaine (pas trois activités bleues).
   function charger(a) {
     var e = etat();
     e.selection = a ? a.id : 'nouvelle';
-    e.b = a ? M.copie(a) : { id: M.nouvelId('a'), nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null, couleur: M.COULEUR_ACTIVITE };
+    var id = M.nouvelId('a');
+    e.b = a ? M.copie(a) : { id: id, nom: '', jour: 'jeu', service: 'midi', participantIds: [], presetId: null,
+      couleur: M.couleurActiviteLibre(App.semaineCourante(), id) };
     e.erreur = ''; e.info = '';
     e.initial = JSON.stringify(e.b);
   }
@@ -57,12 +60,13 @@
     App.ouvrir('activites');
   }
 
-  function depuisPreset(b, p, d) {
+  // Le preset garde sa couleur, sauf si une autre activité de la semaine l'a déjà (couleur libre de la palette).
+  function depuisPreset(b, p, d, s) {
     b.nom = p.nom;
     if (p.jours[0]) b.jour = p.jours[0];
     if (p.services[0]) b.service = p.services[0];
     b.participantIds = p.participantIds.filter(function (id) { var r = M.resident(d, id); return r && !r.archive; });
-    b.couleur = p.couleur || M.COULEUR_ACTIVITE;
+    b.couleur = M.couleurActiviteLibre(s, b.id, p.couleur || M.COULEUR_ACTIVITE);
     b.presetId = p.id;
   }
 
@@ -182,7 +186,7 @@
             h('select', { 'aria-label': 'Charger un preset', style: 'margin-left:auto', disabled: !d.presetsActivites.length,
               onchange: function (ev) {
                 var p = d.presetsActivites.filter(function (x) { return x.id === ev.target.value; })[0];
-                if (p) { depuisPreset(b, p, d); e.info = ''; retirerConflits(d, s, e); App.rendre(); }
+                if (p) { depuisPreset(b, p, d, s); e.info = ''; retirerConflits(d, s, e); App.rendre(); }
               } },
               h('option', { value: '' }, 'Charger un preset'),
               d.presetsActivites.map(function (p) { return h('option', { value: p.id }, p.nom); })),

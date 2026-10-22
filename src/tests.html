@@ -346,6 +346,18 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(M.baseVide().presetsActivites.length, 0, 'Base vide : toujours aucun preset');
   });
 
+  groupe('Couleur automatique des activités', function () {
+    var P = M.PALETTE_ACTIVITES, s = { activites: [] };
+    egal([P.length, M.couleurActiviteLibre(s, 'x')], [8, M.COULEUR_ACTIVITE], 'Semaine sans activité : bleu');
+    s.activites.push({ id: 'a1', couleur: P[0] }, { id: 'a2', couleur: P[1].toUpperCase() });
+    egal(M.couleurActiviteLibre(s, 'x'), P[2], 'Première couleur libre (majuscules ignorées)');
+    egal(M.couleurActiviteLibre(s, 'a1'), P[0], 'L’activité elle-même ne bloque pas sa couleur');
+    egal([M.couleurActiviteLibre(s, 'x', '#123456'), M.couleurActiviteLibre(s, 'x', P[0])], ['#123456', P[2]],
+      'Couleur du preset gardée si libre, sinon couleur libre');
+    s.activites = P.map(function (c, i) { return { id: 'b' + i, couleur: c }; });
+    egal(M.couleurActiviteLibre(s, 'x'), P[0], 'Palette épuisée : on reprend en boucle');
+  });
+
   var r = document.getElementById('resume');
   r.textContent = nbKo ? nbKo + ' test(s) en échec sur ' + (nbOk + nbKo) : 'Tous les tests passent (' + nbOk + ')';
   r.className = nbKo ? 'ko' : 'ok';

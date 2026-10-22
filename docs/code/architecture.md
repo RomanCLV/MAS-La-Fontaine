@@ -48,7 +48,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   semaines: [{
     id: "2026-S42", debut: "2026-10-12",                  // lundi
     presences:  { <residentId>: { <créneau>: 0|1 } },     // seulement les valeurs saisies ≠ défaut
-    activites:  [{ id, nom, jour, service, participantIds[], presetId|null, couleur }],  // couleur : défaut M.COULEUR_ACTIVITE (bleu #2d6cb5)
+    activites:  [{ id, nom, jour, service, participantIds[], presetId|null, couleur }],  // couleur : nouvelle activité = 1re couleur libre de M.PALETTE_ACTIVITES (8, bleu #2d6cb5 d'abord) ; absente = bleu
     salaries:   { <parcId>: { <créneau>: { standard, sansPorc } } },
     sodexo:     { <créneau>: { standard, sansPorc } },
     direction:  { <créneau>: n },  nettoyage: { <créneau>: n },  nettoyageSansViande: { <créneau>: n },
