@@ -45,6 +45,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - Pas de double saisie : un résident coché « 1 » le jeudi midi et participant au Sport n'est compté qu'une fois (dans l'activité).
 - **Presets** d'activité : enregistrent jour(s), service et liste de participants ; rechargés à l'ajout d'une activité sur une semaine, puis éditables.
 - Exemple actuel : Sport du jeudi midi.
+- Choix des participants : recherche par nom et case « Cacher les absents » (du jour et service de l'activité), pour s'y retrouver avec beaucoup de résidents.
 
 ### 5. Sorties imprimables (A4 paysage, 1 feuille par jour × service : petit déjeuner / midi / soir)
 - **Petit déjeuner** : présences seulement (pas de textures, régimes ni options) ; feuille cuisine et feuilles chariot simplifiées (nombres par parc).

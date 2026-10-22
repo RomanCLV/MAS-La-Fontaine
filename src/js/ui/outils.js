@@ -62,6 +62,8 @@
     var d = new Date(ts);
     return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
+  // Pour une recherche par nom sans tenir compte des majuscules ni des accents (« helene » trouve « Hélène »).
+  function sansAccents(t) { return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
   function pluriel(n, mot, motPluriel) { return n + ' ' + (n > 1 ? (motPluriel || mot + 's') : mot); }
   // « 2 semaines (S42, S43) · 30 résidents actifs · 5 parcs »
   function resumeDonnees(d) {
@@ -90,6 +92,6 @@
   R.h = h;
   R.Outils = {
     iconeCrayon: iconeCrayon, texteSur: texteSur, dateLongue: dateLongue, dateCourte: dateCourte,
-    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, resumeDonnees: resumeDonnees, MOIS: MOIS, colonnesGroupees: colonnesGroupees
+    titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, sansAccents: sansAccents, resumeDonnees: resumeDonnees, MOIS: MOIS, colonnesGroupees: colonnesGroupees
   };
 })(window.Recueil = window.Recueil || {});

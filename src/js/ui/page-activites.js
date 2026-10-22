@@ -3,7 +3,8 @@
   'use strict';
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
-  function etat() { return App.etat.activites = App.etat.activites || { selection: null, b: null }; }
+  // q / cacherAbsents : filtres de la liste des participants (simple affichage, gardés d'une activité à l'autre).
+  function etat() { return App.etat.activites = App.etat.activites || { selection: null, b: null, q: '', cacherAbsents: false }; }
 
   function charger(a) {
     var e = etat();
@@ -158,6 +159,9 @@
         var groupes = d.referentiels.parcs.map(function (p) {
           return { parc: p, residents: d.residents.filter(function (r) { return !r.archive && r.parcId === p.id; }) };
         }).filter(function (g) { return g.residents.length; });
+        var zoneParticipants = h('div', null, participants());
+        // Pendant la frappe : seule la liste est refaite (le champ de recherche garde le focus).
+        var rafraichirParticipants = function () { zoneParticipants.replaceChildren.apply(zoneParticipants, [].concat(participants())); };
 
         droite = h('div', { class: 'carte formulaire-activite' },
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.erreur) : null,
@@ -184,26 +188,45 @@
               d.presetsActivites.map(function (p) { return h('option', { value: p.id }, p.nom); })),
             preset ? h('button', { class: 'btn', onclick: function () { enregistrerPreset(true); } }, 'Mettre à jour le preset') : null,
             h('button', { class: 'btn', onclick: function () { enregistrerPreset(false); } }, 'Enregistrer comme nouveau preset')),
-          h('div', { class: 'gras grand' }, 'Participants ', h('span', { class: 'petit' }, '· ' + O.pluriel(b.participantIds.length, 'résident'))),
-          groupes.map(function (g) {
-            return h('div', { class: 'groupe-participants' },
-              h('span', { class: 'etiquette-parc gras', style: 'background:' + g.parc.couleur + ';color:' + O.texteSur(g.parc.couleur) }, g.parc.nom),
-              h('div', null, g.residents.map(function (r) {
-                var on = b.participantIds.indexOf(r.id) >= 0;
-                var autre = C.activitesDuCreneau(s, c).filter(function (a) { return a.id !== b.id && a.participantIds.indexOf(r.id) >= 0; })[0];
-                var absent = C.presence(s, r, c).valeur === 0;
-                var titre = autre ? 'Déjà inscrit à « ' + autre.nom + ' » sur ce service' + (on ? ' : à décocher' : '') : (absent ? 'Absent ce jour-là : ne sera compté nulle part' : '');
-                return h('button', { class: 'participant' + (on ? ' on' : '') + (absent ? ' absent' : '') + (autre && on ? ' conflit' : ''), 'aria-pressed': on ? 'true' : 'false',
-                  disabled: !!autre && !on, title: titre,
-                  onclick: function () {
-                    if (on) b.participantIds = b.participantIds.filter(function (x) { return x !== r.id; }); else b.participantIds.push(r.id);
-                    App.rendre();
-                  } }, M.nomAffiche(r) + (absent ? ' (absent)' : ''));
-              })));
-          }),
+          h('div', { class: 'rangee' },
+            h('div', { class: 'gras grand' }, 'Participants ', h('span', { class: 'petit' }, '· ' + O.pluriel(b.participantIds.length, 'résident'))),
+            h('input', { type: 'search', placeholder: 'Rechercher un nom', 'aria-label': 'Rechercher un participant par nom', value: e.q, style: 'margin-left:auto',
+              oninput: function (ev) { e.q = ev.target.value; rafraichirParticipants(); } }),
+            h('label', { class: 'case' }, h('input', { type: 'checkbox', checked: e.cacherAbsents,
+              onchange: function (ev) { e.cacherAbsents = ev.target.checked; rafraichirParticipants(); } }), ' Cacher les absents')),
+          zoneParticipants,
           h('div', { class: 'rangee boutons' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
             e.selection !== 'nouvelle' ? h('button', { class: 'btn btn-danger', style: 'margin-left:auto', onclick: retirer }, 'Retirer cette activité de la semaine') : null));
+      }
+
+      // Participants par parc, filtrés par nom et (option) sans les absents du créneau.
+      // Un participant coché reste affiché même absent (il serait sinon compté sans qu'on le voie).
+      function participants() {
+        var q = O.sansAccents(e.q.trim());
+        var visibles = groupes.map(function (g) {
+          return { parc: g.parc, residents: g.residents.filter(function (r) {
+            if (q && O.sansAccents(M.nomAffiche(r)).indexOf(q) < 0) return false;
+            return !e.cacherAbsents || b.participantIds.indexOf(r.id) >= 0 || C.presence(s, r, c).valeur !== 0;
+          }) };
+        }).filter(function (g) { return g.residents.length; });
+        if (!visibles.length) return h('div', { class: 'vide-liste' }, 'Aucun résident trouvé.');
+        return visibles.map(function (g) {
+          return h('div', { class: 'groupe-participants' },
+            h('span', { class: 'etiquette-parc gras', style: 'background:' + g.parc.couleur + ';color:' + O.texteSur(g.parc.couleur) }, g.parc.nom),
+            h('div', null, g.residents.map(function (r) {
+              var on = b.participantIds.indexOf(r.id) >= 0;
+              var autre = C.activitesDuCreneau(s, c).filter(function (a) { return a.id !== b.id && a.participantIds.indexOf(r.id) >= 0; })[0];
+              var absent = C.presence(s, r, c).valeur === 0;
+              var titre = autre ? 'Déjà inscrit à « ' + autre.nom + ' » sur ce service' + (on ? ' : à décocher' : '') : (absent ? 'Absent ce jour-là : ne sera compté nulle part' : '');
+              return h('button', { class: 'participant' + (on ? ' on' : '') + (absent ? ' absent' : '') + (autre && on ? ' conflit' : ''), 'aria-pressed': on ? 'true' : 'false',
+                disabled: !!autre && !on, title: titre,
+                onclick: function () {
+                  if (on) b.participantIds = b.participantIds.filter(function (x) { return x !== r.id; }); else b.participantIds.push(r.id);
+                  App.rendre();
+                } }, M.nomAffiche(r) + (absent ? ' (absent)' : ''));
+            })));
+        });
       }
 
       return h('div', { class: 'page page-large' },
