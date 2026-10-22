@@ -60,20 +60,32 @@
       h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
   }
 
-  function grille(d, s, parc) {
-    var residents = d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
-    // Colonnes « toujours affichées » (page Régimes), plus celles qu'un résident du parc présente.
+  // Résidents actifs dont le nom contient le texte cherché (sans accents), tous parcs, dans l'ordre des parcs.
+  function residentsTrouves(d, texte) {
+    var q = O.sansAccents(texte.trim());
+    var ordre = d.referentiels.parcs.map(function (p) { return p.id; });
+    return d.residents.filter(function (r) { return !r.archive && O.sansAccents(M.nomAffiche(r)).indexOf(q) >= 0; })
+      .sort(function (a, b) { return ordre.indexOf(a.parcId) - ordre.indexOf(b.parcId); });
+  }
+
+  // parc : feuille d'un parc. recherche (texte non vide) : feuille spéciale des résidents trouvés, tous parcs,
+  // avec une colonne Parc et sans les lignes propres à un parc (carrés de plats, salariés, hors parcs).
+  function grille(d, s, parc, recherche) {
+    var residents = recherche ? residentsTrouves(d, recherche)
+      : d.residents.filter(function (r) { return !r.archive && r.parcId === parc.id; });
+    // Colonnes « toujours affichées » (page Régimes), plus celles qu'un résident affiché présente.
     var groupes = O.colonnesGroupees(M.groupesRegimes(d, function (g) {
       return g.id !== M.textureDefaut(d) && M.colonneAffichee(g, residents);
     }));
     var cols = groupes.colonnes;
     var vis = creneauxVisibles();
-    var gabarit = 'grid-template-columns:34px 190px 150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
+    var gabarit = 'grid-template-columns:34px 190px ' + (recherche ? '100px ' : '') + '150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
 
-    var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), h('div')]);
+    var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), recherche ? h('div') : null, h('div')]);
     var entete = h('div', { class: 'g g-entete', style: gabarit },
       h('div', { class: 'gh colle0' }, h('span', { class: 'v' }, 'N°')),
       h('div', { class: 'gh gauche colle1' }, 'NOM Prénom'),
+      recherche ? h('div', { class: 'gh gauche' }, 'PARC') : null,
       h('div', { class: 'gh gauche' }, 'OBSERVATION'),
       cols.map(function (g) {
         return h('div', { class: 'gh' + (groupes.debut(g) ? ' debut-groupe' : ''), style: 'background:' + g.couleur + ';color:' + O.texteSur(g.couleur), title: g.nom },
@@ -116,7 +128,7 @@
       }).map(function (g) { return g.id; });
       return ids.length === 1 && ids[0] === M.textureDefaut(d) ? [] : ids;
     }
-    calculer();
+    if (!recherche) calculer();
     // style et titre : texte, ou fonction du n° de créneau affiché k.
     function ligneCarres(libelle, note, valeur, style, titre, fin) {
       return h('div', { class: 'g g-carres' + (fin ? ' fin-carres' : ''), style: gabarit },
@@ -140,11 +152,11 @@
         }));
     }
     // Puis une ligne par texture présente (en plats, double plat = 2). Normal + Haché + … = plats du parc.
-    var presentes = texturesPresentes();
+    var presentes = recherche ? [] : texturesPresentes();
     var textures = M.parNature(d, 'texture').filter(function (g) { return presentes.indexOf(g.id) >= 0; });
     // Enfin, si des résidents du parc partent en activité sur un service affiché : plats retirés du parc
     // (comptés dans la colonne de l'activité), pour comprendre un nombre de plats plus petit que les présents.
-    var avecActivite = colonnes.some(function (col) { return col.platsPartis; });
+    var avecActivite = !recherche && colonnes.some(function (col) { return col.platsPartis; });
     function activitesDe(k) {
       var parAct = {};
       colonnes[k].partis.forEach(function (x) {
@@ -153,7 +165,7 @@
       });
       return Object.keys(parAct).map(function (id) { return parAct[id]; });
     }
-    var carres = [
+    var carres = recherche ? [] : [
       ligneCarres('Plats ' + parc.nom, 'ce parc', function (k) { return comptes[k].total; }, null,
         'Plats ' + parc.nom + ' (résidents présents hors activités, plats en plus, salariés du parc)', !textures.length && !avecActivite)
     ].concat(textures.map(function (g, i) {
@@ -234,6 +246,7 @@
           h('button', { class: 'crayon', 'aria-label': 'Ouvrir la fiche de ' + M.nomAffiche(r), title: 'Ouvrir la fiche',
             onclick: function () { App.ouvrir('resident', r.id); } }, O.iconeCrayon()),
           h('span', { class: 'coupe' }, M.nomAffiche(r))),
+        recherche ? celluleParc(M.parc(d, r.parcId)) : null,
         h('div', { class: 'gc gauche obs', title: r.consigne }, r.consigne),
         cols.map(function (g) {
           var on = marques.indexOf(g.id) >= 0;
@@ -305,6 +318,13 @@
         ecrire: function (c, n) { if (n) s[table][c] = n; else delete s[table][c]; }
       };
     }
+    if (recherche) {
+      return h('div', { class: 'carte-grille' },
+        legende(s),
+        residents.length ? h('div', { class: 'defil', 'data-defil': 'grille' },
+          h('div', { class: 'grille' }, bandeaux, entete, lignes))
+          : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
+    }
     var a = salarie('standard'), b = salarie('sansPorc'), so = sodexo('standard');
     var di = simple('direction'), ne = simple('nettoyage'), nv = simple('nettoyageSansViande'), te = simple('temoins');
     var lignesSal = [
@@ -321,13 +341,7 @@
     lignesSal[lignesSal.length - 1].classList.add('total-hors-parcs');
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
-      h('div', { class: 'legende' },
-        h('span', { class: 'pc-ex' }, '1'), 'Présent et consommant 1 repas',
-        h('span', { class: 'pc-ex absent' }, '0'), 'Absent',
-        h('span', { class: 'pc-ex abs-fiche' }, '0'), 'Absence planifiée',
-        s.activites.length ? s.activites.map(function (a) {
-          return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
-        }) : [h('span', { class: 'pc-ex act' }), 'Activité']),
+      legende(s),
       // Hors de la zone défilante : les boutons restent visibles quelle que soit la largeur de la grille.
       residents.length ? null : h('div', { class: 'message message-attention message-action' },
         h('span', null, 'Aucun résident actif dans ce parc.'),
@@ -336,6 +350,22 @@
           h('button', { class: 'btn btn-principal', onclick: function () { R.PageResident.nouveau(parc.id); } }, '+ Ajouter un résident à ' + parc.nom))),
       h('div', { class: 'defil', 'data-defil': 'grille' },
         h('div', { class: 'grille' }, bandeaux, entete, carres, lignes, lignesSal)));
+  }
+
+  function legende(s) {
+    return h('div', { class: 'legende' },
+      h('span', { class: 'pc-ex' }, '1'), 'Présent et consommant 1 repas',
+      h('span', { class: 'pc-ex absent' }, '0'), 'Absent',
+      h('span', { class: 'pc-ex abs-fiche' }, '0'), 'Absence planifiée',
+      s.activites.length ? s.activites.map(function (a) {
+        return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
+      }) : [h('span', { class: 'pc-ex act' }), 'Activité']);
+  }
+
+  // Colonne Parc de la feuille de recherche.
+  function celluleParc(p) {
+    return h('div', { class: 'gc gauche' }, p ? h('span', { class: 'etiquette-parc coupe', title: p.nom,
+      style: 'background:' + p.couleur + ';color:' + O.texteSur(p.couleur) }, p.nom) : null);
   }
 
   // Supprime la semaine s (après confirmation) et affiche la semaine voisine. La dernière semaine ne peut pas être supprimée.
@@ -360,6 +390,7 @@
       var d = App.donnees, s = M.semaine(d, o.id);
       var parcs = d.referentiels.parcs;
       var parc = M.parc(d, App.ui.parcActif) || parcs[0];
+      var recherche = (App.etat.rechercheSemaine || '').trim() ? App.etat.rechercheSemaine : '';
       return h('div', { class: 'page page-large' },
         h('div', { class: 'page-tete' },
           h('h1', null, O.titreSemaine(s)),
@@ -379,13 +410,26 @@
         filtreServices(),
         parc ? [
           h('div', { class: 'onglets-parcs', role: 'tablist' }, parcs.map(function (p) {
-            var actif = p.id === parc.id;
+            var actif = !recherche && p.id === parc.id;
             var n = d.residents.filter(function (r) { return !r.archive && r.parcId === p.id; }).length;
             return h('button', { class: 'onglet-parc' + (actif ? ' actif' : ''), role: 'tab', 'aria-selected': actif ? 'true' : 'false',
               style: actif ? 'background:' + p.couleur + ';color:' + O.texteSur(p.couleur) : '',
-              onclick: function () { App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } }, p.nom + ' (' + n + ')');
-          })),
-          grille(d, s, parc)
+              onclick: function () { App.etat.rechercheSemaine = ''; App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } }, p.nom + ' (' + n + ')');
+          }),
+          recherche ? h('button', { class: 'onglet-parc actif onglet-recherche', role: 'tab', 'aria-selected': 'true' },
+            'Recherche « ' + recherche.trim() + ' » (' + residentsTrouves(d, recherche).length + ')') : null,
+          // Recherche par nom : feuille spéciale tous parcs (pour trouver quelqu'un sans savoir dans quel parc il est).
+          h('input', { id: 'recherche-semaine', type: 'search', class: 'recherche-semaine', placeholder: 'Rechercher un nom (tous parcs)',
+            'aria-label': 'Rechercher un résident par nom, tous parcs', value: App.etat.rechercheSemaine || '',
+            oninput: function (e) {
+              var pos = e.target.selectionStart;
+              App.etat.rechercheSemaine = e.target.value;
+              App.rendre();
+              // Le champ est recréé par le rendu : on lui rend le focus et la position du curseur.
+              var champ = document.getElementById('recherche-semaine');
+              if (champ) { champ.focus(); champ.setSelectionRange(pos, pos); }
+            } })),
+          grille(d, s, parc, recherche)
         ] : h('div', { class: 'message message-attention message-action' },
           h('span', null, 'Aucun parc : créez-en un dans la page Parcs.'),
           h('button', { class: 'btn', onclick: function () { App.ouvrir('parcs'); } }, 'Aller à la page Parcs')));

@@ -143,3 +143,6 @@
 
 ## 2026-10-22 — Page Régimes : descriptions, nature fixe
 - Une phrase sous chaque tableau (Textures / Régimes & Allergies / Options), reprise du glossaire. Le choix « Régime / Option » du formulaire est retiré : un élément garde la nature du tableau où il a été créé (pour en changer : le recréer dans l'autre tableau). Raison : demande utilisateur, bien dissocier les trois.
+
+## 2026-10-22 — Semaine : feuille « Recherche »
+- Recherche par nom sur tous les parcs : onglet « Recherche » à la place du parc, avec une colonne Parc ; on y saisit les présences comme d'habitude. Les lignes propres à un parc (plats du parc, textures, en activité, salariés, Sodexo… hors parcs) n'y sont pas. Raison : retrouver quelqu'un sans savoir dans quel parc il est.

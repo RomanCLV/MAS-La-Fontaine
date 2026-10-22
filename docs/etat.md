@@ -81,3 +81,4 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - **Toast** de confirmation (« ✓ Fiche de … enregistrée », etc.) après chaque bouton Enregistrer et après un export ; rouge si l'enregistrement a échoué. Vérifié dans le navigateur intégré.
 - Page Régimes : phrase de description sous Textures / Régimes & Allergies / Options ; retrait du choix « Régime / Option » dans le formulaire. Vérifié dans le navigateur intégré.
 - Page Activités : filtres « Rechercher un nom » (sans tenir compte des accents) et « Cacher les absents » sur la liste des participants (un participant coché reste visible). Vérifié dans le navigateur intégré.
+- Page Semaine : champ « Rechercher un nom (tous parcs) » → feuille spéciale « Recherche » (résidents trouvés, colonne Parc, présences modifiables ; sans totaux ni salariés). Vérifié dans le navigateur intégré.
