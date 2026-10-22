@@ -63,7 +63,8 @@
     return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
   // Pour une recherche par nom sans tenir compte des majuscules ni des accents (« helene » trouve « Hélène »).
-  function sansAccents(t) { return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  // \u00ab \u0153 \u00bb / \u00ab \u00e6 \u00bb \u00e9crits \u00ab oe \u00bb / \u00ab ae \u00bb : \u00ab oeufs \u00bb trouve \u00ab Allergie \u0153ufs \u00bb.
+  function sansAccents(t) { return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\u0153/g, 'oe').replace(/\u00e6/g, 'ae'); }
   function pluriel(n, mot, motPluriel) { return n + ' ' + (n > 1 ? (motPluriel || mot + 's') : mot); }
   // « 2 semaines (S42, S43) · 30 résidents actifs · 5 parcs »
   function resumeDonnees(d) {

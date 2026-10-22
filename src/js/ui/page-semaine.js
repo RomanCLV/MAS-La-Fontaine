@@ -60,12 +60,52 @@
       h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
   }
 
-  // Résidents actifs dont le nom contient le texte cherché (sans accents), tous parcs, dans l'ordre des parcs.
+  // Mots cherchés (sans accents ni majuscules).
+  function motsCherches(texte) { return O.sansAccents(texte).split(/\s+/).filter(Boolean); }
+  // Texture, régime ou option dont le nom ou l'abréviation contient l'un des mots.
+  function groupeTrouve(g, mots) {
+    var t = O.sansAccents(g.nom + ' ' + (g.abrege || ''));
+    return mots.some(function (m) { return t.indexOf(m) >= 0; });
+  }
+  // Résidents actifs où chaque mot est trouvé dans le nom, une texture / un régime / une option du résident
+  // (nom ou abréviation) ou l'observation. Tous parcs, dans l'ordre des parcs.
   function residentsTrouves(d, texte) {
-    var q = O.sansAccents(texte.trim());
-    var ordre = d.referentiels.parcs.map(function (p) { return p.id; });
-    return d.residents.filter(function (r) { return !r.archive && O.sansAccents(M.nomAffiche(r)).indexOf(q) >= 0; })
-      .sort(function (a, b) { return ordre.indexOf(a.parcId) - ordre.indexOf(b.parcId); });
+    var mots = motsCherches(texte);
+    var ordre = d.referentiels.parcs.map(function (p) { return p.id; }), refs = M.refs(d);
+    return d.residents.filter(function (r) {
+      if (r.archive) return false;
+      var marques = [r.textureId].concat(r.regimeIds, r.optionIds).map(function (id) { return refs[id]; }).filter(Boolean);
+      var t = O.sansAccents(M.nomAffiche(r) + ' ' + (r.consigne || '') + ' ' +
+        marques.map(function (g) { return g.nom + ' ' + (g.abrege || ''); }).join(' '));
+      return mots.every(function (m) { return t.indexOf(m) >= 0; });
+    }).sort(function (a, b) { return ordre.indexOf(a.parcId) - ordre.indexOf(b.parcId); });
+  }
+  // Texte avec les mots cherchés surlignés (<mark>), sans tenir compte des accents ni des majuscules.
+  function surligner(texte, mots) {
+    texte = texte || '';
+    if (!mots.length) return texte;
+    // Texte sans accents, et pour chacun de ses caractères la position dans le texte d'origine.
+    var plat = '', pos = [];
+    for (var i = 0; i < texte.length; i++) {
+      var x = O.sansAccents(texte[i]);
+      for (var j = 0; j < x.length; j++) { plat += x[j]; pos.push(i); }
+    }
+    pos.push(texte.length);
+    var marque = [];
+    mots.forEach(function (m) {
+      for (var k = plat.indexOf(m); k >= 0; k = plat.indexOf(m, k + 1)) {
+        for (var n = pos[k]; n < pos[k + m.length]; n++) marque[n] = true;
+      }
+    });
+    var morceaux = [], debut = 0;
+    for (var a = 1; a <= texte.length; a++) {
+      if (a === texte.length || !marque[a] !== !marque[debut]) {
+        var bout = texte.slice(debut, a);
+        morceaux.push(marque[debut] ? h('mark', { class: 'trouve' }, bout) : bout);
+        debut = a;
+      }
+    }
+    return morceaux;
   }
 
   // parc : feuille d'un parc. recherche (texte non vide) : feuille spéciale des résidents trouvés, tous parcs,
@@ -207,7 +247,7 @@
         var i0 = Math.min(i, fin.i), i1 = Math.max(i, fin.i), k0 = Math.min(k, fin.k), k1 = Math.max(k, fin.k);
         cases.forEach(function (x) {
           x.dedans = x.i >= i0 && x.i <= i1 && x.k >= k0 && x.k <= k1;
-          x.b.className = x.dedans ? x.classe.replace(/ (present|absent|abs-fiche)\b/g, '') + (v ? ' present' : ' absent') + ' zone' : x.classe;
+          x.b.className = x.dedans ? x.classe.replace(/ (present|absent|abs-fiche|alerte-case)\b/g, '') + (v ? ' present' : ' absent') + ' zone' : x.classe;
           x.b.textContent = x.dedans ? String(v * x.w) : x.texte;
         });
       }
@@ -236,8 +276,17 @@
       dessiner();
     }
 
+    // Cases en alerte (alertes visibles seulement) : créneaux contradictoires, ou toute la semaine si aucune présence.
+    var enAlerte = {};
+    C.alertesVisibles(d, s).forEach(function (a) {
+      (a.type === 'aucunePresence' ? M.CRENEAUX : a.creneaux).forEach(function (c) {
+        enAlerte[a.residentId + ':' + c] = a.titre;
+      });
+    });
+
     // Case présente = nombre de plats du résident (2 avec double plat), absente = 0.
-    var refs = M.refs(d);
+    // Feuille de recherche : mots trouvés surlignés (nom, observation) et cases cochées trouvées encadrées.
+    var refs = M.refs(d), mots = recherche ? motsCherches(recherche) : [];
     var lignes = residents.map(function (r, i) {
       var marques = [r.textureId].concat(r.regimeIds, r.optionIds);
       return h('div', { class: 'g g-ligne', style: gabarit },
@@ -245,12 +294,13 @@
         h('div', { class: 'gc gauche gras colle1' },
           h('button', { class: 'crayon', 'aria-label': 'Ouvrir la fiche de ' + M.nomAffiche(r), title: 'Ouvrir la fiche',
             onclick: function () { App.ouvrir('resident', r.id); } }, O.iconeCrayon()),
-          h('span', { class: 'coupe' }, M.nomAffiche(r))),
+          h('span', { class: 'coupe' }, surligner(M.nomAffiche(r), mots))),
         recherche ? celluleParc(M.parc(d, r.parcId)) : null,
-        h('div', { class: 'gc gauche obs', title: r.consigne }, r.consigne),
+        h('div', { class: 'gc gauche obs', title: r.consigne }, surligner(r.consigne, mots)),
         cols.map(function (g) {
-          var on = marques.indexOf(g.id) >= 0;
-          return h('div', { class: 'gc marque' + (on ? ' on' : '') + (groupes.debut(g) ? ' debut-groupe' : '') }, on ? 'X' : '');
+          var on = marques.indexOf(g.id) >= 0, trouve = on && mots.length && groupeTrouve(g, mots);
+          return h('div', { class: 'gc marque' + (on ? ' on' : '') + (trouve ? ' trouve' : '') + (groupes.debut(g) ? ' debut-groupe' : ''),
+            title: trouve ? g.nom + ' (trouvé par la recherche)' : null }, on ? 'X' : '');
         }),
         h('div'),
         vis.map(function (c, k) {
@@ -261,8 +311,10 @@
           if (p.valeur && w > 1) titre.push(w + ' plats (options en plus)');
           if (p.source === 'absence') titre.push('absence planifiée (fiche du résident)');
           if (act) titre.push('participe à : ' + act.nom);
+          var alerte = enAlerte[r.id + ':' + c];
+          if (alerte) titre.push('alerte : ' + alerte);
           return h('button', {
-            class: 'pc ' + bord(c) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : ''),
+            class: 'pc ' + bord(c) + (p.valeur ? ' present' : ' absent') + (p.source === 'absence' ? ' abs-fiche' : '') + (act ? ' act' : '') + (alerte ? ' alerte-case' : ''),
             style: act ? '--act:' + act.couleur : null,
             title: titre.join(' · '), 'aria-label': titre.join(' · '), 'data-i': i, 'data-k': k, 'data-w': w,
             onpointerdown: function (e) { presser(e, i, k); },
@@ -320,7 +372,7 @@
     }
     if (recherche) {
       return h('div', { class: 'carte-grille' },
-        legende(s),
+        legende(s, Object.keys(enAlerte).length > 0, true),
         residents.length ? h('div', { class: 'defil', 'data-defil': 'grille' },
           h('div', { class: 'grille' }, bandeaux, entete, lignes))
           : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
@@ -341,7 +393,7 @@
     lignesSal[lignesSal.length - 1].classList.add('total-hors-parcs');
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
-      legende(s),
+      legende(s, Object.keys(enAlerte).length > 0),
       // Hors de la zone défilante : les boutons restent visibles quelle que soit la largeur de la grille.
       residents.length ? null : h('div', { class: 'message message-attention message-action' },
         h('span', null, 'Aucun résident actif dans ce parc.'),
@@ -352,11 +404,15 @@
         h('div', { class: 'grille' }, bandeaux, entete, carres, lignes, lignesSal)));
   }
 
-  function legende(s) {
+  // alerte : au moins une case en alerte dans la semaine (entrée de légende ajoutée).
+  // recherche : feuille de recherche (entrée « Trouvé par la recherche » en tête).
+  function legende(s, alerte, recherche) {
     return h('div', { class: 'legende' },
+      recherche ? [h('mark', { class: 'trouve' }, 'texte'), h('span', { class: 'pc-ex marque-trouve' }, 'X'), 'Trouvé par la recherche'] : null,
       h('span', { class: 'pc-ex' }, '1'), 'Présent et consommant 1 repas',
       h('span', { class: 'pc-ex absent' }, '0'), 'Absent',
       h('span', { class: 'pc-ex abs-fiche' }, '0'), 'Absence planifiée',
+      alerte ? [h('span', { class: 'pc-ex alerte-case' }), 'Alerte (voir au-dessus)'] : null,
       s.activites.length ? s.activites.map(function (a) {
         return [h('span', { class: 'pc-ex act', style: '--act:' + a.couleur }), a.nom];
       }) : [h('span', { class: 'pc-ex act' }), 'Activité']);
@@ -421,9 +477,10 @@
           }),
           recherche ? h('button', { class: 'onglet-parc actif onglet-recherche', role: 'tab', 'aria-selected': 'true' },
             'Recherche « ' + recherche.trim() + ' » (' + residentsTrouves(d, recherche).length + ')') : null,
-          // Recherche par nom : feuille spéciale tous parcs (pour trouver quelqu'un sans savoir dans quel parc il est).
-          h('input', { id: 'recherche-semaine', type: 'search', class: 'recherche-semaine', placeholder: 'Rechercher un nom (tous parcs)',
-            'aria-label': 'Rechercher un résident par nom, tous parcs', value: App.etat.rechercheSemaine || '',
+          // Recherche : feuille spéciale tous parcs (nom, texture / régime / option, observation ; plusieurs mots = tous trouvés).
+          h('input', { id: 'recherche-semaine', type: 'search', class: 'recherche-semaine', placeholder: 'Nom, régime, observation…',
+            title: 'Cherche dans le nom, les textures, régimes et options, et l\'observation, tous parcs. Plusieurs mots : tous doivent être trouvés.',
+            'aria-label': 'Rechercher un résident par nom, texture, régime, option ou observation, tous parcs', value: App.etat.rechercheSemaine || '',
             oninput: function (e) {
               var pos = e.target.selectionStart;
               App.etat.rechercheSemaine = e.target.value;

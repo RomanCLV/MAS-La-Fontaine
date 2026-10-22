@@ -13,6 +13,13 @@
       "runtimeArgs": ["-m", "http.server", "8652", "--bind", "127.0.0.1", "--directory", "src"],
       "port": 8652,
       "autoPort": false
+    },
+    {
+      "name": "recueil-src-3",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8662", "--bind", "127.0.0.1", "--directory", "src"],
+      "port": 8662,
+      "autoPort": false
     }
   ]
 }

@@ -30,7 +30,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - Actions sur la liste des résidents (au survol de la ligne) : éditer, archiver, supprimer. Page « Résidents » au style de l'onglet TYPOLOGIE CONVIVES de l'Excel, avec bouton « Ajouter un résident » (v2 : l'archivage remplace « pas d'archives »).
 - Pas de lignes libres supplémentaires : on ajoute un résident via la page Résidents.
 - ~5 lignes libres supplémentaires par parc pour ajouter des résidents.
-- Page Semaine : une feuille par parc ; une **recherche par nom** construit une feuille « Recherche » tous parcs (colonne Parc), pour retrouver quelqu'un sans savoir dans quel parc il est.
+- Page Semaine : une feuille par parc ; une **recherche** (nom, texture / régime / option, observation ; plusieurs mots = tous trouvés) construit une feuille « Recherche » tous parcs (colonne Parc, mots trouvés surlignés), pour retrouver quelqu'un sans savoir dans quel parc il est, ou tous les résidents d'un régime.
 
 ### 3. Convives hors résidents
 - **Salariés par parc** : standard / sans porc, par jour et service. Total parc = résidents (doubles plats inclus, ex. 8 résidents → volume 10) + salariés.
