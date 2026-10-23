@@ -2,6 +2,7 @@
    Un clic sélectionne une case, glisser sélectionne un rectangle (lignes × créneaux affichés), Maj+clic l'étend ;
    on écrit en tapant un chiffre, en double-cliquant ou avec Entrée : le nombre va dans toutes les cases sélectionnées ;
    flèches = déplacer, Maj+flèches = étendre ; Suppr vide ; Échap désélectionne.
+   Copier / couper / coller (Ctrl+C / X / V) internes à l'appli : pas de lien avec le presse-papiers du système.
    Les cases de présence des parcs ont leur propre gestion (page-semaine.js, presser) : ne pas les mélanger.
    La sélection est gardée en coordonnées (n° de ligne, n° de créneau affiché) : elle survit à un re-rendu. */
 (function (R) {
@@ -27,6 +28,26 @@
     var p = borner({ i: s.ancre.i + di, k: s.ancre.k + dk }, nl, nk);
     return { ancre: p, fin: p };
   }
+  // Copier : valeurs du rectangle, ligne par ligne (lire(i, k) donne la valeur d'une case).
+  function extraire(r, lire) {
+    var b = [];
+    for (var i = r.i0; i <= r.i1; i++) {
+      var l = [];
+      for (var k = r.k0; k <= r.k1; k++) l.push(lire(i, k));
+      b.push(l);
+    }
+    return b;
+  }
+  // Coller le bloc copié dans la sélection r d'une grille nl × nk : à partir du coin haut-gauche, ce qui dépasse
+  // de la grille est ignoré ; une seule valeur copiée remplit toute la sélection. Renvoie les cases { i, k, v }
+  // à écrire et le rectangle collé (nouvelle sélection).
+  function coller(r, bloc, nl, nk) {
+    if (bloc.length === 1 && bloc[0].length === 1) {
+      return { cases: cases(r).map(function (x) { return { i: x.i, k: x.k, v: bloc[0][0] }; }), rect: r };
+    }
+    var dest = { i0: r.i0, i1: Math.min(nl - 1, r.i0 + bloc.length - 1), k0: r.k0, k1: Math.min(nk - 1, r.k0 + bloc[0].length - 1) };
+    return { cases: cases(dest).map(function (x) { return { i: x.i, k: x.k, v: bloc[x.i - r.i0][x.k - r.k0] }; }), rect: dest };
+  }
   // Valeur saisie nettoyée comme avant : entier ≥ 0 (0 = case vide, entrée supprimée).
   function nettoyer(v) { return Math.max(0, Math.floor(+v || 0)); }
 
@@ -36,6 +57,9 @@
   var glisse = false;   // glissement de souris en cours
   var ecoute = false;   // écouteurs du document posés (seulement si une sélection est active)
   var MARGE = 30;       // px : près du bord de la grille, le glisser la fait défiler
+  // Copie interne : { bloc, cle, rect (cases marquées en pointillés), coupe, source : cases à vider au collage
+  // (couper), donnees }. Gardée au changement d'onglet (on peut coller dans un autre parc) ; Échap l'oublie.
+  var pressePapiers = null;
 
   // opts : { cle, creneaux (affichés), apres() : mise à jour sur place des totaux après une modification }.
   function grille(opts) {
@@ -87,6 +111,8 @@
     el.classList.toggle('sel-g', dedans && k === r.k0);
     el.classList.toggle('sel-d', dedans && k === r.k1);
     el.setAttribute('aria-selected', dedans ? 'true' : 'false');
+    var pp = pressePapiers;
+    el.classList.toggle('copie', !!pp && pp.cle === g.cle && contient(pp.rect, i, k));
   }
   function dessiner(g) {
     g.cellules.forEach(function (l, i) { l.forEach(function (el, k) { dessinerCase(g, i, k); }); });
@@ -273,18 +299,56 @@
     if (n > 1) R.App.toast(n + ' cases vidées');
   }
 
+  // ---------- Copier / couper / coller (internes) ----------
+  // Couper : comme Excel, les cases d'origine ne sont vidées qu'au collage (rien n'est perdu sans coller).
+  function copier(g, coupe) {
+    var r = rectangle(sel.ancre, sel.fin), n = (r.i1 - r.i0 + 1) * (r.k1 - r.k0 + 1);
+    pressePapiers = {
+      bloc: extraire(r, function (i, k) { return valeur(g, i, k); }), cle: g.cle, rect: r, coupe: coupe, donnees: R.App.donnees,
+      source: coupe ? cases(r).map(function (x) { return { lire: g.lignes[x.i].lire, ecrire: g.lignes[x.i].ecrire, c: g.creneaux[x.k] }; }) : []
+    };
+    dessiner(g);
+    R.App.toast(n + (n > 1 ? ' cases ' : ' case ') + (coupe ? 'coupée' : 'copiée') + (n > 1 ? 's' : '') + ' : Ctrl+V pour coller');
+  }
+  function collerIci(g) {
+    var pp = pressePapiers;
+    if (!pp) return;
+    var res = coller(rectangle(sel.ancre, sel.fin), pp.bloc, g.lignes.length, g.creneaux.length);
+    // Couper : cases d'origine vidées d'abord (le collage peut les recouvrir), si les données n'ont pas été remplacées.
+    var vider = pp.donnees === R.App.donnees ? pp.source.filter(function (x) { return x.lire(x.c); }) : [];
+    var ecrites = res.cases.filter(function (x) { return valeur(g, x.i, x.k) !== x.v; });
+    if (pp.coupe) pressePapiers = null;
+    if (vider.length || ecrites.length) {
+      R.App.modifier(function () {
+        vider.forEach(function (x) { x.ecrire(x.c, 0); });
+        ecrites.forEach(function (x) { g.lignes[x.i].ecrire(g.creneaux[x.k], x.v); });
+      }, { sansRendu: true });
+      g.cellules.forEach(function (l, i) { l.forEach(function (el, k) { afficher(g, i, k); }); });
+    }
+    choisir(g, { i: res.rect.i0, k: res.rect.k0 }, { i: res.rect.i1, k: res.rect.k1 });
+    focaliser(g, sel.ancre);
+    if ((vider.length || ecrites.length) && g.apres) g.apres();
+  }
+
   // ---------- Clavier et clic ailleurs : écoutés seulement quand une sélection est active ----------
   function clavier(e) {
     var g = courant;
-    if (!sel || !g || sel.cle !== g.cle || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (!sel || !g || sel.cle !== g.cle || e.altKey) return;
     if (document.querySelector('dialog[open]')) return;
     // Jamais pendant une saisie ni quand le focus est dans un autre champ (recherche…) ou sur un bouton.
     var a = document.activeElement;
     if (a && a !== document.body && !estCase(g, a)) return;
+    if (e.ctrlKey || e.metaKey) {
+      var touche = e.key.toLowerCase();
+      if (touche === 'c' || touche === 'x') { e.preventDefault(); copier(g, touche === 'x'); }
+      else if (touche === 'v') { e.preventDefault(); collerIci(g); }
+      return;
+    }
     if (/^[0-9]$/.test(e.key)) { e.preventDefault(); editer(g, e.key); }
     else if (e.key === 'Enter' || e.key === 'F2') { e.preventDefault(); editer(g, null); }
     else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); vider(g); }
-    else if (e.key === 'Escape') { e.preventDefault(); effacer(); }
+    // Échap : plus de sélection, et la copie en attente est oubliée (comme Excel).
+    else if (e.key === 'Escape') { e.preventDefault(); pressePapiers = null; effacer(); }
     else if (FLECHES[e.key]) { e.preventDefault(); bouger(g, FLECHES[e.key][0], FLECHES[e.key][1], e.shiftKey); }
   }
   function ailleurs(e) {
@@ -326,6 +390,6 @@
   R.SelectionNombres = {
     grille: grille,
     apresRendu: apresRendu,
-    logique: { rectangle: rectangle, contient: contient, cases: cases, borner: borner, deplacer: deplacer, nettoyer: nettoyer }
+    logique: { rectangle: rectangle, contient: contient, cases: cases, borner: borner, deplacer: deplacer, extraire: extraire, coller: coller, nettoyer: nettoyer }
   };
 })(window.Recueil = window.Recueil || {});

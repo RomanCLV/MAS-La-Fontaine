@@ -109,8 +109,9 @@ Comme dans Excel (les cases de présence gardent leur fonctionnement : un clic i
 - **Glisser** sélectionne plusieurs cases (la grille défile près du bord) ; **Maj + clic** agrandit la sélection.
 - Plusieurs cases sélectionnées : le nombre tapé s'affiche en bleu dans toutes, **Entrée** l'écrit dans toutes.
 - **Flèches** : changer de case (après un nombre tapé, une flèche le valide aussi) ; **Maj + flèches** : agrandir la sélection.
+- **Ctrl + C / X / V** : copier, couper, coller à partir de la case en haut à gauche de la sélection (ce qui dépasse est ignoré ; un seul nombre copié remplit toute la sélection). Pointillés sur les cases copiées ; collage possible dans un autre parc ou Hors parc ; couper ne vide l'origine qu'au collage. Interne à l'appli (pas d'échange avec Excel).
 - **Suppr** / Retour arrière vide les cases sélectionnées (pas de retour en arrière ; message « N cases vidées »).
-- **Échap** ou clic ailleurs : plus de sélection. Le clavier n'agit sur les cases que si une sélection est visible.
+- **Échap** (oublie aussi la copie) ou clic ailleurs : plus de sélection. Le clavier n'agit sur les cases que si une sélection est visible.
 
 ## Alertes
 Au-dessus de la grille : « présent alors qu'absent » (une saisie contredit une absence prévue) et « aucune présence » (un résident à 0 toute la semaine). Chaque alerte : **C'est voulu** ou **Ignorer** (elle disparaît, réaffichage possible). Elles n'apparaissent **jamais** sur les feuilles imprimées.
