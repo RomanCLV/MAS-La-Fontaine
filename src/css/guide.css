@@ -1,0 +1,50 @@
+/* Guide d'utilisation (guide.html) : page de lecture avec sommaire fixe. Chargé après app.css et aide.css. */
+body.guide{background:var(--fond);font-size:16px;line-height:1.55}
+.guide-haut{background:var(--encre);color:#fff;padding:12px 24px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline}
+.guide-haut h1{color:#fff;font-size:22px}
+.guide-haut .petit{color:#cfcfcf}
+.guide-corps{display:grid;grid-template-columns:260px minmax(0,1fr);gap:0 32px;max-width:1180px;margin:0 auto;padding:0 24px 60px;align-items:start}
+.guide-nav{position:sticky;top:0;max-height:100vh;overflow:auto;padding:20px 0;font-size:14px}
+.guide-nav ol,.guide-nav ul{list-style:none;margin:0;padding:0}
+.guide-nav > ol > li{margin-top:12px}
+.guide-nav a{display:block;padding:3px 8px;border-radius:4px;color:var(--encre);text-decoration:none}
+.guide-nav a:hover{background:var(--clair)}
+.guide-nav .niv1{font-weight:700}
+.guide-nav ul a{padding-left:20px;font-weight:400}
+.guide-texte{padding-top:12px;min-width:0}
+.guide-texte section{scroll-margin-top:12px}
+.guide-texte h2{font-size:26px;margin:40px 0 10px;padding-top:12px;border-top:3px solid var(--encre);scroll-margin-top:12px}
+.guide-texte h3{font-size:20px;margin:28px 0 6px;scroll-margin-top:12px}
+.guide-texte h4{font-size:16px;margin:16px 0 4px}
+.guide-texte p{margin:8px 0}
+.guide-texte ul,.guide-texte ol{margin:8px 0;padding-left:24px}
+.guide-texte li{margin:4px 0}
+.guide-texte :target{background:#fff8c6;box-shadow:0 0 0 6px #fff8c6;border-radius:2px}
+.guide-texte a{color:var(--bleu)}
+.guide-texte table{border-collapse:collapse;margin:10px 0;background:#fff;font-size:15px}
+.guide-texte th,.guide-texte td{border:1px solid #bbb;padding:6px 12px;text-align:left;vertical-align:middle}
+.guide-texte th{background:var(--clair)}
+.guide-texte code{background:#e7e4dc;padding:1px 5px;border-radius:3px;font-size:14px}
+.guide-texte .illu{background:#faf9f5;border:1px solid #ddd;border-radius:8px;padding:14px;margin:12px 0;display:flex;justify-content:center;overflow-x:auto}
+.guide-texte .illu > *{max-width:none}
+.guide-texte .astuce{background:var(--bleu-clair);border-left:5px solid var(--bleu);padding:8px 14px;border-radius:4px;margin:12px 0}
+.guide-texte .important{background:#fff8e6;border-left:5px solid #b26a00;padding:8px 14px;border-radius:4px;margin:12px 0}
+.guide-texte .confirmer{color:#6b3f00;font-weight:700}
+.guide-texte dt{font-weight:700;margin-top:10px}
+.guide-texte dd{margin:2px 0 0 0}
+.cache-impression{}
+@media (max-width:860px){
+  .guide-corps{grid-template-columns:minmax(0,1fr);padding:0 16px 40px}
+  .guide-nav{position:static;max-height:none;border-bottom:1px solid var(--trait)}
+}
+@media print{
+  body.guide{background:#fff;font-size:12pt}
+  .guide-haut{background:#fff;color:#000;border-bottom:2px solid #000;padding:0 0 8px}
+  .guide-haut h1{color:#000}
+  .guide-nav,.guide-fermer{display:none}
+  .guide-corps{display:block;padding:0}
+  .guide-texte h2{break-after:avoid;break-before:page}
+  .guide-texte h3,.guide-texte h4{break-after:avoid}
+  .guide-texte .illu{break-inside:avoid}
+  .guide-texte :target{background:none;box-shadow:none}
+}

@@ -1,0 +1,78 @@
+/* Aide : bouton « ? », menu Aide, fenêtre d'aide, présentation de démarrage, maquettes (docs/aide.md). Chargé après app.css. */
+
+/* Bouton « ? » à côté du titre de chaque page */
+.titre-aide{display:flex;align-items:center;gap:8px}
+.page-tete > .titre-aide,.fiche-tete > .titre-aide{margin-right:auto}
+.page-tete .titre-aide h1,.fiche-tete .titre-aide h1{margin-right:0}
+.btn-aide-page{width:30px;height:30px;border-radius:50%;border:2px solid var(--bleu);background:#fff;color:var(--bleu);font-weight:700;font-size:16px;line-height:1;cursor:pointer;padding:0;flex:none}
+.btn-aide-page:hover{background:var(--bleu-clair)}
+
+a.tuile{text-decoration:none}
+.accueil-version{text-align:center;margin:8px 0 0}
+
+/* Menu « ? Aide » du bandeau noir (ouvert à droite, sous le bouton) */
+.btn-aide{font-weight:700}
+.menu-aide{left:auto;right:16px;width:280px}
+a.menu-item{text-decoration:none;color:inherit}
+.menu-version{padding:8px 14px;font-size:12px;color:#555;background:#faf9f5}
+
+/* Fenêtre d'aide d'une page */
+.dialogue.dialogue-aide{width:min(660px,calc(100vw - 32px));max-width:none;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto}
+.aide-fen h2{margin:0 0 6px;font-size:20px}
+.aide-quoi{margin:0 0 12px;font-size:15px;line-height:1.45}
+.aide-fen .illu{margin:0 0 12px}
+.aide-points{margin:0 0 14px;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.45}
+.lien-guide{font-weight:700;color:var(--bleu)}
+.aide-pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* Présentation de démarrage */
+.dialogue.dialogue-presentation{width:min(640px,calc(100vw - 32px));max-width:none;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto}
+.presentation{display:flex;flex-direction:column;gap:14px}
+.pres-haut{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#555}
+.pres-titre{margin:0;font-size:24px}
+.pres-texte{font-size:16px;line-height:1.5;min-height:110px}
+.pres-illu{background:#faf9f5;border:1px solid #ddd;border-radius:8px;padding:14px;display:flex;justify-content:center;align-items:center;min-height:170px;overflow:hidden}
+.pres-points{display:flex;gap:8px;justify-content:center}
+.pres-point{width:12px;height:12px;border-radius:50%;background:#c8c4b8;border:0;padding:0;cursor:pointer}
+.pres-point.on{background:var(--bleu)}
+.pres-aller{display:flex;gap:8px;flex-wrap:wrap}
+.pres-nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pres-nav .btn:disabled{visibility:hidden}
+
+/* Maquettes (aussi dans le guide) */
+.illu{max-width:100%}
+.illu-rangee{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.illu-colonne{display:flex;flex-direction:column;gap:12px;align-items:center}
+.illu-boite{border:1px solid var(--trait);border-radius:8px;background:#fff;padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.illu-titre{font-weight:700;font-size:12px}
+.illu-fleche{font-size:22px;color:var(--gris)}
+.illu-fleches{display:flex;flex-direction:column;font-size:12px;gap:4px;color:var(--gris);text-align:center}
+.illu .pc-ex,.illu .pc-ex.absent,.illu .pc-ex.abs-fiche,.illu .pc-ex.alerte-case,.illu .pc-ex.act{width:28px;height:22px;margin:0 1px;cursor:default}
+.illu-mini{display:flex;flex-direction:column;gap:2px;align-items:center}
+.illu-ligne{display:flex;align-items:center;gap:6px;font-size:13px}
+.illu-nom{width:110px;flex:none;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.illu-nom.gras{font-weight:700}
+.illu-grille{display:flex;flex-direction:column;gap:3px;text-align:left}
+.illu-grille .pc-ex,.illu-grille .pc-ex.absent,.illu-grille .pc-ex.abs-fiche,.illu-grille .pc-ex.alerte-case,.illu-grille .pc-ex.act{width:56px;margin:0}
+.illu-grille .carre{width:56px;flex:none}
+.illu-jour{width:56px;text-align:center;font-size:11px;font-weight:700}
+.illu-legende{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;margin-top:6px}
+.illu-leg{display:inline-flex;gap:5px;align-items:center}
+.illu-feuille{width:150px;aspect-ratio:297/210;border:1px solid #666;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);padding:6px;display:flex;flex-direction:column;gap:4px;font-size:8px}
+.illu-f-haut{display:flex;justify-content:space-between;align-items:center}
+.illu-f-ligne{height:8px;background:#ddd;border-radius:2px}
+.illu-barre{width:100%;max-width:560px;border-radius:6px}
+.illu .btn-barre{display:inline-flex;align-items:center;cursor:default}
+.illu-entoure{outline:3px solid #e8590c;outline-offset:2px}
+.illu-fiche{align-items:stretch;min-width:300px;text-align:left}
+.illu-groupe{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.illu-etq{width:70px;font-size:12px;font-weight:700;color:#333}
+.illu .choix{min-height:26px;font-size:12px;padding:0 8px;cursor:default}
+.illu-ref{display:flex;gap:6px;align-items:center}
+.illu-service{border:1px solid var(--trait);background:#fff;border-radius:6px;padding:8px 12px;font-size:13px}
+.illu-service.nouveau{border:2px dashed var(--bleu);background:var(--bleu-clair);font-weight:700}
+.illu-case{width:18px;height:18px;border:2px solid var(--gris);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#fff;color:#fff}
+.illu-case.on{background:var(--bleu);border-color:var(--bleu)}
+.illu .segments{pointer-events:none}
+.illu-obs{font-size:12px;color:var(--gris)}
+@media print{.btn-aide,.btn-aide-page{display:none}}

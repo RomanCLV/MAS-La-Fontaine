@@ -179,3 +179,8 @@
 ## 2026-10-23 — Services permanents ou de certaines semaines
 - Service additionnel **« Toutes les semaines »** (permanent, ex. goûter) : présent chaque semaine, ses jours cochés. **« Certaines semaines »** (ponctuel, ex. semaine de Noël) : ajouté à une semaine depuis la page Semaine, comme une activité ; ses jours cochés sont proposés (choix utilisateur).
 - En plus (proposé par Claude) : les jours de n'importe quel service additionnel se règlent pour une seule semaine (ex. pas de goûter la semaine de Noël) ; « Créer la semaine suivante » repart des jours habituels. Pas de changement de version (format 1, aucune donnée en service).
+
+## 2026-10-23 — Aide à l'utilisation (dernière pièce de la V1)
+- Trois niveaux : **guide** complet (`guide.html`, second fichier, nouvel onglet), **présentation de démarrage** (carrousel, à la création d'une base seulement, revoyable), **aide par page** (fenêtre + lien vers la section du guide). Détail : `docs/aide.md`.
+- Bouton « ? Aide » dans le **bandeau noir** (menu : aide de la page, guide, présentation, version) + « ? » à côté du titre de chaque page + F1. Accueil : tuile « Guide d'utilisation » et « Version 1.0 · Guide d'utilisation ».
+- Un seul fichier de contenu pour les trois ; illustrations = maquettes aux styles de l'appli (pas de captures). Vouvoiement. Version de l'appli = constante unique, distincte de la version du format de données. Raison : demande utilisateur, appli utilisable sans formation.

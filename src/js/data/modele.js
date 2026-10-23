@@ -5,6 +5,7 @@
 
   var VERSION = 1; // format de la version 1.0 (2026-10-23) ; les formats d'essai d'avant ne sont plus lus
   var APP = 'recueil-alimentation-mas-la-fontaine';
+  var VERSION_APP = '1.0'; // version de l'application affichée à l'utilisateur (accueil, menu Aide, Options, guide) ; distincte de VERSION (format des données)
 
   var JOURS = [
     { id: 'lun', nom: 'Lundi', court: 'lun.' },
@@ -470,7 +471,7 @@
   }
 
   R.Modele = {
-    VERSION: VERSION, APP: APP, JOURS: JOURS, IDS_JOURS: IDS_JOURS, SERVICES_BASE: SERVICES_BASE, TOUS_SERVICES: TOUS_SERVICES,
+    VERSION: VERSION, VERSION_APP: VERSION_APP, APP: APP, JOURS: JOURS, IDS_JOURS: IDS_JOURS, SERVICES_BASE: SERVICES_BASE, TOUS_SERVICES: TOUS_SERVICES,
     SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, creneaux: creneaux,
     appliquerServices: appliquerServices, estActif: estActif, servicesDuJour: servicesDuJour, servicesDeLaSemaine: servicesDeLaSemaine,
     joursDuService: joursDuService, joursHabituels: joursHabituels,

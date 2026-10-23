@@ -14,6 +14,8 @@ src/js/data/stockage.js   copie de travail (localStorage), import/export JSON �
 src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
 src/js/print/feuilles.js  feuille cuisine + feuille chariot (HTML imprimable)   → print.md
 src/js/ui/*.js            outils DOM, application à onglets, une page par fichier → ui.md
+src/js/aide/*.js          contenu et maquettes de l'aide ; ui/aide.js = menu, fenêtres, présentation → aide.md
+src/guide.html            guide d'utilisation (second fichier, nouvel onglet) ; css/aide.css, css/guide.css
 ```
 
 ## Flux de données
@@ -75,3 +77,4 @@ Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim` × services 
 | calc | `docs/code/calc.md` | Calculs purs et leurs règles métier |
 | ui | `docs/code/ui.md` | Onglets, pages, alertes |
 | print | `docs/code/print.md` | Feuille cuisine, feuille chariot, impression |
+| aide | `docs/code/aide.md` | Guide, présentation de démarrage, aide par page, version |

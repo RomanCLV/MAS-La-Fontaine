@@ -23,6 +23,7 @@ Langue : français pour échanges et docs. Code/identifiants : anglais ou franç
 | `docs/decisions.md` | Journal bref des décisions (date, choix, raison) | Avant de remettre un choix en question |
 | `docs/glossaire.md` | Vocabulaire métier | Doute sur un terme |
 | `docs/design.md` | Index des maquettes : validées / en cours / archives | Phase 3+ |
+| `docs/aide.md` | Aide à l'utilisation : guide, présentation, aide par page (définition validée) ; textes dans `aide-textes.md` / `aide-guide.md` | Travail sur l'aide |
 | `docs/technique.md` | Langage, libs, licences (preuve du "gratuit") | Phase 4+ |
 | `docs/code/architecture.md` | Architecture globale + routage vers `docs/code/*.md` par module | Phase 5 |
 | `data/README.md` | Index des fichiers sources/CSV/résumés | Avant toute analyse de données |

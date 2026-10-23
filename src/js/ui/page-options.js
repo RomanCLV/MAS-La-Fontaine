@@ -1,7 +1,7 @@
 /* Page Options : données en cache (ce que l'application garde dans ce navigateur) et bouton pour les vider. */
 (function (R) {
   'use strict';
-  var S = R.Stockage, h = R.h, O = R.Outils, App = R.App;
+  var M = R.Modele, S = R.Stockage, h = R.h, O = R.Outils, App = R.App;
 
   function taille(n) {
     if (n < 1024) return n + ' octets';
@@ -63,6 +63,13 @@
                   h('input', { type: 'checkbox', checked: on, onchange: function (ev) { basculerFermeture(p.type, ev.target.checked); } }),
                   h('span', { class: 'gras' }, p.nom), h('span', { class: 'petit' }, '— après avoir enregistré ' + p.detail));
               }))),
+          h('div', { class: 'carte carte-etape' },
+            h('span', { class: 'etape' }, 'À propos'),
+            h('div', { class: 'grand gras' }, 'Recueil Alimentation · MAS La Fontaine'),
+            h('div', null, 'Version ' + M.VERSION_APP),
+            h('div', { class: 'rangee' },
+              h('a', { class: 'btn', href: R.Aide.lienGuide(), target: '_blank', rel: 'noopener' }, 'Guide d’utilisation'),
+              h('button', { class: 'btn', onclick: function () { R.AideUi.presentation('revue'); } }, 'Revoir la présentation'))),
           h('div', { class: 'carte carte-etape' },
             h('span', { class: 'etape' }, 'Données en cache'),
             h('div', { class: 'grand gras' }, 'Copie de travail gardée dans ce navigateur'),

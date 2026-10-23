@@ -4,7 +4,7 @@
   var M = R.Modele, S = R.Stockage, h = R.h, O = R.Outils, App = R.App;
 
   function repartirDeZero() {
-    function vider() { App.remplacerDonnees(M.baseVide(), 'base vide'); }
+    function vider() { App.remplacerDonnees(M.baseVide(), 'base vide', { presentation: 'vide' }); }
     if (!App.donnees) { vider(); return; }
     App.confirmer('Repartir de zéro ?\n\nLa copie de travail est remplacée par une base vide : aucun parc, aucun résident, ' +
       'aucune activité, seulement la semaine en cours. Les textures, régimes et options reprennent la liste par défaut.' +
@@ -73,8 +73,16 @@
             h('h2', { id: 'acc-creer' }, 'Créer une nouvelle base'),
             h('div', { class: 'tuiles' },
               tuile('MAS La Fontaine', 'Les 7 parcs et l’activité Sport du jeudi midi, prêts à remplir.',
-                function () { App.remplacerDonnees(M.baseMasLaFontaine(), 'base MAS La Fontaine'); }),
-              tuile('Base vide', 'Aucun parc ni résident. Textures, régimes et options par défaut.', repartirDeZero)))));
+                function () { App.remplacerDonnees(M.baseMasLaFontaine(), 'base MAS La Fontaine', { presentation: 'mas' }); }),
+              tuile('Base vide', 'Aucun parc ni résident. Textures, régimes et options par défaut.', repartirDeZero))),
+          h('section', { class: 'accueil-groupe', 'aria-labelledby': 'acc-aide' },
+            h('h2', { id: 'acc-aide' }, 'Besoin d’aide ?'),
+            h('div', { class: 'tuiles' },
+              h('a', { class: 'tuile', href: R.Aide.lienGuide(), target: '_blank', rel: 'noopener' },
+                h('span', { class: 'tuile-titre' }, 'Guide d’utilisation'),
+                h('span', { class: 'tuile-detail' }, 'Comment fonctionne l’application, page par page (s’ouvre dans un nouvel onglet).')))),
+          h('p', { class: 'petit accueil-version' }, 'Version ' + M.VERSION_APP + ' · ',
+            h('a', { href: R.Aide.lienGuide(), target: '_blank', rel: 'noopener' }, 'Guide d’utilisation'))));
     }
   };
 

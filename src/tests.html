@@ -22,6 +22,9 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 
 <script src="js/data/modele.js"></script>
 <script src="js/calc/calc.js"></script>
+<script src="js/ui/outils.js"></script>
+<script src="js/aide/contenu.js"></script>
+<script src="js/aide/illustrations.js"></script>
 <script>
 (function () {
   'use strict';
@@ -476,6 +479,26 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       'Couleur du preset gardée si libre, sinon couleur libre');
     s.activites = P.map(function (c, i) { return { id: 'b' + i, couleur: c }; });
     egal(M.couleurActiviteLibre(s, 'x'), P[0], 'Palette épuisée : on reprend en boucle');
+  });
+
+  groupe('Aide à l’utilisation (contenu)', function () {
+    var A = Recueil.Aide, I = Recueil.Illustrations;
+    var types = ['semaine', 'residents', 'resident', 'parcs', 'services', 'regimes', 'activites', 'import', 'export', 'imprimer', 'options'];
+    egal(Object.keys(A.PAGES).sort(), types.slice().sort(), 'Une aide par page (11 types de page)');
+    egal(A.SECTIONS.filter(function (s, i) { return A.SECTIONS.indexOf(s) !== i; }), [], 'Sections du guide : aucun doublon');
+    egal(types.filter(function (t) { return A.SECTIONS.indexOf(A.PAGES[t].guide) < 0; }), [], 'Chaque aide renvoie à une section du guide');
+    egal(types.filter(function (t) { return I.NOMS.indexOf(A.PAGES[t].illu) < 0; }), [], 'Chaque aide a une maquette connue');
+    egal(types.filter(function (t) { var p = A.PAGES[t]; return !p.nom || !p.quoi || p.points.length < 3; }), [], 'Chaque aide : nom, résumé et au moins 3 points');
+    egal(A.SLIDES.filter(function (s) { return I.NOMS.indexOf(s.illu) < 0 || !s.titre; }).length, 0, 'Présentation : titres et maquettes connus');
+    egal(A.SLIDES.filter(function (s) { return [s.aller, s.aller2].some(function (a) { return a && !A.PAGES[a.page]; }); }).length, 0,
+      'Présentation : les boutons « Aller à… » ouvrent des pages qui existent');
+    egal(A.SLIDES.filter(function (s) { return typeof s.texte !== 'string' && !s.texte.vide; }).length, 0, 'Présentation : texte de base vide toujours présent');
+    egal(A.lienGuide('parcs'), 'guide.html#parcs', 'Lien vers une section du guide');
+    egal(/^\d+\.\d+/.test(M.VERSION_APP), true, 'Version de l’application : numéro ' + M.VERSION_APP);
+    var n = I.texte('un **gras**\nligne 2');
+    egal(n.length, 2, 'Texte d’aide : un retour à la ligne = 2 lignes');
+    var div = document.createElement('div'); n.flat(2).forEach(function (x) { if (x) div.appendChild(x instanceof Node ? x : document.createTextNode(x)); });
+    egal(div.querySelectorAll('strong').length + '/' + div.querySelectorAll('br').length, '1/1', 'Texte d’aide : **gras** et retour à la ligne');
   });
 
   var r = document.getElementById('resume');

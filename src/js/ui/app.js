@@ -46,8 +46,9 @@
     App.ui = etatUi(S.lireUi());
     if (App.donnees) App.nettoyerOnglets();
     document.addEventListener('click', function (e) {
-      if (App.menuOuvert && !e.target.closest('.menu-pages, .btn-pages, .btn-plus')) { App.menuOuvert = false; App.rendre(); }
+      if (App.menuOuvert && !e.target.closest('.menu-pages, .btn-pages, .btn-plus, .btn-aide')) { App.menuOuvert = false; App.rendre(); }
     });
+    if (R.AideUi) R.AideUi.init();
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && App.menuOuvert) { App.menuOuvert = false; App.rendre(); }
     });
@@ -226,7 +227,7 @@
   // ce réglage : on affiche donc nos propres fenêtres, que le navigateur ne bloque jamais.
   // Le texte passe par textContent ; les \n font des retours à la ligne. contenu : texte ou élément (formulaire).
   // Bouton { avant: fn } : fn() renvoie false pour garder la fenêtre ouverte (saisie à corriger).
-  function dialogue(contenu, boutons, surFin) {
+  function dialogue(contenu, boutons, surFin, classe) {
     var fini = false;
     function finir(choix) {
       if (fini) return;
@@ -236,7 +237,7 @@
       surFin(choix);
     }
     // Échap ferme la fenêtre (événement close) : vaut « Annuler ».
-    var d = h('dialog', { class: 'dialogue', onclose: function () { finir(''); } },
+    var d = h('dialog', { class: 'dialogue' + (classe ? ' ' + classe : ''), onclose: function () { finir(''); } },
       typeof contenu === 'string' ? h('p', { class: 'dialogue-texte' }, contenu) : contenu,
       h('div', { class: 'dialogue-boutons' }, boutons.map(function (b) {
         return h('button', { class: 'btn ' + (b.classe || ''), autofocus: b.focus, onclick: function () {
@@ -260,13 +261,14 @@
     dialogue(texte, [{ texte: 'OK', valeur: 'ok', classe: 'btn-principal', focus: true }], function () {});
   };
 
-  App.remplacerDonnees = function (donnees, origine) {
+  // opts.presentation ('mas' | 'vide') : base neuve, la présentation de démarrage s'ouvre après le remplacement.
+  App.remplacerDonnees = function (donnees, origine, opts) {
     // Cache illisible : on ne l'écrase qu'après confirmation (l'accueil propose de le télécharger avant).
     if (App.copieIllisible) {
       App.confirmer('Remplacer les données illisibles de ce navigateur ?\n\nElles seront effacées. ' +
         'Si vous ne l’avez pas encore fait, annulez et cliquez d’abord sur « Télécharger les données illisibles » : ' +
         'ce fichier permettra peut-être de les récupérer.',
-        function () { App.copieIllisible = null; App.remplacerDonnees(donnees, origine); }, { ok: 'Remplacer', danger: true });
+        function () { App.copieIllisible = null; App.remplacerDonnees(donnees, origine, opts); }, { ok: 'Remplacer', danger: true });
       return;
     }
     App.donnees = donnees;
@@ -281,6 +283,7 @@
     App.ui.actif = 'semaine:' + derniere.id;
     App.sauverUi();
     App.rendre(true);
+    if (opts && opts.presentation && R.AideUi) R.AideUi.presentation(opts.presentation);
   };
 
   // Efface tout ce que l'application garde dans ce navigateur, puis retour à l'écran d'accueil.
@@ -325,10 +328,14 @@
       App.donnees ? etat : null,
       App.donnees && App.meta.nonExporte ? h('button', { class: 'etat etat-attention', onclick: function () { App.ouvrir('export'); } },
         'Modifications non exportées') : null,
-      App.donnees ? h('div', { class: 'barre-fichier' },
-        h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('import'); } }, 'Importer'),
-        h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('export'); } }, 'Exporter')) : null,
-      App.menuOuvert === 'pages' ? menuPages() : null);
+      h('div', { class: 'barre-fichier' },
+        App.donnees ? [
+          h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('import'); } }, 'Importer'),
+          h('button', { class: 'btn-barre', onclick: function () { App.ouvrir('export'); } }, 'Exporter')] : null,
+        h('button', { class: 'btn-barre btn-aide', 'aria-expanded': App.menuOuvert === 'aide' ? 'true' : 'false',
+          onclick: function () { App.menuOuvert = App.menuOuvert === 'aide' ? false : 'aide'; App.rendre(); } }, '? Aide')),
+      App.menuOuvert === 'pages' ? menuPages() : null,
+      App.menuOuvert === 'aide' && R.AideUi ? R.AideUi.menu() : null);
   }
 
   function menuPages() {
@@ -453,6 +460,7 @@
       var o = App.ongletActif();
       try {
         contenu = R.Pages[o.type].rendu(o);
+        if (R.AideUi) R.AideUi.boutonTitre(contenu, o.type);
       } catch (e) {
         contenu = h('div', { class: 'page' }, h('div', { class: 'message message-ko' }, 'Erreur d’affichage : ' + e.message));
         if (window.console) console.error(e);

@@ -12,6 +12,7 @@
 | `page-fichier.js` | Accueil, page Importer, page Exporter (choix de la semaine envoyée → nom du fichier) |
 | `page-imprimer.js` | Choix semaine/jours/services/type (services décochés mémorisés dans `servicesExclus` : un service ajouté est coché), aperçu, impression |
 | `page-options.js` | Options › « Enregistrement » : **« Fermer la page après avoir enregistré »** : une case par page (`PAGES_FERMABLES` : Fiche résident, Résidents, Parcs, Régimes, Activités ; liste de types dans `App.ui.fermerApres`, vide par défaut, mémorisée) ; « Données en cache » : contenu, origine, dates, place occupée ; « Vider le cache local » (confirmation, avertit si non exporté) → `App.viderCache()` efface `recueil.donnees/meta/ui` et revient à l’accueil |
+| `aide.js` | Menu « ? Aide » du bandeau, bouton « ? » des titres, fenêtre d'aide, F1, présentation de démarrage → `aide.md` |
 
 ## Principes
 - Onglet = `{type, id?}`, clé `type:id`. Onglets ouverts, actif et « fermés récemment » (pages hors menu seulement : fiches, Imprimer ; voir `fixe()`) mémorisés (`localStorage['recueil.ui']`) et **restaurés** à la réouverture.

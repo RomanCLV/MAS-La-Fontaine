@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide d’utilisation · Recueil Alimentation</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/aide.css">
+<link rel="stylesheet" href="css/guide.css">
+</head>
+<body class="guide">
+<header class="guide-haut">
+  <h1>Guide d’utilisation</h1>
+  <span class="petit">Recueil Alimentation · MAS La Fontaine · version <span data-version></span></span>
+  <span class="petit guide-fermer">Vous pouvez fermer cet onglet pour revenir à l’application.</span>
+</header>
+
+<div class="guide-corps">
+<nav class="guide-nav" aria-label="Sommaire">
+  <ol>
+    <li><a class="niv1" href="#demarrer">1. Pour commencer</a>
+      <ul><li><a href="#donnees">Où sont mes données ?</a></li><li><a href="#ecran">Vue d’ensemble de l’écran</a></li><li><a href="#accueil">L’écran d’accueil</a></li></ul></li>
+    <li><a class="niv1" href="#mise-en-route">2. Première mise en route</a></li>
+    <li><a class="niv1" href="#pages">3. Les pages, une par une</a>
+      <ul><li><a href="#residents">Résidents</a></li><li><a href="#fiche-resident">Fiche résident</a></li><li><a href="#parcs">Parcs</a></li>
+        <li><a href="#services">Services</a></li><li><a href="#regimes">Régimes</a></li><li><a href="#activites">Activités</a></li>
+        <li><a href="#importer">Importer</a></li><li><a href="#exporter">Exporter</a></li><li><a href="#imprimer">Imprimer</a></li><li><a href="#options">Options</a></li></ul></li>
+    <li><a class="niv1" href="#semaine">4. La page Semaine</a></li>
+    <li><a class="niv1" href="#feuilles">5. Les feuilles imprimées</a></li>
+    <li><a class="niv1" href="#calculs">6. Comment l’application compte</a></li>
+    <li><a class="niv1" href="#recettes">7. Je veux…</a></li>
+    <li><a class="niv1" href="#problemes">8. Problèmes courants</a></li>
+    <li><a class="niv1" href="#glossaire">9. Glossaire</a></li>
+  </ol>
+</nav>
+
+<main class="guide-texte">
+
+<!-- ================= 1. POUR COMMENCER ================= -->
+<h2 id="demarrer">1. Pour commencer</h2>
+<p>Vous indiquez <strong>qui mange à quels repas</strong> pendant la semaine. L’application compte les plats (par parc, par texture, par régime, par option) et imprime la <strong>feuille cuisine</strong> et les <strong>feuilles chariot</strong>.</p>
+<div data-illu="etapes"></div>
+
+<h3 id="donnees">Où sont mes données ? (à lire)</h3>
+<div class="important">
+  <ul>
+    <li>Tout ce que vous saisissez est <strong>enregistré automatiquement dans le navigateur</strong> de cet ordinateur. Rien n’est envoyé ailleurs.</li>
+    <li>Ce n’est <strong>pas une sauvegarde</strong> : si vous videz les données du navigateur, si vous changez de navigateur ou d’ordinateur, vous ne retrouvez rien.</li>
+    <li>Pour sauvegarder ou transmettre votre travail : <strong>Exporter</strong> (en haut à droite). Le bandeau affiche « Modifications non exportées » tant que vous n’avez pas exporté.</li>
+    <li>Pour reprendre un fichier : <strong>Importer</strong>. Il remplace votre copie de travail.</li>
+    <li>Gardez toujours un fichier exporté récent.</li>
+  </ul>
+</div>
+<div data-illu="export-barre"></div>
+
+<h3 id="ecran">Vue d’ensemble de l’écran</h3>
+<ul>
+  <li><strong>Bandeau noir</strong> (toujours visible) : menu Pages, Importer, Exporter, <strong>? Aide</strong>. L’indicateur « Enregistré à… » confirme la sauvegarde dans le navigateur.</li>
+  <li><strong>Onglets</strong> : chaque page s’ouvre dans un onglet. Glissez-les pour les ranger ; le bouton « + » ouvre le menu des pages ; « Fermés récemment » (dans le menu Pages) rouvre une fiche fermée. Les onglets sont retrouvés à la réouverture.</li>
+  <li><strong>« Modifications non enregistrées »</strong> : une page (fiche, parc, activité…) travaille sur un brouillon. Rien n’est gardé avant le bouton « Enregistrer » ; fermer l’onglet demande confirmation.</li>
+  <li><strong>« ? » à côté du titre</strong> de chaque page (ou la touche F1) : une aide rapide sur la page, avec un lien vers ce guide.</li>
+</ul>
+
+<h3 id="accueil">L’écran d’accueil</h3>
+<p>Il s’affiche quand le navigateur ne contient encore aucune donnée.</p>
+<ul>
+  <li><strong>Ouvrir un fichier reçu</strong> : reprendre un fichier exporté par l’application.</li>
+  <li><strong>MAS La Fontaine</strong> : les 7 parcs et l’activité Sport du jeudi midi, prêts à remplir.</li>
+  <li><strong>Base vide</strong> : tout est à créer (les textures, régimes et options par défaut sont déjà proposés).</li>
+</ul>
+<p>Après avoir créé une base, une courte présentation en quelques écrans explique les premières étapes. Vous pouvez la revoir à tout moment : <strong>? Aide → Revoir la présentation</strong>.</p>
+
+<!-- ================= 2. MISE EN ROUTE ================= -->
+<h2 id="mise-en-route">2. Première mise en route</h2>
+<p>Dans l’ordre conseillé :</p>
+<ol>
+  <li><strong>Parcs</strong> : vérifiez ou créez les zones de la MAS.</li>
+  <li><strong>Résidents</strong> : ajoutez chaque résident (parc, texture, régimes, options).</li>
+  <li><strong>Régimes</strong> : ajustez les listes si besoin.</li>
+  <li><strong>Services</strong> (facultatif) : goûter, repas de fête…</li>
+  <li><strong>Activités</strong> (facultatif) : Sport du jeudi…</li>
+  <li><strong>Semaine</strong> : saisissez les présences, puis <strong>Imprimer</strong>.</li>
+</ol>
+<div class="astuce">Exportez dès que vos résidents sont saisis : vous aurez une première sauvegarde.</div>
+
+<!-- ================= 3. LES PAGES ================= -->
+<h2 id="pages">3. Les pages, une par une</h2>
+<p>Le menu <strong>☰ Pages</strong> (ou le bouton « + » des onglets) ouvre toutes les pages. La page <a href="#semaine">Semaine</a>, la plus importante, a sa propre section.</p>
+
+<h3 id="residents">Résidents</h3>
+<div data-illu="liste-tableau"></div>
+<ul>
+  <li><strong>Liste</strong> : une ligne par résident. Au survol : éditer, archiver, supprimer. Filtres : nom, parc, archivés.</li>
+  <li><strong>Tableau</strong> : une colonne par texture / régime / option ; cliquez pour attribuer. « Enregistrer » valide tout d’un coup (les cases modifiées sont entourées).</li>
+  <li><strong>Archiver</strong> : le résident disparaît des semaines mais reste dans la liste. <strong>Supprimer</strong> : définitif.</li>
+</ul>
+
+<h3 id="fiche-resident">Fiche résident</h3>
+<div data-illu="fiche"></div>
+<p>Nom, prénom, parc, observation (reprise sur l’étiquette du chariot), texture (une seule), régimes et allergies, options, absences prévues.</p>
+<p><strong>Absence prévue</strong> : « + Ajouter une absence » ouvre une fenêtre (du… au…, repas concernés). Les dates sont incluses. Les cases correspondantes de la semaine passent à 0 (rouge hachuré).</p>
+
+<h3 id="parcs">Parcs</h3>
+<div data-illu="parcs"></div>
+<p>Nom, couleur, ordre. Un parc = un onglet de la semaine et un chariot. Un parc ne peut pas être supprimé tant que des résidents y sont rattachés (même archivés) : changez-les de parc d’abord.</p>
+<p>Base vide : le bouton « Ajouter les parcs MAS La Fontaine » ajoute les 7 parcs de la MAS (les parcs déjà présents ne sont pas touchés).</p>
+
+<h3 id="services">Services</h3>
+<div data-illu="services"></div>
+<ul>
+  <li><strong>Petit déjeuner, midi, soir</strong> : fixes, tous les jours.</li>
+  <li><strong>Services ajoutés</strong> : nom, abrégé (en-tête de colonne), type, semaines, jours, place dans la journée (flèches ↑ ↓), archivage.</li>
+  <li>Type <strong>Repas</strong> : textures, régimes et options comptés comme au midi. Type <strong>Présence seule</strong> : on compte seulement les présents.</li>
+  <li><strong>Toutes les semaines</strong> : le service est présent chaque semaine. <strong>Certaines semaines</strong> : vous l’ajoutez à une semaine précise depuis la page Semaine (repas de Noël…).</li>
+  <li>Un service déjà utilisé ne peut pas être supprimé : la page indique où il sert ; vous pouvez l’<strong>archiver</strong>.</li>
+</ul>
+
+<h3 id="regimes">Régimes</h3>
+<div data-illu="trois-listes"></div>
+<p>Trois tableaux : <strong>Textures</strong> (une par résident), <strong>Régimes et allergies</strong>, <strong>Options</strong>. Pour chaque élément :</p>
+<ul>
+  <li>nom, abrégé, couleur ;</li>
+  <li><strong>repas concernés</strong> (P.-déj. / Midi / Soir) : un élément décoché n’est ni compté ni affiché pour ce repas ;</li>
+  <li><strong>Toujours affiché</strong> : la colonne est toujours dans la grille de la semaine ; sinon, seulement si un résident du parc affiché l’a ;</li>
+  <li>pour les options, l’<strong>effet</strong> : « +1 plat chaud » (un plat de plus) ou « sur l’assiette » (compté sur chaque plat du résident).</li>
+</ul>
+<p>« Normal », « Sans porc » et « Sans viande » peuvent être renommés mais pas supprimés : l’application s’en sert pour compter.</p>
+
+<h3 id="activites">Activités</h3>
+<div data-illu="activite"></div>
+<ul>
+  <li>Une activité a un nom, une couleur (donnée automatiquement, modifiable), un jour, un repas et des participants.</li>
+  <li>Filtres : recherche par nom, « Cacher les absents ». « Tout ajouter » / « Tout retirer » agissent sur les résidents affichés.</li>
+  <li>Un résident ne participe qu’à <strong>une activité par repas</strong> ; un doublon est signalé en rouge et empêche d’enregistrer.</li>
+  <li><strong>Modèles</strong> : enregistrez une activité (ex. Sport jeudi midi) pour la recharger une autre semaine.</li>
+</ul>
+
+<h3 id="importer">Importer</h3>
+<div data-illu="fichier"></div>
+<p>« Ouvrir un fichier… » lit un fichier .json exporté par l’application. L’écran montre son contenu ; « Remplacer la copie de travail » le charge. <strong>Votre copie actuelle est remplacée</strong> : exportez-la d’abord si vous voulez la garder.</p>
+<p>« Repartir de zéro (base vide) » efface tout (après confirmation) et commence une base neuve.</p>
+
+<h3 id="exporter">Exporter</h3>
+<p>Choisissez la <strong>semaine envoyée</strong> (elle donne son nom au fichier), puis « Télécharger le fichier ». Le fichier va dans le dossier Téléchargements (ou le dossier choisi par le navigateur). Envoyez-le ensuite par clé USB, dossier partagé ou mail ; l’autre personne le charge avec <a href="#importer">Importer</a>.</p>
+<p>Le fichier contient toute la copie de travail (toutes les semaines, les résidents, les listes), pas seulement la semaine choisie.</p>
+
+<h3 id="imprimer">Imprimer</h3>
+<div data-illu="feuille"></div>
+<p>Choisissez la <strong>semaine</strong>, les <strong>feuilles</strong> (cuisine et/ou chariots), les <strong>services</strong> et les <strong>jours</strong> ; l’aperçu montre une feuille par jour et par service ; « Imprimer » ouvre la fenêtre d’impression du navigateur. Voir <a href="#feuilles">Les feuilles imprimées</a>.</p>
+
+<h3 id="options">Options</h3>
+<div data-illu="options"></div>
+<ul>
+  <li><strong>Fermer la page après avoir enregistré</strong> : cochez les pages dont l’onglet doit se fermer dès qu’un « Enregistrer » a réussi.</li>
+  <li><strong>À propos</strong> : la version, le lien vers ce guide, « Revoir la présentation ».</li>
+  <li><strong>Données en cache</strong> : ce que l’application garde dans ce navigateur (contenu, origine, dates, place occupée). « Vider le cache local » efface tout et revient à l’accueil (exportez d’abord).</li>
+  <li>Quand l’application est mise à jour, une copie de vos données d’avant la mise à jour est gardée : « Télécharger cette copie ».</li>
+</ul>
+
+<!-- ================= 4. SEMAINE ================= -->
+<h2 id="semaine">4. La page Semaine</h2>
+<p>C’est la page principale : on y saisit les présences et on voit les nombres de plats. Une semaine va du lundi au dimanche.</p>
+<div data-illu="grille"></div>
+
+<h3>Choisir la semaine et le parc</h3>
+<p>Le sélecteur « Semaine » en haut de la page change de semaine. Il y a <strong>un onglet par parc</strong> (pastille de sa couleur, nombre de résidents entre parenthèses).</p>
+
+<h3>Saisir les présences</h3>
+<ul>
+  <li>Chaque ligne est un résident, chaque colonne un repas (jour × service).</li>
+  <li><strong>Un clic</strong> inverse la case. <strong>Glisser</strong> sur plusieurs cases leur applique la même valeur (Échap annule). Au clavier : Entrée ou Espace.</li>
+  <li>Par défaut, tout le monde est <strong>présent</strong>, sauf absence prévue dans la fiche. Pour un service ajouté, la présence suit le repas voisin (avant ou après).</li>
+  <li>Une case présente affiche son <strong>nombre de plats</strong> : 1 normalement, 2 avec un « double plat », 3 avec double plat et gros gourmand ; toujours 1 au petit déjeuner.</li>
+</ul>
+
+<h3>Les couleurs de la grille</h3>
+<table>
+  <tr><th>Case</th><th>Sens</th></tr>
+  <tr><td>Verte</td><td>Présent et consommant ses repas</td></tr>
+  <tr><td>Rouge</td><td>Absent (saisi à la main)</td></tr>
+  <tr><td>Rouge hachuré</td><td>Absence prévue (fiche du résident)</td></tr>
+  <tr><td>Jaune</td><td>Alerte à vérifier</td></tr>
+  <tr><td>Entourée d’une couleur</td><td>Participe à une activité</td></tr>
+  <tr><td>Fond jaune pâle et cadre</td><td>Trouvé par la recherche</td></tr>
+</table>
+
+<h3>Les carrés de plats</h3>
+<p>Sous les en-têtes, pour chaque repas :</p>
+<ul>
+  <li><strong>Plats &lt;parc&gt;</strong> : résidents présents (hors activité) + plats en plus + salariés du parc. C’est la colonne du parc sur la feuille cuisine.</li>
+  <li>Une ligne par <strong>texture</strong> (haché, mixé…), comptée en plats.</li>
+  <li><strong>En activité</strong> : plats des résidents du parc partis en activité (retirés du parc).</li>
+  <li><strong>Total hors parcs</strong> : Sodexo + direction + nettoyage + plats témoins.</li>
+</ul>
+<p>Ils se mettent à jour pendant la saisie.</p>
+
+<h3>Salariés, Sodexo, direction, nettoyage, témoins</h3>
+<p>Lignes de nombres sous la grille, par repas : salariés (par parc, avec ou sans porc), Sodexo, direction, nettoyage et nettoyage sans viande, plats témoins (nombre donné par le client). Ils s’ajoutent au total à produire.</p>
+
+<h3 id="alertes">Alertes</h3>
+<p>Au-dessus de la grille, deux sortes d’alertes :</p>
+<ul>
+  <li><strong>Présent alors qu’absent</strong> : une présence saisie contredit une absence prévue.</li>
+  <li><strong>Aucune présence</strong> : un résident est à 0 sur toute la semaine.</li>
+</ul>
+<p>Pour chaque alerte : <strong>C’est voulu</strong> ou <strong>Ignorer</strong> (elle disparaît, vous pouvez la réafficher). Les alertes n’apparaissent <strong>jamais</strong> sur les feuilles imprimées.</p>
+
+<h3>Rechercher</h3>
+<p>Le champ « Nom, régime, observation… » cherche dans <strong>tous les parcs</strong> : nom, texture, régime, option (nom ou abréviation) et observation, sans tenir compte des accents ni des majuscules. Avec plusieurs mots, <strong>tous</strong> doivent être trouvés (« haché porc »). Un onglet « Recherche » s’ouvre : les présences s’y modifient comme d’habitude, avec une colonne Parc. Cliquer sur un parc efface la recherche.</p>
+
+<h3>Services affichés et services ajoutés</h3>
+<ul>
+  <li><strong>Services affichés</strong> : masque des colonnes pour y voir plus clair (les données sont conservées ; au moins un service reste affiché).</li>
+  <li><strong>Services ajoutés cette semaine</strong> : « + Ajouter un service à cette semaine » (repas de Noël…). Les jours se règlent pour cette semaine seulement.</li>
+</ul>
+
+<h3>Activités de la semaine</h3>
+<p>Un bandeau rappelle les activités ; cliquez-en une pour l’ouvrir. Elles se créent dans la page <a href="#activites">Activités</a>.</p>
+
+<h3>Semaine suivante, impression, suppression</h3>
+<ul>
+  <li><strong>Créer la semaine suivante</strong> : reprend salariés, Sodexo, direction, nettoyage, témoins et les cases mises à 0 ; pas les activités (utilisez les modèles). Corrigez ensuite ce qui change.</li>
+  <li><strong>Imprimer cette semaine</strong> : ouvre la page <a href="#imprimer">Imprimer</a> sur cette semaine.</li>
+  <li><strong>Supprimer cette semaine</strong> : après confirmation ; impossible s’il ne reste qu’une semaine.</li>
+</ul>
+
+<!-- ================= 5. FEUILLES ================= -->
+<h2 id="feuilles">5. Les feuilles imprimées</h2>
+<div data-illu="feuille"></div>
+
+<h3>La feuille cuisine</h3>
+<p>Une feuille par jour et par repas, en A4 paysage.</p>
+<ul>
+  <li>En haut : le <strong>total à produire</strong>.</li>
+  <li>Un tableau <strong>par zone</strong> : chaque parc, chaque activité, Total parcs, Sodexo, Direction, Autres (nettoyage), Témoins, Total.</li>
+  <li>Puis les lignes <strong>Repas</strong>, <strong>Textures</strong> (haché et mixé en grand et en couleur), <strong>Régimes</strong>, <strong>Options</strong>. Une ligne à 0 n’est pas imprimée.</li>
+  <li>Au petit déjeuner (et pour un service « présence seule ») : version simplifiée, on compte les présents.</li>
+</ul>
+
+<h3>La feuille chariot</h3>
+<p>Une par parc et par activité (pas pour Sodexo, direction, nettoyage). L’en-tête est à la couleur du parc.</p>
+<ul>
+  <li><strong>Collectif</strong> : bacs Salariés standard / sans porc, Résidents simples / sans porc. Un bac à 0 n’est pas imprimé.</li>
+  <li><strong>Étiquettes</strong> (6 par page) : texture en grand, régimes, options, observation et <strong>EQ</strong> (équivalent portions : le nombre de plats de ce résident, « ×3 » pour 3 plats).</li>
+  <li>Sur un chariot d’activité, chaque étiquette rappelle le parc du résident.</li>
+  <li>Petit déjeuner : bacs et encadré « Particularités » (pots gourmands…), sans étiquettes.</li>
+</ul>
+
+<h3>Conseils d’impression</h3>
+<ul>
+  <li>A4 paysage, une feuille par page.</li>
+  <li>Couleurs absentes ? Dans la fenêtre d’impression, cochez « Imprimer les arrière-plans ».</li>
+  <li>Pour obtenir un PDF : choisissez « Enregistrer au format PDF » comme imprimante.</li>
+  <li>Un repas à 0 plat n’est pas imprimé.</li>
+</ul>
+
+<!-- ================= 6. CALCULS ================= -->
+<h2 id="calculs">6. Comment l’application compte</h2>
+<ul>
+  <li><strong>Présent</strong> = 1 plat. <strong>Absent</strong> = 0.</li>
+  <li><strong>Double plat</strong> et les autres options « +1 plat chaud » : un plat de plus chacune, cumulables (double plat + gros gourmand = 3 plats).</li>
+  <li><strong>Options « sur l’assiette »</strong> (enrichi, panée, pots gourmands…) : comptées sur chaque plat du résident.</li>
+  <li><strong>Textures et régimes</strong> sont comptés <strong>en plats</strong> : un résident à 2 plats haché compte pour 2 hachés. Ainsi Normal + Haché + Mixé = total. <span class="confirmer">(règle à confirmer)</span></li>
+  <li><strong>Activité</strong> : les participants présents sont retirés de leur parc et comptés dans l’activité.</li>
+  <li><strong>Salariés</strong> : texture normale ; « sans porc » les ajoute au régime sans porc. <strong>Nettoyage sans viande</strong> : régime sans viande. <strong>Plats témoins</strong> : texture normale, sans régime, ajoutés au total.</li>
+  <li><strong>Total à produire</strong> = parcs + activités + Sodexo + direction + nettoyage + témoins.</li>
+  <li>Une texture, un régime ou une option <strong>non concerné par un repas</strong> n’y est ni compté ni affiché ; le résident est alors compté dans la texture par défaut.</li>
+</ul>
+
+<!-- ================= 7. RECETTES ================= -->
+<h2 id="recettes">7. Je veux…</h2>
+<dl>
+  <dt>Noter une absence de plusieurs jours</dt>
+  <dd>Fiche du résident → « + Ajouter une absence » → dates et repas → Enregistrer. Les cases passent en rouge hachuré.</dd>
+  <dt>Retirer un résident d’un seul repas</dt>
+  <dd>Page Semaine : cliquez sa case.</dd>
+  <dt>Organiser le Sport du jeudi</dt>
+  <dd>Activités → charger le modèle « Sport » → cochez les participants → Enregistrer. Leur repas part sur le chariot Sport.</dd>
+  <dt>Ajouter un repas de Noël</dt>
+  <dd>Services → ajouter un service « Certaines semaines » ; puis, page Semaine, « + Ajouter un service à cette semaine » (jours réglables).</dd>
+  <dt>Ajouter un goûter chaque jour</dt>
+  <dd>Services → ajouter un service, type Repas ou Présence seule, « Toutes les semaines ».</dd>
+  <dt>Créer un nouveau régime</dt>
+  <dd>Régimes → tableau « Régimes et allergies » → ajouter ; puis l’attribuer dans la fiche des résidents concernés.</dd>
+  <dt>Retrouver tous les « sans porc »</dt>
+  <dd>Semaine → champ de recherche → « sans porc ».</dd>
+  <dt>Envoyer ma semaine à un collègue</dt>
+  <dd>Exporter → choisir la semaine → Télécharger le fichier → l’envoyer. Il utilise Importer.</dd>
+  <dt>Passer à la semaine suivante</dt>
+  <dd>Page Semaine → « Créer la semaine suivante ».</dd>
+  <dt>Un résident part définitivement</dt>
+  <dd>Résidents → archiver (il reste dans la liste) ou supprimer (définitif).</dd>
+</dl>
+
+<!-- ================= 8. PROBLÈMES ================= -->
+<h2 id="problemes">8. Problèmes courants</h2>
+<dl>
+  <dt>Mes données ont disparu.</dt>
+  <dd>Les données du navigateur ont été effacées, ou vous utilisez un autre navigateur ou un autre ordinateur. Importez votre dernier fichier exporté.</dd>
+  <dt>L’accueil dit que les données sont illisibles.</dt>
+  <dd>L’application les a gardées telles quelles. Cliquez « Télécharger les données illisibles » (gardez ce fichier), puis ouvrez un fichier exporté ou commencez une base.</dd>
+  <dt>Après une mise à jour de l’application.</dt>
+  <dd>Une copie de l’ancienne version de vos données est gardée : page Options → « Télécharger cette copie ».</dd>
+  <dt>L’import est refusé.</dt>
+  <dd>Le fichier vient d’une autre application, est abîmé, ou a été créé par une version plus récente de l’application.</dd>
+  <dt>Un service ne peut pas être supprimé.</dt>
+  <dd>Il est utilisé (semaine, activité, absence…) : archivez-le.</dd>
+  <dt>Les couleurs manquent à l’impression.</dt>
+  <dd>Cochez « Imprimer les arrière-plans » dans la fenêtre d’impression.</dd>
+  <dt>Une case jaune ne disparaît pas.</dt>
+  <dd>C’est une alerte : corrigez la saisie, ou cliquez « C’est voulu » / « Ignorer ».</dd>
+  <dt>Une colonne manque dans la grille.</dt>
+  <dd>Régimes → cochez « Toujours affiché », ou vérifiez le filtre « Services affichés ».</dd>
+  <dt>Rien ne s’imprime pour un repas.</dt>
+  <dd>Un repas à 0 plat n’est pas imprimé.</dd>
+  <dt>Quel navigateur ?</dt>
+  <dd>Firefox, Chrome et Edge conviennent. Ouvrez l’application par un double-clic sur <code>index.html</code>.</dd>
+</dl>
+
+<!-- ================= 9. GLOSSAIRE ================= -->
+<h2 id="glossaire">9. Glossaire</h2>
+<dl>
+  <dt>Activité</dt><dd>Évènement ajouté à une semaine (ex. Sport jeudi midi) dont les participants mangent ailleurs. Ne change pas la portion, change le chariot.</dd>
+  <dt>Chariot</dt><dd>Chariot de transport des repas d’un parc (ou d’une activité). Une feuille chariot par chariot.</dd>
+  <dt>Collectif</dt><dd>Plats servis en bacs communs (sur la feuille chariot), par opposition aux assiettes individuelles à étiquette.</dd>
+  <dt>Enrichi</dt><dd>Plat enrichi en calories et protéines.</dd>
+  <dt>EQ</dt><dd>Équivalent portions : nombre de plats d’un résident (« ×3 » pour 3 plats).</dd>
+  <dt>Feuille cuisine</dt><dd>Feuille de production A4 paysage, par jour et par repas, lue en cuisine.</dd>
+  <dt>Modèle (d’activité)</dt><dd>Activité enregistrée (jour, repas, participants) à recharger d’une semaine à l’autre.</dd>
+  <dt>Option</dt><dd>Ajout ou substitution au repas (double plat, enrichi, pots gourmands…).</dd>
+  <dt>Parc</dt><dd>Zone de la MAS. Un parc = un chariot.</dd>
+  <dt>Plats témoins</dt><dd>Plats gardés en témoin, nombre donné par le client. Ajoutés au total à produire.</dd>
+  <dt>Pots gourmands</dt><dd>Alternative au petit déjeuner classique pour qui ne peut pas mâcher (yaourt, riz au lait, crème pâtissière + brioche…). Préparée par la cuisine, à la place du petit déjeuner.</dd>
+  <dt>Régime</dt><dd>Contrainte alimentaire impérative (sans porc, sans sel, allergies…).</dd>
+  <dt>Sans résidus</dt><dd>Régime pauvre en fibres.</dd>
+  <dt>Service</dt><dd>Moment de repas d’une journée. Services de base : petit déjeuner, midi, soir. Services ajoutés : goûter, repas de fête…</dd>
+  <dt>Sodexo</dt><dd>Équipe de cuisiniers du prestataire, ajoutée au volume total, hors parcs.</dd>
+  <dt>Texture</dt><dd>Consistance du plat : normal, haché, mixé…</dd>
+</dl>
+
+</main>
+</div>
+
+<script src="js/data/modele.js"></script>
+<script src="js/ui/outils.js"></script>
+<script src="js/aide/contenu.js"></script>
+<script src="js/aide/illustrations.js"></script>
+<script>
+(function (R) {
+  'use strict';
+  // Maquettes (mêmes que dans l'application) et version.
+  document.querySelectorAll('[data-illu]').forEach(function (el) {
+    var m = R.Illustrations.faire(el.getAttribute('data-illu'));
+    if (m) el.replaceWith(m); else console.error('Maquette inconnue : ' + el.getAttribute('data-illu'));
+  });
+  document.querySelectorAll('[data-version]').forEach(function (el) { el.textContent = R.Modele.VERSION_APP; });
+  // Contrôle : chaque section citée par l'aide de l'application existe dans ce guide.
+  var manquantes = R.Aide.SECTIONS.filter(function (id) { return !document.getElementById(id); });
+  if (manquantes.length) console.error('Sections du guide manquantes : ' + manquantes.join(', '));
+  document.body.setAttribute('data-sections-manquantes', manquantes.join(','));
+})(window.Recueil);
+</script>
+</body>
+</html>
