@@ -18,7 +18,7 @@ src/js/ui/*.js            outils DOM, application à onglets, une page par fichi
 
 ## Flux de données
 ```
-fichier .json ──import──▶ Modele.migrer ──▶ copie de travail (localStorage, autosauvegarde)
+fichier .json ──import──▶ Modele.migrer (normalise, applique les services) ──▶ copie de travail (localStorage, autosauvegarde)
                                                │
                      pages ui (saisie) ◀───────┤──── modifications → sauvegarde immédiate
                                                │
@@ -30,20 +30,21 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
 - L'interface ne calcule rien elle-même : elle appelle `Calc`.
 - Alertes : calculées par `Calc.alertes`, affichées au-dessus de la grille Semaine, **jamais** dans `Feuilles`.
 
-## Schéma JSON (version 4 ; versions 1 à 3 migrées à l'import)
+## Schéma JSON (version 1 = application 1.0, 2026-10-23 ; formats d'essai d'avant non lus)
 ```
 {
-  app: "recueil-alimentation-mas-la-fontaine", version: 4,   // v1 : nettoyage = tout sans viande ; v2 : pas de petit déjeuner (migrés) exporteLe: "AAAA-MM-JJ",
-  etablissement: "MAS La Fontaine",                       // ajouté par la migration si absent
+  app: "recueil-alimentation-mas-la-fontaine", version: 1, exporteLe: "AAAA-MM-JJ",
+  etablissement: "MAS La Fontaine",                       // ajouté par la normalisation si absent
   referentiels: {
     parcs:   [{ id, nom, couleur, ordre }],
+    services: [{ id, nom, court, base, presenceSeule, jours: ["lun",…], archive }],  // ordre de la journée ; voir ci-dessous
     regimes: [{ id, nom, abrege?, nature: "texture"|"regime"|"option", couleur,
                 affecte?: "plat"|"",                          // options seulement : +1 plat chaud ou sur l'assiette
-                services: ["midi","soir"],                    // services concernés ; v≤3 : midi+soir (pots gourmands : petitdej)
+                services: ["midi","soir"],                    // services concernés (absent = midi + soir)
                 toujoursVisible: true }]                      // colonne toujours dans la grille Semaine (absent = true) ; sinon si un résident du parc l'a
   },
   residents: [{ id, nom, prenom, parcId, textureId, regimeIds[], optionIds[], consigne, archive,
-                absences: [{ debut, fin, services: ["petitdej","midi","soir"] }] }],  // dates incluses ; v2 « midi+soir » → + petitdej
+                absences: [{ debut, fin, services: ["petitdej","midi","soir"] }] }],  // dates incluses
   presetsActivites: [{ id, nom, jours: ["jeu"], services: ["midi"], participantIds[], couleur }],
   semaines: [{
     id: "2026-S42", debut: "2026-10-12",                  // lundi
@@ -57,10 +58,11 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   }]
 }
 ```
-Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim`, services `petitdej midi soir` (21 créneaux). Petit déjeuner = service « présence seulement » (`presenceSeule`) : on compte les présents, sans plat en plus ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
+Services : 3 **services de base** (`base: true`, `petitdej midi soir`, tous les jours, fixes : imposés par la normalisation) + **services additionnels** (page Services : nom, abrégé `court`, type, jours actifs, ordre parmi les services de base, archivage ; identifiant sans `_`).
+Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim` × services non archivés actifs ce jour-là (`Modele.CRENEAUX` ; 21 sans service additionnel). Service « présence seulement » (`presenceSeule` : petit déjeuner, ou un service additionnel de ce type) : on compte les présents, sans plat en plus ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
 
 ## Règles de calcul (résumé, détail dans `calc.md`)
-- Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1.
+- Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1 (service de base) ou, service additionnel, 1 si le service voisin le plus proche (avant ou après, même jour) est à 1.
 - Volume (plats) = résidents présents + plats en plus (options « +1 plat », cumulables) + salariés (+ Sodexo, Direction, Nettoyage, Plats témoins).
 - Activité : participants présents retirés de leur parc, comptés dans une colonne d'activité.
 - Textures, régimes et options « assiette » comptés **en plats** (1 + une par option « +1 plat ») ⇒ Normal + Haché + Mixé = total.

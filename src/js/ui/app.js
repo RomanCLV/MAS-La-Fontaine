@@ -8,6 +8,7 @@
   var MENU = [
     { type: 'semaine', nom: 'Semaine' },
     { type: 'parcs', nom: 'Parcs' },
+    { type: 'services', nom: 'Services' },
     { type: 'regimes', nom: 'Régimes' },
     { type: 'residents', nom: 'Résidents' },
     { type: 'activites', nom: 'Activités' },
@@ -65,17 +66,17 @@
       semaine: ui.semaine || '',
       parcActif: ui.parcActif || '',
       residentsVue: ui.residentsVue || 'liste',
-      servicesVisibles: servicesVisibles(ui.servicesVisibles),
+      servicesMasques: Array.isArray(ui.servicesMasques) ? ui.servicesMasques : [],  // grille Semaine ; un service ajouté est affiché
       impression: ui.impression || null,
       fermerApres: Array.isArray(ui.fermerApres) ? ui.fermerApres : []   // types de page à fermer après « Enregistrer »
     };
   }
 
-  // Services affichés dans la grille Semaine (simple affichage) : tous par défaut, jamais aucun.
-  function servicesVisibles(liste) {
-    var v = M.IDS_SERVICES.filter(function (id) { return Array.isArray(liste) && liste.indexOf(id) >= 0; });
+  // Services affichés dans la grille Semaine (simple affichage) : tous sauf les masqués, jamais aucun.
+  App.servicesVisibles = function () {
+    var v = M.IDS_SERVICES.filter(function (id) { return App.ui.servicesMasques.indexOf(id) < 0; });
     return v.length ? v : M.IDS_SERVICES.slice();
-  }
+  };
 
   // Retire les onglets dont l'objet n'existe plus ; garantit un onglet ouvert.
   App.nettoyerOnglets = function () {
@@ -196,6 +197,7 @@
   // fn(donnees) modifie les données ; sauvegarde immédiate ; re-rendu sauf { sansRendu: true }.
   App.modifier = function (fn, opts) {
     fn(App.donnees);
+    M.appliquerServices(App.donnees);
     App.meta.sauveLe = Date.now();
     App.meta.nonExporte = true;
     App.erreurSauvegarde = !S.sauverCopie(App.donnees, App.meta);
@@ -442,6 +444,8 @@
     var defil = {};
     racine.querySelectorAll('[data-defil]').forEach(function (el) { defil[el.getAttribute('data-defil')] = el.scrollLeft; });
 
+    // Services en vigueur = ceux des données affichées (un fichier lu pour l'import a pu les changer).
+    M.appliquerServices(App.donnees);
     var contenu;
     if (!App.donnees) {
       contenu = R.Pages.accueil.rendu();

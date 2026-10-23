@@ -3,9 +3,7 @@
 (function (R) {
   'use strict';
 
-  var VERSION = 4; // 2 : nettoyage séparé en standard (nettoyage) et sans viande (nettoyageSansViande)
-                   // 3 : service petit déjeuner (absences « midi et soir » étendues au petit déjeuner)
-                   // 4 : services concernés par chaque texture / régime / option (regimes[].services)
+  var VERSION = 1; // format de la version 1.0 (2026-10-23) ; les formats d'essai d'avant ne sont plus lus
   var APP = 'recueil-alimentation-mas-la-fontaine';
 
   var JOURS = [
@@ -17,17 +15,25 @@
     { id: 'sam', nom: 'Samedi', court: 'sam.' },
     { id: 'dim', nom: 'Dimanche', court: 'dim.' }
   ];
-  // Identifiant sans « _ » (séparateur des créneaux). presenceSeule : on compte les présents, sans textures ni régimes.
-  var SERVICES = [
+  var IDS_JOURS = JOURS.map(function (j) { return j.id; });
+  // Services de base : toujours là, tous les jours, dans cet ordre ; ni modifiables, ni archivables, ni supprimables.
+  // Les services additionnels (page Services) se placent avant, entre ou après eux (referentiels.services).
+  // Identifiant sans « _ » (séparateur des créneaux). presenceSeule : on compte les présents, sans plat en plus.
+  var SERVICES_BASE = [
     { id: 'petitdej', nom: 'Petit déjeuner', court: 'p.-déj.', presenceSeule: true },
-    { id: 'midi', nom: 'Midi', court: 'midi' },
-    { id: 'soir', nom: 'Soir', court: 'soir' }
+    { id: 'midi', nom: 'Midi', court: 'midi', presenceSeule: false },
+    { id: 'soir', nom: 'Soir', court: 'soir', presenceSeule: false }
   ];
-  var IDS_SERVICES = SERVICES.map(function (s) { return s.id; });
-  var CRENEAUX = [];
-  JOURS.forEach(function (j) {
-    SERVICES.forEach(function (s) { CRENEAUX.push(j.id + '_' + s.id); });
-  });
+  // Services en vigueur = ceux des dernières données appliquées (appliquerServices), dans l'ordre.
+  // Tableaux modifiés sur place : le reste du code garde les mêmes références (M.SERVICES…).
+  var TOUS_SERVICES = [];  // archivés compris (libellés des anciennes saisies)
+  var SERVICES = [];       // sans les archivés
+  var IDS_SERVICES = [];
+  var CRENEAUX = [];       // jour × service actif ce jour-là, dans l'ordre de la semaine
+  function remplacer(tab, valeurs) { tab.length = 0; valeurs.forEach(function (v) { tab.push(v); }); }
+  function serviceBase(b) {
+    return { id: b.id, nom: b.nom, court: b.court, base: true, presenceSeule: b.presenceSeule, jours: IDS_JOURS.slice(), archive: false };
+  }
 
   // Identifiants du référentiel utilisés par les calculs.
   var TEXTURE_DEFAUT = 'normal';
@@ -36,7 +42,7 @@
   var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
   // Couleurs proposées aux nouvelles activités, dans l'ordre (pas de rouge : réservé aux absences de la grille).
   var PALETTE_ACTIVITES = [COULEUR_ACTIVITE, '#e07b00', '#2e8b3e', '#7b4bb7', '#d63c8c', '#138d90', '#8a5a2b', '#b8860b'];
-  // Services concernés par défaut par une texture / un régime / une option (avant la version 4 : midi et soir).
+  // Services concernés par défaut par une texture / un régime / une option.
   var SERVICES_REGIME_DEFAUT = ['midi', 'soir'];
   var SERVICES_POTS_GOURMANDS = ['petitdej']; // alternative du petit déjeuner (retour utilisateur 2026-10-20)
 
@@ -83,9 +89,32 @@
     return -1;
   }
   function jour(jourId) { return JOURS[indexJour(jourId)]; }
+  // Service par identifiant (archivés compris) ; inconnu : midi.
   function service(serviceId) {
-    return SERVICES.filter(function (s) { return s.id === serviceId; })[0] || SERVICES[1];
+    return TOUS_SERVICES.filter(function (s) { return s.id === serviceId; })[0] || serviceBase(SERVICES_BASE[1]);
   }
+  // Le service est-il proposé ce jour-là (non archivé, jour coché) ?
+  function estActif(jourId, serviceId) {
+    var s = SERVICES.filter(function (x) { return x.id === serviceId; })[0];
+    return !!s && s.jours.indexOf(jourId) >= 0;
+  }
+  function servicesDuJour(jourId) {
+    return SERVICES.filter(function (s) { return s.jours.indexOf(jourId) >= 0; });
+  }
+  // Rend en vigueur les services de donnees (normalisées par migrer) ; null : services de base seulement.
+  // Appelé par migrer, et par l'application à chaque rendu et modification (App.rendre, App.modifier).
+  function appliquerServices(donnees) {
+    var tous = donnees ? donnees.referentiels.services : SERVICES_BASE.map(serviceBase);
+    remplacer(TOUS_SERVICES, tous);
+    remplacer(SERVICES, tous.filter(function (s) { return !s.archive; }));
+    remplacer(IDS_SERVICES, SERVICES.map(function (s) { return s.id; }));
+    var liste = [];
+    JOURS.forEach(function (j) {
+      SERVICES.forEach(function (s) { if (s.jours.indexOf(j.id) >= 0) liste.push(j.id + '_' + s.id); });
+    });
+    remplacer(CRENEAUX, liste);
+  }
+  appliquerServices(null);
 
   // ---- Dates ISO "AAAA-MM-JJ", calculées en UTC (pas d'effet heure d'été) ----
   function versJours(iso) {
@@ -170,33 +199,37 @@
   function objet(v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
   function nombre(v) { v = +v; return isFinite(v) && v > 0 ? Math.floor(v) : 0; }
 
-  // CONVERSIONS[n] fait passer les données de la version n à n + 1 (sur place). Un fichier V1 les enchaîne toutes.
+  // CONVERSIONS[n] fait passer les données de la version n à n + 1 (sur place). Un fichier V1 les enchaînera toutes.
   // Chacune est écrite pour le format de sa version et ne change plus jamais ; la normalisation passe après.
-  var CONVERSIONS = {
-    // 1 → 2 : tout le nettoyage était « sans viande » → nettoyageSansViande ; nettoyage (standard) vide.
-    1: function (d) {
-      tableau(d.semaines).forEach(function (s) {
-        if (!s) return;
-        s.nettoyageSansViande = s.nettoyage;
-        s.nettoyage = {};
-      });
-    },
-    // 2 → 3 : petit déjeuner ajouté ; une absence « midi et soir » couvre aussi le petit déjeuner.
-    2: function (d) {
-      tableau(d.residents).forEach(function (r) {
-        tableau(r && r.absences).forEach(function (a) {
-          var sv = a && a.services;
-          if (Array.isArray(sv) && sv.indexOf('midi') >= 0 && sv.indexOf('soir') >= 0 && sv.indexOf('petitdej') < 0) sv.unshift('petitdej');
-        });
-      });
-    },
-    // 3 → 4 : services concernés par chaque texture / régime / option = midi et soir (pots gourmands : petit déjeuner).
-    3: function (d) {
-      tableau(objet(d.referentiels).regimes).forEach(function (g) {
-        if (g) g.services = (String(g.id) === 'pots_gourmands' ? SERVICES_POTS_GOURMANDS : SERVICES_REGIME_DEFAUT).slice();
-      });
-    }
-  };
+  // Aucune pour l'instant : la version 1 est le format de l'application 1.0.
+  var CONVERSIONS = {};
+
+  // Services d'un fichier : services de base imposés (manquants remis à leur place, ordre petit déjeuner, midi, soir),
+  // services additionnels gardés dans l'ordre du fichier (au moins un jour ; aucun jour coché : tous).
+  function normaliserServices(liste) {
+    var sortie = [], vus = {};
+    var bases = {};
+    SERVICES_BASE.forEach(function (b) { bases[b.id] = b; });
+    tableau(liste).forEach(function (s) {
+      var id = s && s.id ? String(s.id) : '';
+      if (!id || id.indexOf('_') >= 0 || vus[id]) return;
+      vus[id] = true;
+      if (bases[id]) { sortie.push(serviceBase(bases[id])); return; }
+      var jours = IDS_JOURS.filter(function (j) { return tableau(s.jours).indexOf(j) >= 0; });
+      sortie.push({ id: id, nom: s.nom || id, court: s.court || s.nom || id, base: false, presenceSeule: !!s.presenceSeule,
+        jours: jours.length ? jours : IDS_JOURS.slice(), archive: !!s.archive });
+    });
+    SERVICES_BASE.forEach(function (b, i) {
+      if (vus[b.id]) return;
+      var avant = -1;
+      if (i) sortie.forEach(function (s, k) { if (s.id === SERVICES_BASE[i - 1].id) avant = k; });
+      sortie.splice(avant + 1, 0, serviceBase(b));
+    });
+    var places = [];
+    sortie.forEach(function (s, k) { if (s.base) places.push(k); });
+    places.forEach(function (k, i) { sortie[k] = serviceBase(SERVICES_BASE[i]); });
+    return sortie;
+  }
 
   function migrer(entree) {
     if (!entree || typeof entree !== 'object') throw new Error('Ce fichier ne contient pas de données lisibles.');
@@ -218,13 +251,17 @@
       return { id: String(p.id), nom: p.nom || p.id, couleur: p.couleur || '#dddddd', ordre: p.ordre || i + 1 };
     });
     d.referentiels.parcs.sort(function (a, b) { return a.ordre - b.ordre; });
+    d.referentiels.services = normaliserServices(d.referentiels.services);
+    // Identifiants des services de ce fichier (archivés compris), dans l'ordre : pas ceux en vigueur avant lui.
+    var ids = d.referentiels.services.map(function (s) { return s.id; });
+    function servicesConnus(liste) { return ids.filter(function (x) { return tableau(liste).indexOf(x) >= 0; }); }
     d.referentiels.regimes = tableau(d.referentiels.regimes).map(function (g) {
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
       n.nature = (g.nature === 'texture' || g.nature === 'option') ? g.nature : 'regime';
-      // Options : +1 plat chaud ou rien (les anciens effets « portion à part » et « information » sont retirés, 2026-10-23).
+      // Options : +1 plat chaud ou rien (sur l'assiette).
       if (n.nature === 'option') n.affecte = g.affecte === 'plat' ? 'plat' : '';
-      n.toujoursVisible = g.toujoursVisible !== false; // absent (fichiers d'avant) : toujours affiché
-      n.services = IDS_SERVICES.filter(function (x) { return tableau(g.services).indexOf(x) >= 0; });
+      n.toujoursVisible = g.toujoursVisible !== false; // absent : toujours affiché
+      n.services = Array.isArray(g.services) ? servicesConnus(g.services) : SERVICES_REGIME_DEFAUT.slice(); // absent : midi et soir
       return n;
     });
     d.residents = tableau(d.residents).map(function (r) {
@@ -234,29 +271,28 @@
         regimeIds: tableau(r.regimeIds).slice(), optionIds: tableau(r.optionIds).slice(),
         consigne: r.consigne || '', archive: !!r.archive,
         absences: tableau(r.absences).filter(function (a) { return a && a.debut && a.fin; }).map(function (a) {
-          var sv = IDS_SERVICES.filter(function (x) { return tableau(a.services).indexOf(x) >= 0; });
-          return { debut: a.debut, fin: a.fin, services: sv.length ? sv : IDS_SERVICES.slice() };
+          var sv = servicesConnus(a.services);
+          return { debut: a.debut, fin: a.fin, services: sv.length ? sv : ids.slice() };
         })
       };
     });
     d.presetsActivites = tableau(d.presetsActivites).map(function (p) {
-      return { id: String(p.id), nom: p.nom || '', jours: tableau(p.jours), services: tableau(p.services), participantIds: tableau(p.participantIds),
+      return { id: String(p.id), nom: p.nom || '', jours: tableau(p.jours), services: servicesConnus(p.services), participantIds: tableau(p.participantIds),
         couleur: p.couleur || COULEUR_ACTIVITE };
     });
     d.semaines = tableau(d.semaines).map(function (s) {
       var n = {
         id: s.id || idSemaine(s.debut), debut: lundiDe(s.debut),
         presences: objet(s.presences), activites: tableau(s.activites).map(function (a) {
-          return { id: a.id || nouvelId('a'), nom: a.nom || 'Activité', jour: a.jour || 'lun', service: a.service || 'midi',
+          return { id: a.id || nouvelId('a'), nom: a.nom || 'Activité', jour: a.jour || 'lun', service: ids.indexOf(a.service) >= 0 ? a.service : 'midi',
             participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
         salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {},
         alertesTraitees: tableau(s.alertesTraitees)
       };
-      // Sodexo : ancien format possible = un nombre par créneau. Plus de saisie « sans porc » : un ancien sans porc compte en standard.
+      // Sodexo : pas de saisie « sans porc » (sansPorc toujours 0).
       Object.keys(objet(s.sodexo)).forEach(function (c) {
-        var v = s.sodexo[c];
-        n.sodexo[c] = typeof v === 'object' && v ? { standard: nombre(v.standard) + nombre(v.sansPorc), sansPorc: 0 } : { standard: nombre(v), sansPorc: 0 };
+        n.sodexo[c] = { standard: nombre(objet(s.sodexo[c]).standard), sansPorc: 0 };
       });
       ['direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].forEach(function (k) {
         Object.keys(objet(s[k])).forEach(function (c) { n[k][c] = nombre(s[k][c]); });
@@ -265,6 +301,7 @@
     });
     d.semaines.sort(function (a, b) { return a.debut < b.debut ? -1 : 1; });
     if (!d.semaines.length) d.semaines.push(semaineVide(aujourdhui()));
+    appliquerServices(d);
     return d;
   }
 
@@ -377,6 +414,27 @@
     return libre || PALETTE_ACTIVITES[prises.length % PALETTE_ACTIVITES.length];
   }
 
+  // Ce qui utilise le service serviceId (page Services : suppression refusée tant que l'un d'eux n'est pas à 0).
+  // semaines : semaines avec une saisie sur ce service (présences, salariés, Sodexo, direction, nettoyage, témoins).
+  function utilisationsService(donnees, serviceId) {
+    function surService(table) {
+      return Object.keys(table || {}).some(function (c) { return decoupeCreneau(c).service === serviceId; });
+    }
+    var u = { semaines: 0, activites: 0, presets: 0, absences: 0 };
+    donnees.semaines.forEach(function (s) {
+      var saisie = ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].some(function (k) { return surService(s[k]); }) ||
+        Object.keys(s.presences).some(function (rid) { return surService(s.presences[rid]); }) ||
+        Object.keys(s.salaries).some(function (pid) { return surService(s.salaries[pid]); });
+      if (saisie) u.semaines++;
+      u.activites += s.activites.filter(function (a) { return a.service === serviceId; }).length;
+    });
+    u.presets = donnees.presetsActivites.filter(function (p) { return p.services.indexOf(serviceId) >= 0; }).length;
+    donnees.residents.forEach(function (r) {
+      u.absences += r.absences.filter(function (a) { return a.services.indexOf(serviceId) >= 0; }).length;
+    });
+    return u;
+  }
+
   function textureDefaut(donnees) {
     var t = parNature(donnees, 'texture');
     var n = t.filter(function (g) { return g.id === TEXTURE_DEFAUT; })[0];
@@ -384,7 +442,9 @@
   }
 
   R.Modele = {
-    VERSION: VERSION, APP: APP, JOURS: JOURS, SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
+    VERSION: VERSION, APP: APP, JOURS: JOURS, IDS_JOURS: IDS_JOURS, SERVICES_BASE: SERVICES_BASE, TOUS_SERVICES: TOUS_SERVICES,
+    SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
+    appliquerServices: appliquerServices, estActif: estActif, servicesDuJour: servicesDuJour,
     TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
     PALETTE_ACTIVITES: PALETTE_ACTIVITES, couleurActiviteLibre: couleurActiviteLibre,
     SERVICES_REGIME_DEFAUT: SERVICES_REGIME_DEFAUT, REGIMES_DEFAUT: REGIMES_DEFAUT,
@@ -397,6 +457,6 @@
     PRESETS_ACTIVITES_MAS_LA_FONTAINE: PRESETS_ACTIVITES_MAS_LA_FONTAINE, presetsActivitesManquants: presetsActivitesManquants,
     ajouterPresetsActivites: ajouterPresetsActivites, baseMasLaFontaine: baseMasLaFontaine,
     refs: refs, parc: parc, resident: resident, semaine: semaine, parNature: parNature, groupesRegimes: groupesRegimes, textureDefaut: textureDefaut, concerne: concerne,
-    aRegime: aRegime, colonneAffichee: colonneAffichee
+    aRegime: aRegime, colonneAffichee: colonneAffichee, utilisationsService: utilisationsService
   };
 })(window.Recueil = window.Recueil || {});

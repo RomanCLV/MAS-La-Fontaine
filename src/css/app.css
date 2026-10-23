@@ -238,6 +238,7 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .ligne-reg input:not([type=color]):not([type=checkbox]),.ligne-reg select{width:100%}
 .titre-carte{font-size:17px;margin:0 0 2px}
 .services-reg{display:flex;gap:4px;flex-wrap:wrap}
+.ligne-reg.archivee{color:var(--gris)}
 .services-reg .choix,.ligne-reg > .choix{min-height:32px;padding:0 6px;font-size:13px;gap:4px;justify-self:start}
 .aide{cursor:help;text-decoration:underline dotted}
 .edition{background:#fffbe8}

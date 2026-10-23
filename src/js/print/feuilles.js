@@ -14,8 +14,12 @@
     var s = M.decoupeCreneau(c);
     return M.jour(s.jour).nom + ' ' + M.service(s.service).court;
   }
-  // Unité affichée à côté du total : « plats », ou « petits déj. » (service « présence seulement »).
-  function unite(f) { return f.presenceSeule ? 'petits déj.' : 'plats'; }
+  // Unité affichée à côté du total : « plats » ; service « présence seulement » : « petits déj. » ou « convives ».
+  function unite(f) { return !f.presenceSeule ? 'plats' : f.service === 'petitdej' ? 'petits déj.' : 'convives'; }
+  // Règle d'un service « présence seulement », au pied des feuilles.
+  function reglePresence(f) {
+    return M.service(f.service).nom + ' : présences, et seulement les régimes / options cochés pour ce service.';
+  }
   function tiret(v) { return v ? v : '–'; }
   // Nom trop long pour la colonne de libellés : abrégé du référentiel s'il existe.
   function nomCourt(g) { return g.nom.length > 26 && g.abrege ? g.abrege : g.nom; }
@@ -127,7 +131,7 @@
           col.type === 'activite' ? col.nom.toUpperCase() + ' (activité)' : col.nom);
       }));
 
-    var regle = f.presenceSeule ? 'Petit déjeuner : présences, et seulement les régimes / options cochés pour ce service. Total parc = résidents + salariés.'
+    var regle = f.presenceSeule ? reglePresence(f) + ' Total parc = résidents + salariés.'
       : 'Total parc = résidents + plats en plus + salariés.';
     var pied = f.activites.length
       ? 'Colonne ' + f.activites.map(function (a) { return a.nom; }).join(', ') +
@@ -206,19 +210,20 @@
     return bacs.length ? bacs : [h('div', { class: 'ch-bac-desc' }, 'Aucun bac collectif cette fois.')];
   }
 
-  // Chariot d'un service « présence seulement » (petit déjeuner) : des nombres, pas d'étiquettes ;
+  // Chariot d'un service « présence seulement » (petit déjeuner, goûter…) : des nombres, pas d'étiquettes ;
   // à droite, les régimes / options cochés pour ce service, avec les noms (ex. pots gourmands).
   function chariotSimple(donnees, semaine, c, col) {
     var cpt = col.c;
+    var f = { presenceSeule: true, service: M.decoupeCreneau(c).service };
     var sal = cpt.salStd + cpt.salSansPorc;
     var detail = [O.pluriel(cpt.residents, 'résident')];
     if (sal) detail.push(O.pluriel(sal, 'salarié'));
     var parts = C.particularites(donnees, c, col);
     return [h('div', { class: 'feuille feuille-chariot' },
-      enteteChariot(semaine, c, col, infoChariot(donnees, col), 'PETITS DÉJ.', cpt.total, detail.join(' + ')),
+      enteteChariot(semaine, c, col, infoChariot(donnees, col), unite(f).toUpperCase(), cpt.total, detail.join(' + ')),
       h('div', { class: 'ch-corps' },
         h('div', { class: 'ch-collectif' },
-          h('div', { class: 'ch-bandeau' }, 'PETIT DÉJEUNER · à charger'),
+          h('div', { class: 'ch-bandeau' }, M.service(f.service).nom.toUpperCase() + ' · à charger'),
           h('div', { class: 'ch-bacs' }, bacsNonVides([
             { qui: 'sal', lab: 'Salariés', n: sal, desc: 'Salariés du parc' },
             { qui: 'res', lab: 'Résidents', n: cpt.residents, desc: 'Présents à ce service' }
@@ -229,7 +234,7 @@
             return bac(nomCourt(x.regime), x.noms.length, x.noms.join(', '));
           }))) : null),
       h('div', { class: 'ch-pied' },
-        h('span', null, 'Petit déjeuner : présences, et seulement les régimes / options cochés pour ce service.'),
+        h('span', null, reglePresence(f)),
         h('span', null, libelleCourt(c))))];
   }
 
@@ -310,19 +315,16 @@
     return pages;
   }
 
-  // Toutes les feuilles demandées, dans l'ordre jour × service (cuisine puis chariots).
+  // Toutes les feuilles demandées, dans l'ordre jour × service (cuisine puis chariots) ; services actifs ce jour-là seulement.
   function construire(donnees, semaine, choix) {
     var frag = document.createDocumentFragment();
     var n = 0;
-    M.JOURS.forEach(function (j) {
-      if (choix.jours.indexOf(j.id) < 0) return;
-      M.SERVICES.forEach(function (s) {
-        if (choix.services.indexOf(s.id) < 0) return;
-        var c = M.creneau(j.id, s.id);
-        if (C.feuilleJour(donnees, semaine, c).total.total === 0) return;
-        if (choix.cuisine) { frag.appendChild(cuisine(donnees, semaine, c)); n++; }
-        if (choix.chariot) chariots(donnees, semaine, c).forEach(function (pg) { frag.appendChild(pg); n++; });
-      });
+    M.CRENEAUX.forEach(function (c) {
+      var sc = M.decoupeCreneau(c);
+      if (choix.jours.indexOf(sc.jour) < 0 || choix.servicesExclus.indexOf(sc.service) >= 0) return;
+      if (C.feuilleJour(donnees, semaine, c).total.total === 0) return;
+      if (choix.cuisine) { frag.appendChild(cuisine(donnees, semaine, c)); n++; }
+      if (choix.chariot) chariots(donnees, semaine, c).forEach(function (pg) { frag.appendChild(pg); n++; });
     });
     return { fragment: frag, nombre: n };
   }

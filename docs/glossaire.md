@@ -21,5 +21,6 @@
 | Enrichi | Plat enrichi en calories/protéines. |
 
 - **Activité** : évènement ajouté à une semaine (ex. Sport jeudi midi) dont les participants mangent ailleurs ; ne change pas la portion, change le chariot.
+- **Service** : moment de repas d'une journée. **Services de base** : petit déjeuner, midi, soir (fixes). **Service additionnel** : ajouté par l'utilisateur (goûter, collation, repas de fête…), certains jours seulement si besoin, type « Repas » ou « Présence seule ».
 - **Preset (activité)** : modèle enregistré (jour, service, participants) réutilisable d'une semaine à l'autre.
 - **Équipe Sodexo** : cuisiniers du prestataire, ajoutés au volume total, hors parcs.

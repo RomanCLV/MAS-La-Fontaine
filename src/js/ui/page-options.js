@@ -17,6 +17,7 @@
     { type: 'resident', nom: 'Fiche résident', detail: 'la fiche d’un résident' },
     { type: 'residents', nom: 'Résidents', detail: 'le tableau des résidents' },
     { type: 'parcs', nom: 'Parcs', detail: 'un parc' },
+    { type: 'services', nom: 'Services', detail: 'un service' },
     { type: 'regimes', nom: 'Régimes', detail: 'une texture, un régime ou une option' },
     { type: 'activites', nom: 'Activités', detail: 'une activité' }
   ];

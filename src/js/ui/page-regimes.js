@@ -34,10 +34,10 @@
     return d.residents.filter(function (r) { return M.aRegime(r, g); }).length;
   }
 
-  // Ajoute / retire un service, en gardant l'ordre petit déjeuner, midi, soir.
+  // Ajoute / retire un service, dans l'ordre des services (page Services ; archivés gardés).
   function basculer(services, id) {
     var on = services.indexOf(id) >= 0;
-    return M.IDS_SERVICES.filter(function (x) { return x === id ? !on : services.indexOf(x) >= 0; });
+    return M.TOUS_SERVICES.map(function (s) { return s.id; }).filter(function (x) { return x === id ? !on : services.indexOf(x) >= 0; });
   }
 
   // Monter / descendre parmi les éléments de même nature (l'ordre global du référentiel est conservé ailleurs).
@@ -189,7 +189,7 @@
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' },
           h('div', { class: 'titre-ligne' }, h('h1', null, 'Textures, Régimes & Allergies et Options ', h('span', { class: 'pilule' }, liste.length)), App.indicateur()),
-          h('div', { class: 'petit' }, 'Services concernés : décochés, l’élément n’apparaît pas sur les feuilles de ce service ' +
+          h('div', { class: 'petit' }, 'Services concernés (liste de la page Services) : décochés, l’élément n’apparaît pas sur les feuilles de ce service ' +
             '(ex. pots gourmands : petit déjeuner seulement). Toujours affiché : colonne présente dans la grille Semaine même si aucun résident du parc n’a l’élément.')),
         TABLES.map(table));
     }

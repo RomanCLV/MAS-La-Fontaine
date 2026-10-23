@@ -13,15 +13,39 @@
     });
   }
 
+  // Présence d'un résident à un créneau : 1. valeur saisie dans la grille ; 2. absence de la fiche → 0 ;
+  // 3. service de base → 1 ; service additionnel → 1 si le service « connu » le plus proche avant ou après
+  // (même jour) est à 1, sinon 0. Connu = service de base, ou additionnel saisi ou couvert par une absence de la fiche.
+  // Ex. p.-déj. 1, midi 0, soir 0 : un goûter entre midi et soir vaut 0.
   function presence(semaine, resident, c) {
+    return connue(semaine, resident, c, true) || { valeur: voisinsPresents(semaine, resident, c) ? 1 : 0, source: 'voisins' };
+  }
+  // null : service additionnel sans saisie ni absence de fiche (valeur déduite des voisins).
+  function connue(semaine, resident, c, avecSaisie) {
     var saisies = (semaine.presences || {})[resident.id] || {};
-    if (saisies[c] === 0 || saisies[c] === 1) return { valeur: saisies[c], source: 'saisie' };
-    return estAbsentFiche(resident, semaine, c) ? { valeur: 0, source: 'absence' } : { valeur: 1, source: 'defaut' };
+    if (avecSaisie && (saisies[c] === 0 || saisies[c] === 1)) return { valeur: saisies[c], source: 'saisie' };
+    if (estAbsentFiche(resident, semaine, c)) return { valeur: 0, source: 'absence' };
+    return M.service(M.decoupeCreneau(c).service).base ? { valeur: 1, source: 'defaut' } : null;
+  }
+  function voisinsPresents(semaine, resident, c) {
+    var jour = M.decoupeCreneau(c).jour;
+    var liste = M.CRENEAUX.filter(function (x) { return M.decoupeCreneau(x).jour === jour; });
+    var i = liste.indexOf(c);
+    if (i < 0) return true; // service archivé ou hors de ses jours : jamais affiché ni compté
+    function voisin(sens) {
+      for (var k = i + sens; k >= 0 && k < liste.length; k += sens) {
+        var p = connue(semaine, resident, liste[k], true);
+        if (p) return p.valeur;
+      }
+      return 0;
+    }
+    return voisin(-1) === 1 || voisin(1) === 1;
   }
 
-  // Valeur par défaut d'une case (sans saisie) : sert à effacer une saisie redevenue inutile.
+  // Valeur par défaut d'une case (sans sa saisie) : sert à effacer une saisie redevenue inutile.
   function presenceParDefaut(semaine, resident, c) {
-    return estAbsentFiche(resident, semaine, c) ? 0 : 1;
+    var p = connue(semaine, resident, c, false);
+    return p ? p.valeur : (voisinsPresents(semaine, resident, c) ? 1 : 0);
   }
 
   function activitesDuCreneau(semaine, c) {

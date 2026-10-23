@@ -3,23 +3,22 @@
   'use strict';
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
-  // Créneaux affichés (services cochés dans le filtre) ; les autres sont seulement masqués.
+  // Créneaux affichés (services cochés dans le filtre, jours actifs de chaque service) ; les autres sont seulement masqués.
   function creneauxVisibles() {
-    return M.CRENEAUX.filter(function (c) { return App.ui.servicesVisibles.indexOf(M.decoupeCreneau(c).service) >= 0; });
+    var vis = App.servicesVisibles();
+    return M.CRENEAUX.filter(function (c) { return vis.indexOf(M.decoupeCreneau(c).service) >= 0; });
   }
-  // Trait marqué au début de chaque jour : sur le premier service affiché.
-  function bord(c) { return M.decoupeCreneau(c).service === App.ui.servicesVisibles[0] ? 'jour' : ''; }
 
   function filtreServices() {
-    var vis = App.ui.servicesVisibles;
+    var vis = App.servicesVisibles();
     return h('div', { class: 'filtre-services' },
       h('span', { class: 'gras' }, 'Services affichés :'),
       M.SERVICES.map(function (x) {
         var on = vis.indexOf(x.id) >= 0, seul = on && vis.length === 1;
         return h('label', { class: 'choix' + (on ? ' on' : ''), title: seul ? 'Au moins un service reste affiché' : null },
           h('input', { type: 'checkbox', checked: on, disabled: seul, onchange: function () {
-            var liste = on ? vis.filter(function (id) { return id !== x.id; }) : vis.concat([x.id]);
-            App.ui.servicesVisibles = M.IDS_SERVICES.filter(function (id) { return liste.indexOf(id) >= 0; });
+            var m = App.ui.servicesMasques.filter(function (id) { return id !== x.id; });
+            App.ui.servicesMasques = on ? m.concat([x.id]) : m;
             App.sauverUi();
             App.rendre();
           } }), x.nom);
@@ -119,7 +118,12 @@
     }));
     var cols = groupes.colonnes;
     var vis = creneauxVisibles();
-    var gabarit = 'grid-template-columns:34px 190px ' + (recherche ? '100px ' : '') + '150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
+    // Trait marqué au début de chaque jour : sur son premier créneau affiché.
+    function bord(c) {
+      var k = vis.indexOf(c);
+      return k === 0 || M.decoupeCreneau(vis[k - 1]).jour !== M.decoupeCreneau(c).jour ? 'jour' : '';
+    }
+    var gabarit ='grid-template-columns:34px 190px ' + (recherche ? '100px ' : '') + '150px repeat(' + cols.length + ',34px) 10px repeat(' + vis.length + ',32px)';
 
     var bandeaux = groupes.bandeaux(gabarit, [h('div', { class: 'colle0' }), h('div', { class: 'colle1' }), recherche ? h('div') : null, h('div')]);
     var entete = h('div', { class: 'g g-entete', style: gabarit },
@@ -310,6 +314,7 @@
           var titre = [M.nomAffiche(r) + ' · ' + C.libelleCreneaux([c]) + ' : ' + (p.valeur ? 'présent' : 'absent')];
           if (p.valeur && w > 1) titre.push(w + ' plats (options en plus)');
           if (p.source === 'absence') titre.push('absence planifiée (fiche du résident)');
+          if (p.source === 'voisins') titre.push('d’après les services voisins');
           if (act) titre.push('participe à : ' + act.nom);
           var alerte = enAlerte[r.id + ':' + c];
           if (alerte) titre.push('alerte : ' + alerte);

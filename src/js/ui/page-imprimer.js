@@ -5,11 +5,10 @@
 
   function choix() {
     var c = App.ui.impression;
-    if (!c || !Array.isArray(c.jours)) {
-      c = App.ui.impression = { cuisine: true, chariot: true, jours: M.JOURS.map(function (j) { return j.id; }), services: M.IDS_SERVICES.slice() };
+    // servicesExclus : services décochés (un service ajouté ensuite est coché).
+    if (!c || !Array.isArray(c.jours) || !Array.isArray(c.servicesExclus)) {
+      c = App.ui.impression = { cuisine: true, chariot: true, jours: M.IDS_JOURS.slice(), servicesExclus: [] };
     }
-    // Ancien nom « feuille chef » mémorisé dans le navigateur.
-    if (c.cuisine === undefined) { c.cuisine = c.chef !== false; delete c.chef; }
     return c;
   }
 
@@ -51,8 +50,8 @@
             h('label', { class: 'choix' + (c.chariot ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.chariot, onchange: function () { c.chariot = !c.chariot; maj(); } }), 'Feuilles chariot'),
             h('span', { class: 'gras', style: 'margin-left:16px' }, 'Services :'),
             M.SERVICES.map(function (x) {
-              var on = c.services.indexOf(x.id) >= 0;
-              return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () { bascule(c.services, x.id); maj(); } }), x.nom);
+              var on = c.servicesExclus.indexOf(x.id) < 0;
+              return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () { bascule(c.servicesExclus, x.id); maj(); } }), x.nom);
             })),
           h('div', { class: 'rangee' },
             h('span', { class: 'gras' }, 'Jours :'),
@@ -61,7 +60,7 @@
               return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () { bascule(c.jours, j.id); maj(); } }),
                 j.nom + ' ' + O.dateCourte(M.dateDuJour(s, j.id)).slice(0, 5));
             }),
-            h('button', { class: 'lien', onclick: function () { c.jours = M.JOURS.map(function (j) { return j.id; }); maj(); } }, 'Tous'),
+            h('button', { class: 'lien', onclick: function () { c.jours = M.IDS_JOURS.slice(); maj(); } }, 'Tous'),
             h('button', { class: 'lien', onclick: function () { c.jours = []; maj(); } }, 'Aucun')),
           h('div', { class: 'petit' }, 'Fenêtre d’impression : orientation paysage, « graphiques d’arrière-plan » cochés pour les couleurs.')),
         h('div', { class: 'petit' }, 'Aperçu (' + O.pluriel(apercu.nombre, 'feuille') + ')'),

@@ -4,7 +4,8 @@ Fonctions pures : entrées = données + semaine + créneau ; aucune lecture du D
 
 ## Présence
 - `estAbsentFiche(resident, semaine, creneau)` : date du créneau dans une absence de la fiche (bornes incluses, service coché).
-- `presence(semaine, resident, creneau)` → `{valeur: 0|1, source: "saisie"|"absence"|"defaut"}` ; saisie prioritaire.
+- `presence(semaine, resident, creneau)` → `{valeur: 0|1, source: "saisie"|"absence"|"defaut"|"voisins"}` : 1. saisie ; 2. absence de la fiche → 0 ; 3. service de base → 1 (`defaut`) ; service additionnel → 1 si le service « connu » le plus proche avant **ou** après, le même jour, est à 1, sinon 0 (`voisins`). Connu = service de base, ou additionnel saisi / couvert par une absence de la fiche (deux additionnels côte à côte : on saute celui qui n'est pas connu). Ex. p.-déj. 1, midi 0, soir 0 → goûter (entre midi et soir) 0.
+- `presenceParDefaut(semaine, resident, creneau)` : même calcul sans la saisie de ce créneau (une saisie égale est effacée par la grille).
 - `activiteDe(semaine, residentId, creneau)` : 1re activité du créneau contenant le résident.
 
 ## Colonnes de la feuille cuisine — `feuilleJour(donnees, semaine, creneau)`
@@ -15,7 +16,8 @@ Compteurs par colonne : `residents`, `platsEnPlus`, `salStd`, `salSansPorc`, `to
 - `tex[texture]` et `reg[régime]` += poids. Options : « plat » += 1 (nombre de personnes) ; options d'assiette (enrichi, panée, pots gourmands…) += poids.
 - Salariés : texture par défaut ; `sansPorc` ajoute aussi `reg.sans_porc`. Direction = standard. Nettoyage = `nettoyage` (standard) + `nettoyageSansViande` (standard + `reg.sans_viande`), une seule colonne. Plats témoins = compteur `temoins` (ligne à part sur la feuille cuisine), texture par défaut, sans régime, compris dans `total`.
 - Services concernés (`regimes[].services`, `Modele.concerne`) : seuls la texture, les régimes et options qui concernent le service sont comptés (`regimesDu`, `optionsDu`). Texture non concernée → texture par défaut si elle l'est, sinon rien (`textureDu`). Idem pour salariés / Sodexo / direction / nettoyage / témoins (texture par défaut, sans porc, sans viande).
-- Service « présence seulement » (petit déjeuner, `feuilleJour(...).presenceSeule`) : jamais de plat en plus ; par défaut rien n'y est coché sauf les pots gourmands. `particularites(donnees, c, col)` : éléments concernés avec les noms (chariot du petit déjeuner).
+- Service additionnel : mêmes colonnes et compteurs qu'un service de base (salariés, Sodexo, direction, nettoyage, témoins saisis sur ses créneaux).
+- Service « présence seulement » (petit déjeuner ou additionnel de ce type, `feuilleJour(...).presenceSeule`) : jamais de plat en plus ; par défaut rien n'y est coché sauf les pots gourmands. `particularites(donnees, c, col)` : éléments concernés avec les noms (chariot du petit déjeuner).
 - Hypothèse à confirmer : les textures et régimes d'un double plat comptent pour 2 plats (Normal + Haché + Mixé = total).
 
 ## Ventilation — `ventilation(donnees, compteurs)`
@@ -28,5 +30,5 @@ Liste « sur N plats » : textures hors défaut, régimes, options d'assiette (p
 
 ## Alertes — `alertes(donnees, semaine)` puis `alertesVisibles(...)`
 1. **Présent alors qu'absent** : présence saisie à 1 sur un créneau d'absence de la fiche (une alerte par résident, créneaux regroupés).
-2. **Aucune présence** : 0 sur les 21 créneaux sans absence dans la fiche cette semaine.
+2. **Aucune présence** : 0 sur tous les créneaux de la semaine (`Modele.CRENEAUX`) sans absence dans la fiche cette semaine.
 Clé stable (`type:resident:créneaux`) ; une alerte traitée (« C'est voulu » / « Ignorer ») est masquée tant que sa clé est identique.

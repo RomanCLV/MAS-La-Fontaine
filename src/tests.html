@@ -73,11 +73,12 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       semaines: [{ id: '2026-S42', debut: '2026-10-12',
         salaries: { p1: { lun_midi: { standard: 2, sansPorc: 1 } } },
         sodexo: { lun_midi: { standard: 4, sansPorc: 0 } },
-        direction: { lun_midi: 3 }, nettoyage: { lun_midi: 5 }, temoins: { lun_midi: 2 } }]
+        direction: { lun_midi: 3 }, nettoyageSansViande: { lun_midi: 5 }, temoins: { lun_midi: 2 } }]
     });
   }
 
   groupe('Dates et créneaux', function () {
+    M.appliquerServices(null);
     egal(M.CRENEAUX.length, 21, '21 créneaux par semaine (petit déjeuner, midi, soir)');
     egal(M.CRENEAUX.slice(0, 3), ['lun_petitdej', 'lun_midi', 'lun_soir'], 'Ordre des services : petit déjeuner, midi, soir');
     egal(M.idSemaine('2026-10-12'), '2026-S42', 'Semaine ISO du 12/10/2026');
@@ -152,7 +153,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var d = jeu(), f = C.feuilleJour(d, d.semaines[0], 'lun_midi');
     egal(col(f, 'nettoyage').c.reg.sans_viande, 5, 'Nettoyage = 5 sans viande');
     egal(col(f, 'nettoyage').c.salStd, 5, 'Nettoyage en ligne salariés standard');
-    var d2 = M.migrer({ app: M.APP, version: 2, referentiels: d.referentiels,
+    var d2 = M.migrer({ app: M.APP, version: M.VERSION, referentiels: d.referentiels,
       semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] });
     var n2 = col(C.feuilleJour(d2, d2.semaines[0], 'lun_midi'), 'nettoyage').c;
     egal([n2.total, n2.reg.sans_viande, n2.tex.normal], [5, 3, 5], 'Nettoyage 2 standard + 3 sans viande = 5, dont 3 sans viande');
@@ -211,28 +212,22 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var A = d.residents[0];
     A.absences.push({ debut: '2026-10-13', fin: '2026-10-13', services: ['petitdej'] });
     egal([C.presence(s, A, 'mar_petitdej').valeur, C.presence(s, A, 'mar_midi').valeur], [0, 1], 'Absence au petit déjeuner seulement');
-    var v2 = M.migrer({ app: M.APP, version: 2, residents: [{ id: 'X', absences: [
-      { debut: '2026-10-12', fin: '2026-10-13', services: ['midi', 'soir'] },
-      { debut: '2026-10-14', fin: '2026-10-14', services: ['soir'] },
+    var ab = M.migrer({ app: M.APP, version: M.VERSION, residents: [{ id: 'X', absences: [
+      { debut: '2026-10-12', fin: '2026-10-13', services: ['soir', 'midi', 'zzz'] },
       { debut: '2026-10-15', fin: '2026-10-15' }] }] });
-    egal(v2.residents[0].absences.map(function (a) { return a.services; }), [['petitdej', 'midi', 'soir'], ['soir'], ['petitdej', 'midi', 'soir']],
-      'Version 2 : absence « midi et soir » étendue au petit déjeuner, « soir seulement » inchangée');
-    var v3 = M.migrer({ app: M.APP, version: 3, residents: [{ id: 'Y', absences: [{ debut: '2026-10-12', fin: '2026-10-13', services: ['midi', 'soir'] }] }] });
-    egal(v3.residents[0].absences[0].services, ['midi', 'soir'], 'Version 3 : absence « midi et soir » conservée telle quelle');
+    egal(ab.residents[0].absences.map(function (a) { return a.services; }), [['midi', 'soir'], ['petitdej', 'midi', 'soir']],
+      'Absence : services rangés (inconnus retirés) ; aucun service = tous');
   });
 
   groupe('Services concernés par les régimes / options', function () {
     var d = jeu(), s = d.semaines[0], refs = M.refs(d);
     egal([refs.normal.services, refs.diabetique.services, refs.double_plat.services], [['midi', 'soir'], ['midi', 'soir'], ['midi', 'soir']],
-      'Ancien fichier : tout concerne midi et soir');
-    var v3 = M.migrer({ app: M.APP, version: 3, referentiels: { regimes: [{ id: 'pots_gourmands', nom: 'Pots', nature: 'option', affecte: 'information' }] } });
-    egal(v3.referentiels.regimes[0].services, ['petitdej'], 'Version 3 : pots gourmands → petit déjeuner seulement');
-    var v4 = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: [{ id: 'x', nature: 'regime', services: ['soir', 'petitdej', 'zzz'] }, { id: 'y', nature: 'regime', services: [] }] } });
-    egal(v4.referentiels.regimes.map(function (g) { return g.services; }), [['petitdej', 'soir'], []], 'Version 4 : services conservés (ordre et valeurs nettoyés)');
-    var effets = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: ['plat', 'legumes', 'information', ''].map(function (a, i) {
+      'Services concernés absents : midi et soir');
+    var v = M.migrer({ app: M.APP, version: M.VERSION, referentiels: { regimes: [{ id: 'x', nature: 'regime', services: ['soir', 'petitdej', 'zzz'] }, { id: 'y', nature: 'regime', services: [] }] } });
+    egal(v.referentiels.regimes.map(function (g) { return g.services; }), [['petitdej', 'soir'], []], 'Services conservés (ordre et valeurs nettoyés)');
+    var effets = M.migrer({ app: M.APP, version: M.VERSION, referentiels: { regimes: ['plat', 'autre', ''].map(function (a, i) {
       return { id: 'o' + i, nature: 'option', affecte: a, services: ['midi'] }; }) } });
-    egal(effets.referentiels.regimes.map(function (g) { return g.affecte; }), ['plat', '', '', ''],
-      'Anciens effets « portion à part » et « information » → sur l’assiette');
+    egal(effets.referentiels.regimes.map(function (g) { return g.affecte; }), ['plat', '', ''], 'Effet inconnu → sur l’assiette');
 
     // Pots gourmands : alternative du petit déjeuner (option d'assiette), petit déjeuner seulement.
     d.referentiels.regimes.push({ id: 'pots', nom: 'Pots gourmands', nature: 'option', affecte: '', couleur: '#eee', services: ['petitdej'] });
@@ -285,34 +280,22 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(ch.volume, 7, 'Volume du chariot = total du parc');
   });
 
-  groupe('Migration', function () {
-    var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: 4 } }] });
+  groupe('Normalisation des fichiers', function () {
+    egal(M.VERSION, 1, 'Format de données : version 1 (application 1.0)');
+    var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: { standard: 4 } } }] });
     egal(m.semaines[0].debut, '2026-10-12', 'Début ramené au lundi');
-    egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo nombre → {standard, sansPorc}');
-    var so = M.migrer({ app: M.APP, version: M.VERSION, semaines: [{ debut: '2026-10-12', sodexo: { lun_midi: { standard: 3, sansPorc: 2 } } }] }).semaines[0];
-    egal(so.sodexo.lun_midi, { standard: 5, sansPorc: 0 }, 'Sodexo sans porc (plus saisi) → compté en standard');
+    egal(m.semaines[0].sodexo.lun_midi, { standard: 4, sansPorc: 0 }, 'Sodexo : sansPorc toujours 0');
     egal(Array.isArray(m.residents) && Array.isArray(m.presetsActivites), true, 'Tableaux manquants créés');
-    var v1 = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 5 } }] }).semaines[0];
-    egal([v1.nettoyage, v1.nettoyageSansViande], [{}, { lun_midi: 5 }], 'Version 1 : nettoyage → nettoyage sans viande');
-    var v2 = M.migrer({ app: M.APP, version: 2, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] }).semaines[0];
-    egal([v2.nettoyage, v2.nettoyageSansViande], [{ lun_midi: 2 }, { lun_midi: 3 }], 'Version 2 : nettoyage et sans viande conservés');
-    egal(M.semaineSuivante(v2).nettoyageSansViande, { lun_midi: 3 }, 'Semaine suivante : reprend le nettoyage sans viande');
+    var n = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] }).semaines[0];
+    egal([n.nettoyage, n.nettoyageSansViande], [{ lun_midi: 2 }, { lun_midi: 3 }], 'Nettoyage et nettoyage sans viande conservés');
+    egal(M.semaineSuivante(n).nettoyageSansViande, { lun_midi: 3 }, 'Semaine suivante : reprend le nettoyage sans viande');
     var refus = 0;
     try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
-    try { M.migrer({ app: M.APP, version: 99 }); } catch (e) { refus++; }
+    try { M.migrer({ app: M.APP, version: 2 }); } catch (e) { refus++; }
     egal(refus, 2, 'Fichier étranger ou trop récent refusé');
-
-    // Conversions enchaînées : un fichier V1 passe par 1 → 2 → 3 → 4, puis une seule normalisation.
-    var brut = { app: M.APP, version: 1,
-      referentiels: { regimes: [{ id: 'hache', nature: 'texture' }, { id: 'pots_gourmands', nature: 'option' }] },
-      residents: [{ id: 'Z', absences: [{ debut: '2026-10-12', fin: '2026-10-12', services: ['midi', 'soir'] }] }],
-      semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 4 } }] };
+    var brut = { app: M.APP, version: 1, semaines: [{ debut: '2026-10-12' }] };
     var avant = JSON.stringify(brut);
     var ch = M.migrer(brut);
-    egal([ch.version, ch.semaines[0].nettoyage, ch.semaines[0].nettoyageSansViande, ch.residents[0].absences[0].services,
-      ch.referentiels.regimes.map(function (g) { return g.services; })],
-      [M.VERSION, {}, { lun_midi: 4 }, ['petitdej', 'midi', 'soir'], [['midi', 'soir'], ['petitdej']]],
-      'Version 1 : les trois conversions appliquées dans l’ordre');
     egal(JSON.stringify(brut) === avant, true, 'Le fichier d’origine n’est pas modifié (copie)');
     egal(JSON.stringify(M.migrer(ch)) === JSON.stringify(ch), true, 'Normalisation rejouable : relire un fichier à jour ne change rien');
     var j = jeu();
@@ -320,8 +303,92 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(M.migrer({ app: M.APP }).version, M.VERSION, 'Sans numéro de version : traité comme version 1');
   });
 
+  // Jeu d'essai + un goûter (repas) entre midi et soir, du lundi au vendredi.
+  function jeuGouter() {
+    var d = jeu();
+    d.referentiels.services.splice(2, 0, { id: 'gouter', nom: 'Goûter', court: 'goûter', jours: ['lun', 'mar', 'mer', 'jeu', 'ven'] });
+    d.referentiels.regimes.forEach(function (g) { g.services.push('gouter'); }); // concernés comme à midi
+    return M.migrer(d);
+  }
+
+  groupe('Services de base et services additionnels', function () {
+    var d = jeu();
+    egal(d.referentiels.services.map(function (s) { return s.id + (s.base ? '*' : ''); }), ['petitdej*', 'midi*', 'soir*'],
+      'Fichier sans services : les trois services de base');
+    var m = M.migrer({ app: M.APP, version: 1, referentiels: { services: [
+      { id: 'nuit', nom: 'Collation de nuit', jours: [] }, { id: 'soir', nom: 'Renommé', presenceSeule: true }, { id: 'midi' },
+      { id: 'a_b', nom: 'Mauvais id' }, { id: 'nuit', nom: 'Doublon' }] } });
+    egal(m.referentiels.services.map(function (s) { return s.id; }), ['petitdej', 'nuit', 'midi', 'soir'],
+      'Petit déjeuner manquant remis en tête, ordre des services de base imposé, id avec « _ » ou en double ignoré');
+    var soir = m.referentiels.services[3], nuit = m.referentiels.services[1];
+    egal([soir.nom, soir.presenceSeule, soir.jours.length], ['Soir', false, 7], 'Service de base : nom, type et jours fixes');
+    egal([nuit.court, nuit.jours.length, nuit.presenceSeule, nuit.archive], ['Collation de nuit', 7, false, false],
+      'Service ajouté : abrégé = nom, aucun jour coché = tous, repas, non archivé');
+
+    d = jeuGouter();
+    egal([M.CRENEAUX.length, M.CRENEAUX.slice(0, 4)], [26, ['lun_petitdej', 'lun_midi', 'lun_gouter', 'lun_soir']],
+      'Goûter 5 jours : 26 créneaux, entre midi et soir');
+    egal([M.estActif('ven', 'gouter'), M.estActif('sam', 'gouter'), M.servicesDuJour('sam').length], [true, false, 3], 'Pas de goûter le week-end');
+    egal(M.service('gouter').nom, 'Goûter', 'Libellé du service ajouté');
+    d.referentiels.services[2].archive = true;
+    M.appliquerServices(d);
+    egal([M.CRENEAUX.length, M.SERVICES.length, M.service('gouter').nom], [21, 3, 'Goûter'],
+      'Service archivé : plus de créneau, libellé gardé');
+    d.referentiels.services[2].archive = false;
+    M.appliquerServices(d);
+    egal(M.migrer(M.copie(d)).referentiels.services.length, 4, 'Services relus à l’identique');
+  });
+
+  groupe('Présence à un service additionnel (services voisins)', function () {
+    var d = jeuGouter(), s = d.semaines[0], A = d.residents[0];
+    egal(C.presence(s, A, 'lun_gouter'), { valeur: 1, source: 'voisins' }, 'Présent à midi et au soir : présent au goûter');
+    s.presences.A = { lun_midi: 0, lun_soir: 0 };
+    egal(C.presence(s, A, 'lun_gouter').valeur, 0, 'p.-déj. 1, midi 0, soir 0 : absent au goûter (exemple utilisateur)');
+    s.presences.A = { lun_midi: 0 };
+    egal(C.presence(s, A, 'lun_gouter').valeur, 1, 'Un seul voisin présent (soir) : présent');
+    s.presences.A = { lun_midi: 0, lun_soir: 0, lun_gouter: 1 };
+    egal(C.presence(s, A, 'lun_gouter'), { valeur: 1, source: 'saisie' }, 'Case saisie : prioritaire');
+    egal(C.presenceParDefaut(s, A, 'lun_gouter'), 0, 'Valeur par défaut = celle des voisins (la saisie à 1 est gardée)');
+    s.presences = {};
+    A.absences.push({ debut: '2026-10-13', fin: '2026-10-13', services: ['midi', 'soir'] });
+    egal(C.presence(s, A, 'mar_gouter').valeur, 0, 'Absence de la fiche midi et soir (sans le goûter) : absent au goûter');
+    A.absences.push({ debut: '2026-10-14', fin: '2026-10-14', services: ['gouter'] });
+    egal(C.presence(s, A, 'mer_gouter'), { valeur: 0, source: 'absence' }, 'Absence de la fiche au goûter : absent');
+    // Deux services ajoutés côte à côte : le voisin « connu » le plus proche compte.
+    d.referentiels.services.splice(3, 0, { id: 'collation', nom: 'Collation', jours: ['lun'] });
+    d = M.migrer(d); s = d.semaines[0]; A = d.residents[0];
+    s.presences.A = { lun_midi: 0, lun_soir: 0 };
+    egal([C.presence(s, A, 'lun_gouter').valeur, C.presence(s, A, 'lun_collation').valeur], [0, 0], 'Goûter puis collation : absents tous deux');
+    s.presences.A.lun_gouter = 1;
+    egal(C.presence(s, A, 'lun_collation').valeur, 1, 'Goûter saisi à 1 : la collation qui suit vaut 1');
+    s.presences.C = {};
+    M.CRENEAUX.forEach(function (c) { if (c.indexOf('gouter') < 0 && c.indexOf('collation') < 0) s.presences.C[c] = 0; });
+    egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence' && a.residentId === 'C'; }), true,
+      'Absent à tous les services de base : aussi aux services ajoutés (alerte « Aucune présence »)');
+  });
+
+  groupe('Feuilles d’un service additionnel', function () {
+    var d = jeuGouter(), s = d.semaines[0];
+    s.salaries.p1.lun_gouter = { standard: 2, sansPorc: 0 };
+    s.direction.lun_gouter = 1;
+    var f = C.feuilleJour(d, s, 'lun_gouter'), p1 = col(f, 'p1').c;
+    egal([f.presenceSeule, p1.residents, p1.platsEnPlus, p1.salStd, f.total.total], [false, 3, 1, 2, 3 + 1 + 2 + 1 + 1],
+      'Goûter « repas » : double plat, salariés et direction comptés');
+    d.referentiels.services[2].presenceSeule = true;
+    M.appliquerServices(d);
+    f = C.feuilleJour(d, s, 'lun_gouter');
+    egal([f.presenceSeule, col(f, 'p1').c.platsEnPlus], [true, 0], 'Goûter « présence seule » : jamais de plat en plus');
+    var u = M.utilisationsService(d, 'gouter');
+    egal([u.semaines, u.activites, u.presets, u.absences], [1, 0, 0, 0], 'Utilisations : une semaine avec des saisies');
+    s.activites.push({ id: 'x', nom: 'Sortie', jour: 'lun', service: 'gouter', participantIds: [] });
+    d.residents[0].absences.push({ debut: '2026-10-12', fin: '2026-10-12', services: ['gouter'] });
+    u = M.utilisationsService(d, 'gouter');
+    egal([u.activites, u.absences], [1, 1], 'Utilisations : activité et absence de résident');
+    egal(M.utilisationsService(d, 'midi').semaines, 1, 'Midi utilisé par la semaine d’essai');
+  });
+
   groupe('Colonnes affichées dans la grille', function () {
-    var m = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: [{ id: 'a', nature: 'regime' }, { id: 'b', nature: 'regime', toujoursVisible: false }] } });
+    var m = M.migrer({ app: M.APP, version: 1, referentiels: { regimes: [{ id: 'a', nature: 'regime' }, { id: 'b', nature: 'regime', toujoursVisible: false }] } });
     egal(m.referentiels.regimes.map(function (g) { return g.toujoursVisible; }), [true, false], 'Champ absent (fichier d’avant) : toujours affiché');
     var b = m.referentiels.regimes[1];
     var avec = { textureId: 'normal', regimeIds: ['b'], optionIds: [] }, sans = { textureId: 'normal', regimeIds: [], optionIds: [] };
