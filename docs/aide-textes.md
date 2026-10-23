@@ -55,7 +55,7 @@ Chaque fenêtre : phrase « À quoi sert cette page » · points clés · illust
 
 ### Semaine (`#semaine`)
 **À quoi sert cette page** : saisir qui mange à quels repas pendant la semaine, et voir les nombres de plats à produire.
-- Un clic sur une case inverse sa valeur : **1** (vert) = présent, **0** (rouge) = absent. Glissez pour en changer plusieurs.
+- Un clic sur une case inverse sa valeur : **1** (vert) = présent, **0** (rouge) = absent. Glissez pour en changer plusieurs. **Ctrl+Z** annule une erreur.
 - Les cases rouges hachurées viennent d'une absence prévue dans la fiche du résident.
 - Une case **jaune** est une alerte : à vérifier, ou à classer avec « C'est voulu » / « Ignorer ».
 - Les carrés en haut donnent le nombre de plats par repas pour le parc affiché.

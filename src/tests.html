@@ -24,6 +24,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 <script src="js/calc/calc.js"></script>
 <script src="js/ui/outils.js"></script>
 <script src="js/ui/selection-nombres.js"></script>
+<script src="js/ui/historique.js"></script>
 <script src="js/aide/contenu.js"></script>
 <script src="js/aide/illustrations.js"></script>
 <script>
@@ -508,6 +509,29 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(L.coller(L.rectangle({ i: 0, k: 0 }, { i: 1, k: 2 }), [[7]], 5, 6).cases.map(function (x) { return x.v; }), [7, 7, 7, 7, 7, 7],
       'Une seule valeur copiée : remplit toute la sélection');
     egal(['7', '3.8', '-2', '', 'abc', '012'].map(L.nettoyer), [7, 3, 0, 0, 0, 12], 'Valeur saisie : entier ≥ 0 (0 = case vide)');
+  });
+
+  groupe('Annuler / rétablir les saisies (logique)', function () {
+    var L = Recueil.Historique.logique, cases = { a: 1, b: undefined };
+    function ch(cle, v) { return { lire: function () { return cases[cle]; }, ecrire: function (x) { cases[cle] = x; }, v: v }; }
+    var liste = L.preparer([ch('a', 0), ch('b', undefined), ch('b', 5)]);
+    egal(liste.map(function (x) { return [x.avant, x.apres]; }), [[1, 0], [undefined, 5]], 'Cases déjà à la bonne valeur ignorées');
+    L.appliquer(liste, 'apres');
+    egal([cases.a, cases.b], [0, 5], 'Rétablir / saisir : nouvelles valeurs');
+    L.appliquer(liste, 'avant');
+    egal([cases.a, cases.b], [1, undefined], 'Annuler : valeurs d’avant (pas de saisie = undefined)');
+    cases = { a: 7 };
+    var deux = [{ ecrire: function (x) { cases.a = x; }, avant: 7, apres: 0 }, { ecrire: function (x) { cases.a = x; }, avant: 7, apres: 3 }];
+    L.appliquer(deux, 'apres'); L.appliquer(deux, 'avant');
+    egal(cases.a, 7, 'Case changée deux fois dans une action : annuler retrouve la première valeur');
+    var p = L.pile();
+    p.ajouter('x'); p.ajouter('y');
+    egal([p.annuler(), p.annuler(), p.annuler(), p.tailles()], ['y', 'x', undefined, [0, 2]], 'Annuler dans l’ordre inverse, rien de plus');
+    egal([p.refaire(), p.tailles()], ['x', [1, 1]], 'Rétablir');
+    p.ajouter('z');
+    egal([p.refaire(), p.tailles()], [undefined, [2, 0]], 'Une nouvelle saisie efface ce qui pouvait être rétabli');
+    for (var i = 0; i < 120; i++) p.ajouter(i);
+    egal(p.tailles()[0], 100, 'Historique limité à 100 actions');
   });
 
   groupe('Aide à l’utilisation (contenu)', function () {

@@ -193,7 +193,13 @@
 ## 2026-10-23 — Saisie des cases numériques : sélection multiple
 - **Périmètre** : uniquement les cases de **quantité** (onglet « Hors parc » + lignes de salariés des onglets de parc). Les cases de **présence** des parcs gardent leur comportement actuel (appui = inverse, glisser = rectangle provisoire, `Échap` annule) : deux gestions séparées, ne pas y toucher.
 - **Sélection persistante** par glissement de souris (rectangle lignes × créneaux) ; `Suppr` vide, `Échap` désélectionne, nouvelle sélection par la souris remplace. Copier / couper / coller **interne à l'appli** ; **pas** de lien avec Excel pour l'instant.
-- **Pas de Ctrl+Z** pour l'instant.
+- ~~**Pas de Ctrl+Z** pour l'instant.~~ → remplacé, voir « Annuler / rétablir » ci-dessous.
 - **Clavier** : écouté **seulement si une sélection est active** (jamais dans une recherche ou une fenêtre de dialogue).
 - **Modèle Excel (choix utilisateur)** : un clic **sélectionne** la case ; on passe en écriture en tapant un chiffre, en double-cliquant ou avec `Entrée`. Taper un nombre puis `Entrée` l'écrit dans **toutes** les cases sélectionnées ; `Échap` annule la saisie. Flèches = déplacent la sélection, `Maj`+flèches / `Maj`+clic = l'étendent ; pas de `Ctrl`+clic multi-rectangles. Lignes « Total » non sélectionnables. Un seul enregistrement par action ; valeurs nettoyées comme aujourd'hui (entier ≥ 0, 0 = entrée supprimée).
 - Réalisation prévue en 3 livraisons : (1) sélection + `Suppr` / `Échap` ; (2) saisie sur la sélection + flèches ; (3) copier / couper / coller internes. Défilement automatique de la grille pendant le glisser près du bord.
+
+## 2026-10-23 — Annuler / rétablir (Ctrl+Z / Ctrl+Y) sur la page Semaine
+- **Un seul historique** pour les cases de **présence** et les cases de **quantité** (salariés, Hors parc) : un clic de trop sur des présences ou un Suppr sur toute une sélection se rattrapent (demande utilisateur).
+- **Par semaine**, en mémoire seulement (perdu en fermant la page), 100 actions au plus ; Ctrl+Y ou Ctrl+Maj+Z rétablit. Une action = un glisser, une saisie, un Suppr, un collage.
+- Ctrl+Z revient sur l'onglet (parc / Hors parc) de la saisie annulée et l'indique par un message. Pas d'effet dans un champ (recherche, saisie d'un nombre) ni dans une fenêtre.
+- Hors périmètre : activités, services ajoutés, création / suppression de semaine, autres pages.

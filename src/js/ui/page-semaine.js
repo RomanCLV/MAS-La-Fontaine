@@ -288,17 +288,22 @@
           activitesDe(k).map(function (a) { return ' · ' + a.activite.nom + ' : ' + O.pluriel(a.plats, 'plat'); }).join('');
       }, true)] : []);
 
-    // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde.
-    // Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
+    // Donne la valeur v à une liste de cases {i: n° de ligne, k: n° de créneau affiché}, en une seule sauvegarde,
+    // annulable par Ctrl+Z (historique.js). Une valeur égale à celle de la fiche efface la saisie (pas de fausse alerte).
     function appliquer(cases, v) {
-      App.modifier(function () {
-        cases.forEach(function (x) {
-          var r = residents[x.i], c = vis[x.k];
-          var p = s.presences[r.id] = s.presences[r.id] || {};
-          if (v === C.presenceParDefaut(s, r, c)) delete p[c]; else p[c] = v;
-          if (!Object.keys(p).length) delete s.presences[r.id];
-        });
-      });
+      R.Historique.modifier(s, 'présences', recherche ? null : parc.id, cases.map(function (x) {
+        var r = residents[x.i], c = vis[x.k];
+        return {
+          lire: function () { return (s.presences[r.id] || {})[c]; },
+          // undefined : pas de saisie (valeur par défaut de la fiche).
+          ecrire: function (val) {
+            var p = s.presences[r.id] = s.presences[r.id] || {};
+            if (val === undefined) delete p[c]; else p[c] = val;
+            if (!Object.keys(p).length) delete s.presences[r.id];
+          },
+          v: v === C.presenceParDefaut(s, r, c) ? undefined : v
+        };
+      }));
     }
     function inverse(i, k) { return 1 - C.presence(s, residents[i], vis[k]).valeur; }
 
@@ -423,7 +428,8 @@
           h('div', { class: 'grille' }, bandeaux, entete, lignes))
           : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
     }
-    nombres = R.SelectionNombres.grille({ cle: 'parc:' + parc.id + ':' + s.id + ':' + vis.join(), creneaux: vis, apres: majCarres });
+    nombres = R.SelectionNombres.grille({ cle: 'parc:' + parc.id + ':' + s.id + ':' + vis.join(), semaine: s,
+      libelle: 'salariés', lieu: parc.id, creneaux: vis, apres: majCarres });
     var a = salarie('standard'), b = salarie('sansPorc');
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),

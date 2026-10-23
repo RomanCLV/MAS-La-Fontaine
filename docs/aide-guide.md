@@ -81,6 +81,7 @@ Une semaine = du lundi au dimanche. Un **onglet par parc** (pastille de sa coule
 ## Saisir les présences
 - Chaque ligne = un résident, chaque colonne = un repas (jour × service).
 - **Clic** : inverse la case. **Glisser** : applique la même valeur sur plusieurs cases (Échap annule). **Clavier** : Entrée ou Espace.
+- **Ctrl + Z** annule la dernière saisie de cases de la semaine (présences ou nombres, même dans un autre onglet de parc : l'appli y revient, message « Annulé : … ») ; **Ctrl + Y** (ou Ctrl + Maj + Z) rétablit. 100 retours au plus par semaine, oubliés en fermant la page.
 - Par défaut tout le monde est **présent** (1), sauf absence prévue dans la fiche. Pour un service ajouté, la présence suit le repas voisin.
 - Une case présente affiche son **nombre de plats** : 2 avec un « double plat », 3 avec double plat et gros gourmand, 1 au petit déjeuner.
 
@@ -110,7 +111,7 @@ Comme dans Excel (les cases de présence gardent leur fonctionnement : un clic i
 - Plusieurs cases sélectionnées : le nombre tapé s'affiche en bleu dans toutes, **Entrée** l'écrit dans toutes.
 - **Flèches** : changer de case (après un nombre tapé, une flèche le valide aussi) ; **Maj + flèches** : agrandir la sélection.
 - **Ctrl + C / X / V** : copier, couper, coller à partir de la case en haut à gauche de la sélection (ce qui dépasse est ignoré ; un seul nombre copié remplit toute la sélection). Pointillés sur les cases copiées ; collage possible dans un autre parc ou Hors parc ; couper ne vide l'origine qu'au collage. Interne à l'appli (pas d'échange avec Excel).
-- **Suppr** / Retour arrière vide les cases sélectionnées (pas de retour en arrière ; message « N cases vidées »).
+- **Suppr** / Retour arrière vide les cases sélectionnées (message « N cases vidées ») ; **Ctrl + Z** les remet.
 - **Échap** (oublie aussi la copie) ou clic ailleurs : plus de sélection. Le clavier n'agit sur les cases que si une sélection est visible.
 
 ## Alertes

@@ -61,9 +61,11 @@
   // (couper), donnees }. Gardée au changement d'onglet (on peut coller dans un autre parc) ; Échap l'oublie.
   var pressePapiers = null;
 
-  // opts : { cle, creneaux (affichés), apres() : mise à jour sur place des totaux après une modification }.
+  // opts : { cle, semaine, libelle et lieu (historique Ctrl+Z, cf. historique.js), creneaux (affichés),
+  //   apres() : mise à jour sur place des totaux après une modification }.
   function grille(opts) {
-    var g = { cle: opts.cle, creneaux: opts.creneaux, apres: opts.apres, lignes: [], cellules: [], edition: null };
+    var g = { cle: opts.cle, semaine: opts.semaine, libelle: opts.libelle, lieu: opts.lieu, creneaux: opts.creneaux, apres: opts.apres,
+      lignes: [], cellules: [], edition: null };
     if (sel && sel.cle !== g.cle) effacer();
     courant = g;
     // lire(c) / ecrire(c, n) : accès au champ de la semaine pour le créneau c. Renvoie le n° de la ligne.
@@ -283,16 +285,20 @@
     if (sel) focaliser(g, sel.ancre);
   }
 
-  // Écrit les valeurs { i, k, v } en un seul enregistrement ; renvoie le nombre de cases changées.
-  function ecrire(g, liste) {
-    var a = liste.filter(function (x) { return valeur(g, x.i, x.k) !== x.v; });
-    if (!a.length) return 0;
-    R.App.modifier(function () {
-      a.forEach(function (x) { g.lignes[x.i].ecrire(g.creneaux[x.k], x.v); });
-    }, { sansRendu: true });
-    a.forEach(function (x) { afficher(g, x.i, x.k); });
+  // Changement d'une case pour l'historique (Ctrl+Z) : lire / écrire sa valeur, v = nouvelle valeur.
+  function changement(lire, ecrireCase, c, v) {
+    return { lire: function () { return lire(c); }, ecrire: function (n) { ecrireCase(c, n); }, v: v };
+  }
+  // Écrit les valeurs { i, k, v } en un seul enregistrement (annulable) ; renvoie le nombre de cases changées.
+  // avant : changements à faire d'abord (couper : cases d'origine vidées).
+  function ecrire(g, liste, avant) {
+    var n = R.Historique.modifier(g.semaine, g.libelle, g.lieu, (avant || []).concat(liste.map(function (x) {
+      return changement(g.lignes[x.i].lire, g.lignes[x.i].ecrire, g.creneaux[x.k], x.v);
+    })), { sansRendu: true });
+    if (!n) return 0;
+    g.cellules.forEach(function (l, i) { l.forEach(function (el, k) { afficher(g, i, k); }); });
     if (g.apres) g.apres();
-    return a.length;
+    return n;
   }
   function vider(g) {
     var n = ecrire(g, cases(rectangle(sel.ancre, sel.fin)).map(function (x) { return { i: x.i, k: x.k, v: 0 }; }));
@@ -305,7 +311,7 @@
     var r = rectangle(sel.ancre, sel.fin), n = (r.i1 - r.i0 + 1) * (r.k1 - r.k0 + 1);
     pressePapiers = {
       bloc: extraire(r, function (i, k) { return valeur(g, i, k); }), cle: g.cle, rect: r, coupe: coupe, donnees: R.App.donnees,
-      source: coupe ? cases(r).map(function (x) { return { lire: g.lignes[x.i].lire, ecrire: g.lignes[x.i].ecrire, c: g.creneaux[x.k] }; }) : []
+      source: coupe ? cases(r).map(function (x) { return { i: x.i, k: x.k, lire: g.lignes[x.i].lire, ecrire: g.lignes[x.i].ecrire, c: g.creneaux[x.k] }; }) : []
     };
     dessiner(g);
     R.App.toast(n + (n > 1 ? ' cases ' : ' case ') + (coupe ? 'coupée' : 'copiée') + (n > 1 ? 's' : '') + ' : Ctrl+V pour coller');
@@ -314,20 +320,14 @@
     var pp = pressePapiers;
     if (!pp) return;
     var res = coller(rectangle(sel.ancre, sel.fin), pp.bloc, g.lignes.length, g.creneaux.length);
-    // Couper : cases d'origine vidées d'abord (le collage peut les recouvrir), si les données n'ont pas été remplacées.
-    var vider = pp.donnees === R.App.donnees ? pp.source.filter(function (x) { return x.lire(x.c); }) : [];
-    var ecrites = res.cases.filter(function (x) { return valeur(g, x.i, x.k) !== x.v; });
+    // Couper : cases d'origine vidées d'abord, sauf celles que le collage recouvre (si les données n'ont pas été remplacées).
+    var vider = pp.donnees !== R.App.donnees ? [] : pp.source.filter(function (x) {
+      return !(pp.cle === g.cle && contient(res.rect, x.i, x.k));
+    }).map(function (x) { return changement(x.lire, x.ecrire, x.c, 0); });
     if (pp.coupe) pressePapiers = null;
-    if (vider.length || ecrites.length) {
-      R.App.modifier(function () {
-        vider.forEach(function (x) { x.ecrire(x.c, 0); });
-        ecrites.forEach(function (x) { g.lignes[x.i].ecrire(g.creneaux[x.k], x.v); });
-      }, { sansRendu: true });
-      g.cellules.forEach(function (l, i) { l.forEach(function (el, k) { afficher(g, i, k); }); });
-    }
     choisir(g, { i: res.rect.i0, k: res.rect.k0 }, { i: res.rect.i1, k: res.rect.k1 });
     focaliser(g, sel.ancre);
-    if ((vider.length || ecrites.length) && g.apres) g.apres();
+    ecrire(g, res.cases, vider);
   }
 
   // ---------- Clavier et clic ailleurs : écoutés seulement quand une sélection est active ----------

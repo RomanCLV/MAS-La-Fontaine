@@ -40,7 +40,8 @@
       }));
 
     // Cases de quantité : sélection et saisie « façon Excel » (selection-nombres.js) ; la ligne Total n'en fait pas partie.
-    var nombres = R.SelectionNombres.grille({ cle: 'horsparc:' + s.id + ':' + vis.join(), creneaux: vis, apres: majTotal });
+    var nombres = R.SelectionNombres.grille({ cle: 'horsparc:' + s.id + ':' + vis.join(), semaine: s,
+      libelle: 'nombres', lieu: App.ui.parcActif, creneaux: vis, apres: majTotal });
     // lire(c) / ecrire(c, n) : accès au champ de la semaine.
     function ligneNombres(libelle, note, lire, ecrire) {
       var i = nombres.ligne(libelle, lire, ecrire);
