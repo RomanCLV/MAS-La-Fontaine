@@ -1,6 +1,7 @@
 /* Cases de quantité de la page Semaine (onglet Hors parc, salariés des onglets de parc) : sélection « façon Excel ».
    Un clic sélectionne une case, glisser sélectionne un rectangle (lignes × créneaux affichés), Maj+clic l'étend ;
-   on écrit en tapant un chiffre, en double-cliquant ou avec Entrée ; Suppr vide ; Échap désélectionne.
+   on écrit en tapant un chiffre, en double-cliquant ou avec Entrée : le nombre va dans toutes les cases sélectionnées ;
+   flèches = déplacer, Maj+flèches = étendre ; Suppr vide ; Échap désélectionne.
    Les cases de présence des parcs ont leur propre gestion (page-semaine.js, presser) : ne pas les mélanger.
    La sélection est gardée en coordonnées (n° de ligne, n° de créneau affiché) : elle survit à un re-rendu. */
 (function (R) {
@@ -17,6 +18,14 @@
     var l = [];
     for (var i = r.i0; i <= r.i1; i++) for (var k = r.k0; k <= r.k1; k++) l.push({ i: i, k: k });
     return l;
+  }
+  function borner(p, nl, nk) { return { i: Math.max(0, Math.min(nl - 1, p.i)), k: Math.max(0, Math.min(nk - 1, p.k)) }; }
+  // Flèche : déplace la case active (sélection d'une seule case) ; avec Maj, déplace le coin opposé (sélection étendue).
+  // nl × nk : taille de la grille (on reste dedans).
+  function deplacer(s, di, dk, etendre, nl, nk) {
+    if (etendre) return { ancre: s.ancre, fin: borner({ i: s.fin.i + di, k: s.fin.k + dk }, nl, nk) };
+    var p = borner({ i: s.ancre.i + di, k: s.ancre.k + dk }, nl, nk);
+    return { ancre: p, fin: p };
   }
   // Valeur saisie nettoyée comme avant : entier ≥ 0 (0 = case vide, entrée supprimée).
   function nettoyer(v) { return Math.max(0, Math.floor(+v || 0)); }
@@ -91,10 +100,10 @@
   // Désélectionne (Échap, clic ailleurs, changement d'onglet, de page, de semaine) ; une saisie en cours est abandonnée.
   function effacer() {
     var g = courant, avant = sel;
+    if (g && avant && avant.cle === g.cle && g.edition) fermerEdition(g);  // avant sel = null : remet les aperçus
     sel = null;
     ecouter(false);
     if (!g || !avant || avant.cle !== g.cle) return;
-    if (g.edition) fermerEdition(g);
     dessiner(g);
   }
   function focaliser(g, p) {
@@ -119,17 +128,9 @@
 
     var defil = g.cellules[i][k].closest('.defil');
     var x = e.clientX, y = e.clientY, vitesse = 0, anim = 0;
-    // Bord gauche utile : après les colonnes collées (étiquettes), qui recouvrent les créneaux en défilant.
-    function bordGauche() {
-      var d = defil.getBoundingClientRect().left;
-      g.cellules[0][0].parentNode.querySelectorAll('.colle0, .colle1').forEach(function (el) {
-        d = Math.max(d, el.getBoundingClientRect().right);
-      });
-      return d;
-    }
     // Case sous le pointeur, ramené dans la zone visible des cases (on peut glisser au-delà du bord).
     function suivre() {
-      var gauche = bordGauche(), droite = defil.getBoundingClientRect().right;
+      var gauche = bordGauche(g, defil), droite = defil.getBoundingClientRect().right;
       var fin = positionAu(g, Math.max(gauche + 1, Math.min(droite - 1, x)), y);
       if (fin.i !== sel.fin.i || fin.k !== sel.fin.k) { sel.fin = fin; dessiner(g); }
       vitesse = x < gauche + MARGE ? -Math.min(20, Math.ceil((gauche + MARGE - x) / 3))
@@ -155,6 +156,36 @@
     document.addEventListener('pointerup', relacher);
     document.addEventListener('pointercancel', relacher);
   }
+  // Bord gauche utile de la grille : après les colonnes collées (étiquettes), qui recouvrent les créneaux en défilant.
+  function bordGauche(g, defil) {
+    var d = defil.getBoundingClientRect().left;
+    g.cellules[0][0].parentNode.querySelectorAll('.colle0, .colle1').forEach(function (el) {
+      d = Math.max(d, el.getBoundingClientRect().right);
+    });
+    return d;
+  }
+  // Fait défiler la grille (et la page) pour que la case p soit visible.
+  function montrer(g, p) {
+    var el = g.cellules[p.i][p.k], defil = el.closest('.defil'), main = el.closest('main'), r = el.getBoundingClientRect();
+    if (defil) {
+      var gauche = bordGauche(g, defil), droite = defil.getBoundingClientRect().right;
+      if (r.left < gauche) defil.scrollLeft -= gauche - r.left;
+      else if (r.right > droite) defil.scrollLeft += r.right - droite;
+    }
+    if (main) {
+      var m = main.getBoundingClientRect();
+      if (r.top < m.top) main.scrollTop -= m.top - r.top;
+      else if (r.bottom > m.bottom) main.scrollTop += r.bottom - m.bottom;
+    }
+  }
+  function bouger(g, di, dk, etendre) {
+    var n = deplacer(sel, di, dk, etendre, g.lignes.length, g.creneaux.length);
+    choisir(g, n.ancre, n.fin);
+    focaliser(g, n.ancre);
+    montrer(g, n.fin);
+  }
+  var FLECHES = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+
   function positionAu(g, x, y) {
     var i = g.cellules.length - 1, l0 = g.cellules[0], k = l0.length - 1, a;
     for (a = 0; a < g.cellules.length; a++) if (y < g.cellules[a][0].getBoundingClientRect().bottom) { i = a; break; }
@@ -162,19 +193,27 @@
     return { i: i, k: k };
   }
 
-  // ---------- Saisie dans la case active ----------
-  // depart : chiffre tapé (il remplace la valeur) ou null (double-clic, Entrée : on modifie la valeur actuelle).
+  // ---------- Saisie : dans la case active, écrite dans toutes les cases sélectionnées ----------
+  // depart : chiffre tapé (il remplace la valeur) ou null (double-clic, Entrée, F2 : on modifie la valeur actuelle).
+  // Pendant la frappe, les autres cases sélectionnées montrent en aperçu le nombre qui y sera écrit.
   function editer(g, depart) {
     if (g.edition || !sel) return;
     var p = sel.ancre, el = g.cellules[p.i][p.k], v = valeur(g, p.i, p.k);
     var champ = R.h('input', {
       class: 'nb nb-edition', type: 'text', inputmode: 'numeric', autocomplete: 'off',
       'aria-label': el.getAttribute('aria-label'), value: depart !== null ? depart : (v ? String(v) : ''),
-      oninput: function () { var t = champ.value.replace(/\D/g, ''); if (t !== champ.value) champ.value = t; },
+      oninput: function () { var t = champ.value.replace(/\D/g, ''); if (t !== champ.value) champ.value = t; apercu(g); },
       // Les touches de la saisie ne remontent pas au document (sinon Entrée rouvrirait la saisie aussitôt).
+      // Saisie commencée par un chiffre : une flèche valide et déplace la sélection (sinon elle déplace le curseur).
       onkeydown: function (e) {
+        var fl = FLECHES[e.key];
         if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); valider(g); }
         else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); annuler(g); }
+        else if (fl && depart !== null) {
+          e.preventDefault(); e.stopPropagation();
+          valider(g);
+          if (sel) bouger(actuelle(g), fl[0], fl[1], e.shiftKey);
+        }
       },
       // Clic ailleurs, autre fenêtre : la saisie est gardée (comme Excel).
       onblur: function () { if (g.edition && g.edition.champ === champ) valider(g); }
@@ -184,12 +223,25 @@
     el.appendChild(champ);
     champ.focus({ preventScroll: true });
     if (depart === null) champ.select();
+    apercu(g);
+  }
+  function apercu(g) {
+    var n = nettoyer(g.edition.champ.value);
+    cases(rectangle(sel.ancre, sel.fin)).forEach(function (x) {
+      if (x.i === sel.ancre.i && x.k === sel.ancre.k) return;
+      var el = g.cellules[x.i][x.k];
+      el.classList.add('nb-apercu');
+      el.textContent = n ? String(n) : '';
+    });
   }
   function fermerEdition(g) {
     var ed = g.edition;
     g.edition = null;
     ed.champ.remove();
-    if (sel) afficher(g, sel.ancre.i, sel.ancre.k);
+    if (sel) cases(rectangle(sel.ancre, sel.fin)).forEach(function (x) {
+      g.cellules[x.i][x.k].classList.remove('nb-apercu');
+      afficher(g, x.i, x.k);
+    });
   }
   function valider(g) {
     if (!g.edition) return;
@@ -197,7 +249,7 @@
     fermerEdition(g);
     if (!sel) return;
     focaliser(g, sel.ancre);
-    ecrire(g, [{ i: sel.ancre.i, k: sel.ancre.k, v: n }]);
+    ecrire(g, cases(rectangle(sel.ancre, sel.fin)).map(function (x) { return { i: x.i, k: x.k, v: n }; }));
   }
   function annuler(g) {
     if (!g.edition) return;
@@ -233,6 +285,7 @@
     else if (e.key === 'Enter' || e.key === 'F2') { e.preventDefault(); editer(g, null); }
     else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); vider(g); }
     else if (e.key === 'Escape') { e.preventDefault(); effacer(); }
+    else if (FLECHES[e.key]) { e.preventDefault(); bouger(g, FLECHES[e.key][0], FLECHES[e.key][1], e.shiftKey); }
   }
   function ailleurs(e) {
     var g = courant;
@@ -273,6 +326,6 @@
   R.SelectionNombres = {
     grille: grille,
     apresRendu: apresRendu,
-    logique: { rectangle: rectangle, contient: contient, cases: cases, nettoyer: nettoyer }
+    logique: { rectangle: rectangle, contient: contient, cases: cases, borner: borner, deplacer: deplacer, nettoyer: nettoyer }
   };
 })(window.Recueil = window.Recueil || {});

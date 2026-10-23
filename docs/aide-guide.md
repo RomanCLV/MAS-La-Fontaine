@@ -107,6 +107,8 @@ Onglet **Hors parc**, à droite des onglets de parc (même page Semaine, mêmes 
 Comme dans Excel (les cases de présence gardent leur fonctionnement : un clic inverse).
 - **Un clic** sélectionne la case. Tapez le nombre puis **Entrée**. **Double-clic** ou **Entrée** : modifier le nombre déjà saisi. **Échap** annule la saisie.
 - **Glisser** sélectionne plusieurs cases (la grille défile près du bord) ; **Maj + clic** agrandit la sélection.
+- Plusieurs cases sélectionnées : le nombre tapé s'affiche en bleu dans toutes, **Entrée** l'écrit dans toutes.
+- **Flèches** : changer de case (après un nombre tapé, une flèche le valide aussi) ; **Maj + flèches** : agrandir la sélection.
 - **Suppr** / Retour arrière vide les cases sélectionnées (pas de retour en arrière ; message « N cases vidées »).
 - **Échap** ou clic ailleurs : plus de sélection. Le clavier n'agit sur les cases que si une sélection est visible.
 

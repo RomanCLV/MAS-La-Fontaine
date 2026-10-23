@@ -491,6 +491,11 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(L.cases(L.rectangle({ i: 0, k: 1 }, { i: 1, k: 2 })), [{ i: 0, k: 1 }, { i: 0, k: 2 }, { i: 1, k: 1 }, { i: 1, k: 2 }],
       'Cases du rectangle, ligne par ligne');
     egal(L.cases(L.rectangle({ i: 2, k: 4 }, { i: 2, k: 4 })).length, 1, 'Une seule case');
+    var s = { ancre: { i: 1, k: 1 }, fin: { i: 2, k: 3 } };
+    egal(L.deplacer(s, 0, 1, false, 5, 6), { ancre: { i: 1, k: 2 }, fin: { i: 1, k: 2 } }, 'Flèche : la case active se déplace, sélection réduite à une case');
+    egal(L.deplacer(s, 1, 0, true, 5, 6), { ancre: { i: 1, k: 1 }, fin: { i: 3, k: 3 } }, 'Maj+flèche : le coin opposé se déplace, la case active reste');
+    egal([L.deplacer(s, -5, 0, false, 5, 6).ancre, L.deplacer(s, 0, 9, true, 5, 6).fin], [{ i: 0, k: 1 }, { i: 2, k: 5 }],
+      'Flèches : on reste dans la grille');
     egal(['7', '3.8', '-2', '', 'abc', '012'].map(L.nettoyer), [7, 3, 0, 0, 0, 12], 'Valeur saisie : entier ≥ 0 (0 = case vide)');
   });
 
