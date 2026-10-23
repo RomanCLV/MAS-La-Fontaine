@@ -180,6 +180,12 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(M.semaineSuivante(s).temoins, { lun_midi: 2 }, 'Semaine suivante : reprend les plats témoins');
     egal(M.semaineSuivante({ debut: '2026-10-12', presences: { a: { sam_midi: 0, dim_soir: 0, lun_midi: 1 }, b: { lun_soir: 1 } } }).presences,
       { a: { sam_midi: 0, dim_soir: 0 } }, 'Semaine suivante : reprend les absences cochées (0), pas les « présent » saisis');
+    var s43 = { debut: '2026-10-19' };
+    egal(M.debutSemaineACreer(s43, '2026-10-24'), '2026-10-26', 'Semaine à créer : dernière S43, on est en S43 → S44');
+    egal(M.debutSemaineACreer(s43, '2026-10-28'), '2026-11-02', 'Semaine à créer : dernière S43, on est en S44 → S45 (S44 sautée)');
+    egal(M.debutSemaineACreer({ debut: '2026-11-02' }, '2026-10-24'), '2026-11-09', 'Semaine à créer : S45 déjà prête en avance → S46');
+    egal(M.idSemaine(M.debutSemaineACreer({ debut: '2026-12-21' }, '2026-12-31')), '2027-S01', 'Semaine à créer : on est en S53 → 2027-S01');
+    egal(M.semaineSuivante(s, '2026-11-02').id, '2026-S45', 'Semaine suivante à une date donnée : bon numéro');
   });
 
   groupe('Présences et alertes', function () {

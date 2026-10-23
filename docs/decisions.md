@@ -203,3 +203,6 @@
 - **Par semaine**, en mémoire seulement (perdu en fermant la page), 100 actions au plus ; Ctrl+Y ou Ctrl+Maj+Z rétablit. Une action = un glisser, une saisie, un Suppr, un collage.
 - Ctrl+Z revient sur l'onglet (parc / Hors parc) de la saisie annulée et l'indique par un message. Pas d'effet dans un champ (recherche, saisie d'un nombre) ni dans une fenêtre.
 - Hors périmètre : activités, services ajoutés, création / suppression de semaine, autres pages.
+## 2026-10-24 — Semaine suivante : d'après la date du jour
+- « Créer la semaine suivante » crée la semaine après la dernière existante, **mais au moins la semaine prochaine du calendrier** : dernière feuille S43 alors qu'on est en S44 → S45 (S44 sautée). Si une semaine est déjà prête en avance, on continue (S45 prête → S46). Numéro ISO (S53, passage d'année). Les réglages repris viennent de la dernière semaine existante. Raison : demande utilisateur.
+- Listes de semaines (Semaine, Imprimer, Activités, Fichier) : la plus récente en haut.

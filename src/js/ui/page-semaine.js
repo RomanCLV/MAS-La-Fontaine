@@ -503,7 +503,8 @@
               // Plus récente en haut (d.semaines est trié de la plus ancienne à la plus récente).
               d.semaines.slice().reverse().map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); }))),
           h('button', { class: 'btn', onclick: function () {
-            var suivante = M.semaineSuivante(d.semaines[d.semaines.length - 1]);
+            var derniere = d.semaines[d.semaines.length - 1];
+            var suivante = M.semaineSuivante(derniere, M.debutSemaineACreer(derniere, M.aujourdhui()));
             if (M.semaine(d, suivante.id)) return;
             App.modifier(function () { d.semaines.push(suivante); }, { sansRendu: true });
             App.ouvrir('semaine', suivante.id);

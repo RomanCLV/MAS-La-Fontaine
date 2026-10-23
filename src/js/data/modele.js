@@ -185,8 +185,9 @@
   // ni les services ponctuels ou jours réglés pour la semaine : seulement les créneaux servis la nouvelle semaine.
   // Les « présent » saisis (1) ne sont pas repris : ils contredisaient une absence de fiche de cette semaine-là
   // et masqueraient une nouvelle absence de fiche.
-  function semaineSuivante(semaine) {
-    var s = semaineVide(ajouterJours(semaine.debut, 7));
+  // debut (facultatif) : lundi de la semaine à créer, sinon la semaine juste après (voir debutSemaineACreer).
+  function semaineSuivante(semaine, debut) {
+    var s = semaineVide(debut || ajouterJours(semaine.debut, 7));
     var servis = creneaux(s);
     function garder(table, filtre) {
       var n = {};
@@ -200,6 +201,14 @@
     Object.keys(semaine.salaries || {}).forEach(function (pid) { s.salaries[pid] = garder(semaine.salaries[pid]); });
     ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].forEach(function (k) { s[k] = garder(semaine[k]); });
     return s;
+  }
+
+  // Lundi de la semaine créée par « Créer la semaine suivante » : la semaine après la dernière existante,
+  // mais au moins la semaine prochaine par rapport à aujourd'hui (les semaines manquées sont sautées).
+  function debutSemaineACreer(derniere, aujourdhuiIso) {
+    var apresDerniere = ajouterJours(derniere.debut, 7);
+    var prochaine = ajouterJours(lundiDe(aujourdhuiIso), 7);
+    return apresDerniere > prochaine ? apresDerniere : prochaine;
   }
 
   function residentVide(parcId) {
@@ -481,7 +490,7 @@
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
-    nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, residentVide: residentVide,
+    nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, debutSemaineACreer: debutSemaineACreer, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer, baseVide: baseVide,
     PARCS_MAS_LA_FONTAINE: PARCS_MAS_LA_FONTAINE, parcsPresetManquants: parcsPresetManquants, ajouterParcsPreset: ajouterParcsPreset,
     PRESETS_ACTIVITES_MAS_LA_FONTAINE: PRESETS_ACTIVITES_MAS_LA_FONTAINE, presetsActivitesManquants: presetsActivitesManquants,

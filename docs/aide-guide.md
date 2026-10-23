@@ -128,7 +128,7 @@ Le champ « Nom, régime, observation… » cherche dans tous les parcs. Plusieu
 Un bandeau rappelle les activités. Voir la page Activités pour les créer.
 
 ## Semaine suivante, impression, suppression
-- **Créer la semaine suivante** : reprend salariés, Sodexo, direction, nettoyage, témoins et les cases mises à 0 ; pas les activités (utilisez les modèles). Corrigez ensuite.
+- **Créer la semaine suivante** : reprend salariés, Sodexo, direction, nettoyage, témoins et les cases mises à 0 ; pas les activités (utilisez les modèles). Corrigez ensuite. Crée la semaine prochaine d'après la date du jour : les semaines non faites sont sautées (réglages repris de la dernière semaine existante).
 - **Imprimer cette semaine** : ouvre la page Imprimer.
 - **Supprimer cette semaine** : après confirmation ; impossible s'il n'en reste qu'une.
 
