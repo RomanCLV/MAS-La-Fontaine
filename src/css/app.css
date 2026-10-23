@@ -132,6 +132,8 @@ input[type=color]{width:44px;height:40px;padding:2px;border:1px solid #666;borde
 .onglet-parc{padding:7px 14px;font-size:14px;background:#faf9f5;border:1px solid var(--trait);border-radius:6px 6px 0 0;cursor:pointer;min-height:36px}
 .onglet-parc.actif{font-weight:700;border-bottom-color:transparent}
 .onglet-parc .pastille-couleur{margin-right:6px;vertical-align:-2px}
+.onglet-horsparc{background:#e4edf7}
+.onglet-horsparc.actif{background:#e4edf7;border-top:3px solid var(--gris)}
 .onglet-recherche{background:var(--encre);color:#fff;cursor:default}
 .recherche-semaine{margin-left:auto;align-self:center;width:240px;margin-bottom:6px}
 .carte-grille{background:#fff;border:1px solid var(--trait);border-top:6px solid #ccc;padding:10px;display:flex;flex-direction:column;gap:8px}
@@ -160,7 +162,6 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .g-ligne:hover .crayon,.crayon:focus-visible{visibility:visible}
 .pc{border:0;border-left:1px solid #ccc;border-bottom:1px solid #ccc;height:30px;font-size:13px;cursor:pointer;padding:0;background:#eef6ec}
 .pc.jour{border-left:2px solid var(--gris)}
-.g-sal.separe>div{border-top:3px solid var(--gris)}
 .pc.absent{background:#f2bcbc;color:var(--rouge);font-weight:700}
 .pc.abs-fiche{background:repeating-linear-gradient(135deg,#f2bcbc 0 4px,#fbe4e4 4px 8px);color:var(--rouge)}
 /* Case concernée par une alerte de présence : jaune des alertes, plus franc que le fond du bandeau (#fff8e6, trop proche du vert). Après absent / abs-fiche pour l'emporter. */

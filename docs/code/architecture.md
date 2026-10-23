@@ -13,7 +13,7 @@ src/js/data/modele.js     constantes, listes par défaut, dates, création, migr
 src/js/data/stockage.js   copie de travail (localStorage), import/export JSON → data.md
 src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
 src/js/print/feuilles.js  feuille cuisine + feuille chariot (HTML imprimable)   → print.md
-src/js/ui/*.js            outils DOM, application à onglets, une page par fichier → ui.md
+src/js/ui/*.js            outils DOM, application à onglets, une page par fichier ; semaine-horsparc.js = onglet Hors parc de la Semaine → ui.md
 src/js/aide/*.js          contenu et maquettes de l'aide ; ui/aide.js = menu, fenêtres, présentation → aide.md
 src/guide.html            guide d'utilisation (second fichier, nouvel onglet) ; css/aide.css, css/guide.css
 ```

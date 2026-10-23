@@ -95,10 +95,13 @@ Une semaine = du lundi au dimanche. Un **onglet par parc** (pastille de sa coule
 | Encadrée | Trouvé par la recherche |
 
 ## Les carrés de plats
-Sous les en-têtes, par repas : **Plats du parc** (résidents présents hors activité + plats en plus + salariés du parc), une ligne par **texture**, **En activité** (plats partis avec une activité) et **Total hors parcs** (Sodexo + direction + nettoyage + témoins). Ils se mettent à jour pendant la saisie.
+Sous les en-têtes, par repas : **Plats du parc** (résidents présents hors activité + plats en plus + salariés du parc), une ligne par **texture**, **En activité** (plats partis avec une activité). Ils se mettent à jour pendant la saisie.
 
-## Salariés, Sodexo, direction, nettoyage, témoins
-Lignes de nombres, par repas. Salariés (par parc), Sodexo, direction, nettoyage (et nettoyage sans viande), plats témoins. Ils s'ajoutent au total à produire.
+## Salariés du parc
+Deux lignes de nombres sous la grille, par repas : salariés du parc, avec ou sans porc. Ils s'ajoutent au total à produire.
+
+## Hors parc : Sodexo, direction, nettoyage, témoins
+Onglet **Hors parc**, à droite des onglets de parc (même page Semaine, mêmes services affichés). Lignes par repas : Sodexo, direction, nettoyage, nettoyage sans viande, plats témoins, puis **Total hors parcs**. Ils s'ajoutent au total à produire de la feuille cuisine.
 
 ## Alertes
 Au-dessus de la grille : « présent alors qu'absent » (une saisie contredit une absence prévue) et « aucune présence » (un résident à 0 toute la semaine). Chaque alerte : **C'est voulu** ou **Ignorer** (elle disparaît, réaffichage possible). Elles n'apparaissent **jamais** sur les feuilles imprimées.

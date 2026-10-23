@@ -4,6 +4,8 @@
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
   // Créneaux affichés (services cochés dans le filtre, jours actifs de chaque service) ; les autres sont seulement masqués.
+  var ID_HORS_PARC = '@horsparc';
+
   function creneauxVisibles(s) {
     var vis = App.servicesVisibles(), tous = M.creneaux(s);
     var liste = tous.filter(function (c) { return vis.indexOf(M.decoupeCreneau(c).service) >= 0; });
@@ -213,18 +215,14 @@
     // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
     // (résidents présents hors partis en activité, plats en plus, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
-    // horsParcs : plats Sodexo + Direction + Nettoyage + Plats témoins (ligne de total sous les lignes « tous parcs »).
-    var HORS_PARCS = ['sodexo', 'direction', 'autres', 'temoins'];
-    var colonnes, comptes, horsParcs, majs = [];
+    // Sodexo, Direction, Nettoyage et Plats témoins sont dans l’onglet Hors parc (semaine-horsparc.js).
+    var colonnes, comptes, majs = [];
     function calculer() {
       var feuilles = vis.map(function (c) { return C.feuilleJour(d, s, c); });
       colonnes = feuilles.map(function (f) {
         return f.parcs.filter(function (col) { return col.type === 'parc' && col.id === parc.id; })[0];
       });
       comptes = colonnes.map(function (col) { return col.c; });
-      horsParcs = feuilles.map(function (f) {
-        return f.colonnes.reduce(function (n, col) { return n + (HORS_PARCS.indexOf(col.type) >= 0 ? col.c.total : 0); }, 0);
-      });
     }
     // Une ligne de texture apparaît ou disparaît (ex. salariés en texture par défaut) : re-rendu complet.
     function majCarres() {
@@ -397,9 +395,8 @@
         }));
     });
 
-    // separe : trait marqué au-dessus de la ligne (début des lignes « tous parcs »).
-    function ligneNombres(libelle, note, fond, lire, ecrire, separe) {
-      return h('div', { class: 'g g-sal' + (separe ? ' separe' : ''), style: gabarit + ';background:' + fond },
+    function ligneNombres(libelle, note, fond, lire, ecrire) {
+      return h('div', { class: 'g g-sal', style: gabarit + ';background:' + fond },
         h('div', { class: 'gc colle0', style: 'background:' + fond }),
         h('div', { class: 'gc gauche gras colle1 etiquette', style: 'background:' + fond, title: libelle }, libelle),
         h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + 1) }, note),
@@ -428,21 +425,6 @@
         }
       };
     }
-    function sodexo(cleChamp) {
-      return {
-        lire: function (c) { return (s.sodexo[c] || {})[cleChamp] || 0; },
-        ecrire: function (c, n) {
-          var v = s.sodexo[c] = s.sodexo[c] || { standard: 0, sansPorc: 0 };
-          v[cleChamp] = n;
-        }
-      };
-    }
-    function simple(table) {
-      return {
-        lire: function (c) { return s[table][c] || 0; },
-        ecrire: function (c, n) { if (n) s[table][c] = n; else delete s[table][c]; }
-      };
-    }
     if (recherche) {
       return h('div', { class: 'carte-grille' },
         legende(s, Object.keys(enAlerte).length > 0, true),
@@ -450,20 +432,11 @@
           h('div', { class: 'grille' }, bandeaux, entete, lignes))
           : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
     }
-    var a = salarie('standard'), b = salarie('sansPorc'), so = sodexo('standard');
-    var di = simple('direction'), ne = simple('nettoyage'), nv = simple('nettoyageSansViande'), te = simple('temoins');
+    var a = salarie('standard'), b = salarie('sansPorc');
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),
-      ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire),
-      ligneNombres('Salariés SODEXO', 'tous parcs', '#e4edf7', so.lire, so.ecrire, true),
-      ligneNombres('Direction', 'tous parcs', '#e4edf7', di.lire, di.ecrire),
-      ligneNombres('Nettoyage', 'tous parcs', '#e4edf7', ne.lire, ne.ecrire),
-      ligneNombres('Nettoyage sans viande', 'tous parcs', '#e4edf7', nv.lire, nv.ecrire),
-      ligneNombres('Plats témoins', 'à produire en plus', '#e4edf7', te.lire, te.ecrire),
-      ligneCarres('Total hors parcs', 'Sodexo + Direction + Nettoyage + Témoins', function (k) { return horsParcs[k]; }, null,
-        'Total hors parcs (Sodexo, Direction, Nettoyage, Nettoyage sans viande, Plats témoins)')
+      ligneNombres('Salariés sans porc (' + parc.nom + ')', '', '#f0ede4', b.lire, b.ecrire)
     ];
-    lignesSal[lignesSal.length - 1].classList.add('total-hors-parcs');
 
     return h('div', { class: 'carte-grille', style: 'border-top-color:' + parc.couleur },
       legende(s, Object.keys(enAlerte).length > 0),
@@ -521,6 +494,8 @@
       var d = App.donnees, s = M.semaine(d, o.id);
       var parcs = d.referentiels.parcs;
       var parc = M.parc(d, App.ui.parcActif) || parcs[0];
+      // Onglet « Hors parc » (à droite des parcs) : App.ui.parcActif = ID_HORS_PARC (aucun parc n'a cet identifiant).
+      var horsParc = App.ui.parcActif === ID_HORS_PARC;
       var recherche = (App.etat.rechercheSemaine || '').trim() ? App.etat.rechercheSemaine : '';
       return h('div', { class: 'page page-large' },
         h('div', { class: 'page-tete' },
@@ -542,13 +517,16 @@
         filtreServices(s),
         parc ? [
           h('div', { class: 'onglets-parcs', role: 'tablist' }, parcs.map(function (p) {
-            var actif = !recherche && p.id === parc.id;
+            var actif = !recherche && !horsParc && p.id === parc.id;
             var n = d.residents.filter(function (r) { return !r.archive && r.parcId === p.id; }).length;
             return h('button', { class: 'onglet-parc' + (actif ? ' actif' : ''), role: 'tab', 'aria-selected': actif ? 'true' : 'false',
               style: actif ? 'background:' + p.couleur + ';color:' + O.texteSur(p.couleur) : '',
               onclick: function () { App.etat.rechercheSemaine = ''; App.ui.parcActif = p.id; App.sauverUi(); App.rendre(); } },
               h('span', { class: 'pastille-couleur', style: 'background:' + p.couleur, 'aria-hidden': 'true' }), p.nom + ' (' + n + ')');
           }),
+          h('button', { class: 'onglet-parc onglet-horsparc' + (!recherche && horsParc ? ' actif' : ''), role: 'tab',
+            'aria-selected': !recherche && horsParc ? 'true' : 'false', title: 'Sodexo, Direction, Nettoyage, Plats témoins',
+            onclick: function () { App.etat.rechercheSemaine = ''; App.ui.parcActif = ID_HORS_PARC; App.sauverUi(); App.rendre(); } }, 'Hors parc'),
           recherche ? h('button', { class: 'onglet-parc actif onglet-recherche', role: 'tab', 'aria-selected': 'true' },
             'Recherche « ' + recherche.trim() + ' » (' + residentsTrouves(d, recherche).length + ')') : null,
           // Recherche : feuille spéciale tous parcs (nom, texture / régime / option, observation ; plusieurs mots = tous trouvés).
@@ -563,7 +541,7 @@
               var champ = document.getElementById('recherche-semaine');
               if (champ) { champ.focus(); champ.setSelectionRange(pos, pos); }
             } })),
-          grille(d, s, parc, recherche)
+          horsParc && !recherche ? R.HorsParc.grille(d, s, creneauxVisibles(s)) : grille(d, s, parc, recherche)
         ] : h('div', { class: 'message message-attention message-action' },
           h('span', null, 'Aucun parc : créez-en un dans la page Parcs.'),
           h('button', { class: 'btn', onclick: function () { App.ouvrir('parcs'); } }, 'Aller à la page Parcs')));

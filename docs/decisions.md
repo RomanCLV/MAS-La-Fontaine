@@ -184,3 +184,8 @@
 - Trois niveaux : **guide** complet (`guide.html`, second fichier, nouvel onglet), **présentation de démarrage** (carrousel, à la création d'une base seulement, revoyable), **aide par page** (fenêtre + lien vers la section du guide). Détail : `docs/aide.md`.
 - Bouton « ? Aide » dans le **bandeau noir** (menu : aide de la page, guide, présentation, version) + « ? » à côté du titre de chaque page + F1. Accueil : tuile « Guide d'utilisation » et « Version 1.0 · Guide d'utilisation ».
 - Un seul fichier de contenu pour les trois ; illustrations = maquettes aux styles de l'appli (pas de captures). Vouvoiement. Version de l'appli = constante unique, distincte de la version du format de données. Raison : demande utilisateur, appli utilisable sans formation.
+
+## 2026-10-23 — Onglet « Hors parc » (page Semaine allégée)
+- Sodexo, Direction, Nettoyage (avec/sans viande) et Plats témoins + leur total quittent les onglets de parc pour un onglet « Hors parc » à droite des parcs, **toujours dans la page Semaine** (pas une page du menu : première version écartée sur retour de l'utilisateur). Les salariés du parc restent dans chaque onglet de parc.
+- **Raison** : la page Semaine était trop chargée ; ces lignes ne dépendent d'aucun parc et se répétaient sous chaque onglet de parc.
+- Données, calcul, feuilles imprimées et « Créer la semaine suivante » inchangés (format toujours en version 1).
