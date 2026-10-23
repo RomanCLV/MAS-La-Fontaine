@@ -55,7 +55,11 @@
   function dateCourte(iso) { return ('0' + jourMois(iso)).slice(-2) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4); }
   function titreSemaine(s) {
     var fin = M.ajouterJours(s.debut, 6);
-    return 'Semaine ' + M.numeroSemaine(s.debut).numero + ' · du ' + jourMois(s.debut) + ' au ' + jourMois(fin) + ' ' +
+    // Semaine à cheval sur deux mois (ou deux années) : on précise aussi le mois (et l'année) du lundi.
+    var debut = jourMois(s.debut);
+    if (s.debut.slice(0, 7) !== fin.slice(0, 7)) debut += ' ' + MOIS_C[+s.debut.slice(5, 7) - 1];
+    if (s.debut.slice(0, 4) !== fin.slice(0, 4)) debut += ' ' + s.debut.slice(0, 4);
+    return 'Semaine ' + M.numeroSemaine(s.debut).numero + ' · du ' + debut + ' au ' + jourMois(fin) + ' ' +
       MOIS_C[+fin.slice(5, 7) - 1] + ' ' + fin.slice(0, 4);
   }
   function heure(ts) {

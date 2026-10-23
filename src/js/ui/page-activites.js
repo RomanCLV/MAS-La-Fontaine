@@ -138,7 +138,7 @@
           App.rendre();
           peutChanger(function () { App.ui.semaine = id; abandonner(); App.sauverUi(); App.rendre(); });
         } },
-          d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
+          d.semaines.slice().reverse().map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
         s.activites.map(function (a) {
           return h('button', { class: 'carte-activite' + (e.selection === a.id ? ' choisie' : ''), style: 'border-left:6px solid ' + a.couleur, onclick: function () { peutChanger(function () { charger(a); App.rendre(); }); } },
             h('b', null, a.nom), h('br'), M.jour(a.jour).nom.toLowerCase() + ' · ' + M.service(a.service).court + ' · ' + O.pluriel(a.participantIds.length, 'participant'));

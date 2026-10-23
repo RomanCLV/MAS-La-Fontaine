@@ -500,7 +500,8 @@
           h('h1', null, O.titreSemaine(s)),
           h('label', { class: 'champ-ligne' }, 'Semaine ',
             h('select', { onchange: function (e) { App.ouvrir('semaine', e.target.value); } },
-              d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); }))),
+              // Plus récente en haut (d.semaines est trié de la plus ancienne à la plus récente).
+              d.semaines.slice().reverse().map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); }))),
           h('button', { class: 'btn', onclick: function () {
             var suivante = M.semaineSuivante(d.semaines[d.semaines.length - 1]);
             if (M.semaine(d, suivante.id)) return;

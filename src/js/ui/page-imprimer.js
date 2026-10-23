@@ -40,7 +40,7 @@
         h('div', { class: 'page-tete' },
           h('h1', null, 'Imprimer'),
           h('select', { 'aria-label': 'Semaine', onchange: function (e) { App.ui.semaine = e.target.value; maj(); } },
-            d.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
+            d.semaines.slice().reverse().map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); })),
           h('button', { class: 'btn btn-grand btn-principal', onclick: imprimer, disabled: !apercu.nombre },
             'Imprimer ' + O.pluriel(apercu.nombre, 'feuille'))),
         h('div', { class: 'carte choix-impression' },

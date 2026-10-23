@@ -134,7 +134,7 @@
             h('div', { class: 'grand gras' }, 'Exporter la copie de travail'),
             h('div', { class: 'champ' }, h('label', { for: 'x-semaine' }, 'Semaine envoyée (donne le nom du fichier)'),
               h('select', { id: 'x-semaine', onchange: function (ev) { App.choisirSemaine(ev.target.value); } },
-                App.donnees.semaines.map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); }))),
+                App.donnees.semaines.slice().reverse().map(function (x) { return h('option', { value: x.id, selected: x.id === s.id }, O.titreSemaine(x)); }))),
             h('div', { class: 'champ' }, h('label', { for: 'x-nom' }, 'Nom du fichier'),
               h('input', { id: 'x-nom', value: e.nom, oninput: function (ev) { e.nom = ev.target.value; } })),
             h('button', { class: 'btn btn-grand btn-principal', onclick: function () {
