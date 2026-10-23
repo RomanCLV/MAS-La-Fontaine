@@ -61,8 +61,10 @@ h1{font-size:22px;margin:0}
 .btn-plus:hover,.btn-plus[aria-expanded=true]{background-color:var(--onglet);border-style:solid}
 .onglet-plus .menu-pages{left:0;top:40px}
 
-/* Pages */
-.contenu{padding:0 0 24px}
+/* Pages : barre du haut et onglets fixes, seul le contenu de l'onglet défile. */
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column}
+#app > .barre,#app > .onglets{flex-shrink:0}
+.contenu{padding:0 0 24px;flex:1;min-height:0;overflow:auto}
 .page{padding:16px;display:flex;flex-direction:column;gap:12px}
 .page-tete{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .page-tete h1{margin-right:auto}

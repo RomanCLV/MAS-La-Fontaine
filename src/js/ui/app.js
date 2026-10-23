@@ -360,7 +360,9 @@
   // hautDePage : true quand on change d'onglet (sinon la position de défilement est conservée).
   App.rendre = function (hautDePage) {
     var racine = document.getElementById('app');
-    var x = window.scrollX, y = window.scrollY;
+    // Seul le contenu de l'onglet défile (barre et onglets restent en haut).
+    var ancien = racine.querySelector(':scope > .contenu');
+    var x = ancien ? ancien.scrollLeft : 0, y = ancien ? ancien.scrollTop : 0;
     var defil = {};
     racine.querySelectorAll('[data-defil]').forEach(function (el) { defil[el.getAttribute('data-defil')] = el.scrollLeft; });
 
@@ -378,13 +380,14 @@
     }
     var parties = [barre()];
     if (App.donnees) parties.push(barreOnglets());
-    parties.push(h('main', { class: 'contenu' }, contenu));
+    var main = h('main', { class: 'contenu' }, contenu);
+    parties.push(main);
     racine.replaceChildren.apply(racine, parties);
     document.title = (App.donnees ? titreOnglet(App.ongletActif()) + ' · ' : '') + 'Recueil Alimentation';
 
-    if (hautDePage) window.scrollTo(0, 0);
-    else {
-      window.scrollTo(x, y);
+    if (!hautDePage) {
+      main.scrollLeft = x;
+      main.scrollTop = y;
       racine.querySelectorAll('[data-defil]').forEach(function (el) {
         var v = defil[el.getAttribute('data-defil')];
         if (v) el.scrollLeft = v;
