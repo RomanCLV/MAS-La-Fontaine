@@ -29,9 +29,9 @@
   }
   function voisinsPresents(semaine, resident, c) {
     var jour = M.decoupeCreneau(c).jour;
-    var liste = M.CRENEAUX.filter(function (x) { return M.decoupeCreneau(x).jour === jour; });
+    var liste = M.creneaux(semaine).filter(function (x) { return M.decoupeCreneau(x).jour === jour; });
     var i = liste.indexOf(c);
-    if (i < 0) return true; // service archivé ou hors de ses jours : jamais affiché ni compté
+    if (i < 0) return true; // service pas servi ce jour-là cette semaine : jamais affiché ni compté
     function voisin(sens) {
       for (var k = i + sens; k >= 0 && k < liste.length; k += sens) {
         var p = connue(semaine, resident, liste[k], true);
@@ -277,9 +277,10 @@
   function alertes(donnees, semaine) {
     var liste = [];
     var fin = M.ajouterJours(semaine.debut, 6);
+    var servis = M.creneaux(semaine);
     residentsActifs(donnees).forEach(function (r) {
       var nom = M.nomAffiche(r);
-      var contradictions = M.CRENEAUX.filter(function (c) {
+      var contradictions = servis.filter(function (c) {
         var p = presence(semaine, r, c);
         return p.source === 'saisie' && p.valeur === 1 && estAbsentFiche(r, semaine, c);
       });
@@ -290,7 +291,7 @@
           detail: nom + ' : absent dans sa fiche, mais présent saisi ' + libelleCreneaux(contradictions) + '.'
         });
       }
-      var aucune = M.CRENEAUX.every(function (c) { return presence(semaine, r, c).valeur === 0; });
+      var aucune = servis.every(function (c) { return presence(semaine, r, c).valeur === 0; });
       var absenceSemaine = (r.absences || []).some(function (a) { return a.debut <= fin && a.fin >= semaine.debut; });
       if (aucune && !absenceSemaine) {
         liste.push({

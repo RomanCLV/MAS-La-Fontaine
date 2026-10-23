@@ -315,11 +315,11 @@
     return pages;
   }
 
-  // Toutes les feuilles demandées, dans l'ordre jour × service (cuisine puis chariots) ; services actifs ce jour-là seulement.
+  // Toutes les feuilles demandées, dans l'ordre jour × service (cuisine puis chariots) ; services servis ce jour-là cette semaine seulement.
   function construire(donnees, semaine, choix) {
     var frag = document.createDocumentFragment();
     var n = 0;
-    M.CRENEAUX.forEach(function (c) {
+    M.creneaux(semaine).forEach(function (c) {
       var sc = M.decoupeCreneau(c);
       if (choix.jours.indexOf(sc.jour) < 0 || choix.servicesExclus.indexOf(sc.service) >= 0) return;
       if (C.feuilleJour(donnees, semaine, c).total.total === 0) return;

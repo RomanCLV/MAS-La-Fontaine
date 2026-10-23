@@ -49,7 +49,7 @@
             h('label', { class: 'choix' + (c.cuisine ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.cuisine, onchange: function () { c.cuisine = !c.cuisine; maj(); } }), 'Feuille cuisine'),
             h('label', { class: 'choix' + (c.chariot ? ' on' : '') }, h('input', { type: 'checkbox', checked: c.chariot, onchange: function () { c.chariot = !c.chariot; maj(); } }), 'Feuilles chariot'),
             h('span', { class: 'gras', style: 'margin-left:16px' }, 'Services :'),
-            M.SERVICES.map(function (x) {
+            M.servicesDeLaSemaine(s).map(function (x) {
               var on = c.servicesExclus.indexOf(x.id) < 0;
               return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () { bascule(c.servicesExclus, x.id); maj(); } }), x.nom);
             })),

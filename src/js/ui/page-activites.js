@@ -63,15 +63,15 @@
     });
   }
 
-  // Service pas proposé ce jour-là (service ajouté sur certains jours seulement, ou archivé) : midi.
-  function serviceDuJour(b) { if (!M.estActif(b.jour, b.service)) b.service = 'midi'; }
+  // Service pas servi ce jour-là cette semaine (service ajouté sur certains jours ou semaines, ou archivé) : midi.
+  function serviceDuJour(b, s) { if (!M.estActif(s, b.jour, b.service)) b.service = 'midi'; }
 
   // Le preset garde sa couleur, sauf si une autre activité de la semaine l'a déjà (couleur libre de la palette).
   function depuisPreset(b, p, d, s) {
     b.nom = p.nom;
     if (p.jours[0]) b.jour = p.jours[0];
     if (p.services[0]) b.service = p.services[0];
-    serviceDuJour(b);
+    serviceDuJour(b, s);
     b.participantIds = p.participantIds.filter(function (id) { var r = M.resident(d, id); return r && !r.archive; });
     b.couleur = M.couleurActiviteLibre(s, b.id, p.couleur || M.COULEUR_ACTIVITE);
     b.presetId = p.id;
@@ -188,12 +188,12 @@
             h('div', { class: 'champ' }, h('label', { for: 'a-couleur' }, 'Couleur'),
               h('input', { id: 'a-couleur', type: 'color', value: b.couleur, oninput: function (ev) { b.couleur = ev.target.value; App.signalerModif(); } })),
             h('div', { class: 'champ' }, h('label', { for: 'a-jour' }, 'Jour'),
-              h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; serviceDuJour(b); e.info = ''; retirerConflits(d, s, e); App.rendre(); } },
+              h('select', { id: 'a-jour', onchange: function (ev) { b.jour = ev.target.value; serviceDuJour(b, s); e.info = ''; retirerConflits(d, s, e); App.rendre(); } },
                 M.JOURS.map(function (j) { return h('option', { value: j.id, selected: j.id === b.jour }, j.nom); }))),
             h('div', { class: 'champ' }, h('label', { for: 'a-svc' }, 'Service impacté'),
               h('select', { id: 'a-svc', onchange: function (ev) { b.service = ev.target.value; e.info = ''; retirerConflits(d, s, e); App.rendre(); } },
-                // Services de ce jour ; celui d'une activité enregistrée reste dans la liste même s'il n'y est plus.
-                M.servicesDuJour(b.jour).concat(M.estActif(b.jour, b.service) ? [] : [M.service(b.service)]).map(function (x) {
+                // Services de ce jour cette semaine ; celui d'une activité enregistrée reste dans la liste même s'il n'y est plus.
+                M.servicesDuJour(s, b.jour).concat(M.estActif(s, b.jour, b.service) ? [] : [M.service(b.service)]).map(function (x) {
                   return h('option', { value: x.id, selected: x.id === b.service }, x.nom);
                 })))),
           h('div', { class: 'bandeau bandeau-activites' },

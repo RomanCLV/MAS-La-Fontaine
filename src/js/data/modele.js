@@ -19,6 +19,8 @@
   // Services de base : toujours là, tous les jours, dans cet ordre ; ni modifiables, ni archivables, ni supprimables.
   // Les services additionnels (page Services) se placent avant, entre ou après eux (referentiels.services).
   // Identifiant sans « _ » (séparateur des créneaux). presenceSeule : on compte les présents, sans plat en plus.
+  // Service additionnel permanent : chaque semaine, ses jours cochés ; ponctuel : seulement dans les semaines où on
+  // l'ajoute (semaine.servicesSemaine, comme une activité ; ses jours cochés sont alors proposés).
   var SERVICES_BASE = [
     { id: 'petitdej', nom: 'Petit déjeuner', court: 'p.-déj.', presenceSeule: true },
     { id: 'midi', nom: 'Midi', court: 'midi', presenceSeule: false },
@@ -29,10 +31,10 @@
   var TOUS_SERVICES = [];  // archivés compris (libellés des anciennes saisies)
   var SERVICES = [];       // sans les archivés
   var IDS_SERVICES = [];
-  var CRENEAUX = [];       // jour × service actif ce jour-là, dans l'ordre de la semaine
   function remplacer(tab, valeurs) { tab.length = 0; valeurs.forEach(function (v) { tab.push(v); }); }
   function serviceBase(b) {
-    return { id: b.id, nom: b.nom, court: b.court, base: true, presenceSeule: b.presenceSeule, jours: IDS_JOURS.slice(), archive: false };
+    return { id: b.id, nom: b.nom, court: b.court, base: true, presenceSeule: b.presenceSeule, permanent: true,
+      jours: IDS_JOURS.slice(), archive: false };
   }
 
   // Identifiants du référentiel utilisés par les calculs.
@@ -93,13 +95,34 @@
   function service(serviceId) {
     return TOUS_SERVICES.filter(function (s) { return s.id === serviceId; })[0] || serviceBase(SERVICES_BASE[1]);
   }
-  // Le service est-il proposé ce jour-là (non archivé, jour coché) ?
-  function estActif(jourId, serviceId) {
-    var s = SERVICES.filter(function (x) { return x.id === serviceId; })[0];
-    return !!s && s.jours.indexOf(jourId) >= 0;
+  // Jours du service s dans la semaine : réglage de cette semaine (semaine.servicesSemaine) s'il existe,
+  // sinon ses jours cochés s'il est permanent, sinon aucun (ponctuel pas ajouté). Archivé : aucun.
+  function joursHabituels(s) { return s.permanent ? s.jours.slice() : []; }
+  function joursDuService(semaine, s) {
+    if (s.archive) return [];
+    if (s.base) return IDS_JOURS.slice();
+    var reglage = ((semaine && semaine.servicesSemaine) || {})[s.id];
+    return Array.isArray(reglage) ? reglage.slice() : joursHabituels(s);
   }
-  function servicesDuJour(jourId) {
-    return SERVICES.filter(function (s) { return s.jours.indexOf(jourId) >= 0; });
+  // Le service est-il servi ce jour-là, cette semaine ?
+  function estActif(semaine, jourId, serviceId) {
+    var s = SERVICES.filter(function (x) { return x.id === serviceId; })[0];
+    return !!s && joursDuService(semaine, s).indexOf(jourId) >= 0;
+  }
+  function servicesDuJour(semaine, jourId) {
+    return SERVICES.filter(function (s) { return joursDuService(semaine, s).indexOf(jourId) >= 0; });
+  }
+  // Services servis au moins un jour de la semaine (filtres de la grille et de l'impression).
+  function servicesDeLaSemaine(semaine) {
+    return SERVICES.filter(function (s) { return joursDuService(semaine, s).length; });
+  }
+  // Créneaux de la semaine : jour × service servi ce jour-là, dans l'ordre de la semaine puis de la journée.
+  function creneaux(semaine) {
+    var liste = [];
+    JOURS.forEach(function (j) {
+      SERVICES.forEach(function (s) { if (joursDuService(semaine, s).indexOf(j.id) >= 0) liste.push(j.id + '_' + s.id); });
+    });
+    return liste;
   }
   // Rend en vigueur les services de donnees (normalisées par migrer) ; null : services de base seulement.
   // Appelé par migrer, et par l'application à chaque rendu et modification (App.rendre, App.modifier).
@@ -108,11 +131,6 @@
     remplacer(TOUS_SERVICES, tous);
     remplacer(SERVICES, tous.filter(function (s) { return !s.archive; }));
     remplacer(IDS_SERVICES, SERVICES.map(function (s) { return s.id; }));
-    var liste = [];
-    JOURS.forEach(function (j) {
-      SERVICES.forEach(function (s) { if (s.jours.indexOf(j.id) >= 0) liste.push(j.id + '_' + s.id); });
-    });
-    remplacer(CRENEAUX, liste);
   }
   appliquerServices(null);
 
@@ -156,27 +174,30 @@
     var lundi = lundiDe(debut);
     return {
       id: idSemaine(lundi), debut: lundi, presences: {}, activites: [],
-      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {}, alertesTraitees: []
+      salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {}, alertesTraitees: [],
+      servicesSemaine: {}   // { <service additionnel>: [jours] } : réglage de cette semaine seulement
     };
   }
 
   // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins)
-  // et les absences cochées dans la grille (cases à 0), pas les activités (les presets servent à les recréer).
+  // et les absences cochées dans la grille (cases à 0), pas les activités (les presets servent à les recréer)
+  // ni les services ponctuels ou jours réglés pour la semaine : seulement les créneaux servis la nouvelle semaine.
   // Les « présent » saisis (1) ne sont pas repris : ils contredisaient une absence de fiche de cette semaine-là
   // et masqueraient une nouvelle absence de fiche.
   function semaineSuivante(semaine) {
     var s = semaineVide(ajouterJours(semaine.debut, 7));
+    var servis = creneaux(s);
+    function garder(table, filtre) {
+      var n = {};
+      Object.keys(table || {}).forEach(function (c) { if (servis.indexOf(c) >= 0 && (!filtre || filtre(table[c]))) n[c] = copie(table[c]); });
+      return n;
+    }
     Object.keys(semaine.presences || {}).forEach(function (rid) {
-      var saisies = semaine.presences[rid] || {}, zeros = {};
-      Object.keys(saisies).forEach(function (c) { if (saisies[c] === 0) zeros[c] = 0; });
+      var zeros = garder(semaine.presences[rid], function (v) { return v === 0; });
       if (Object.keys(zeros).length) s.presences[rid] = zeros;
     });
-    s.salaries = copie(semaine.salaries || {});
-    s.sodexo = copie(semaine.sodexo || {});
-    s.direction = copie(semaine.direction || {});
-    s.nettoyage = copie(semaine.nettoyage || {});
-    s.nettoyageSansViande = copie(semaine.nettoyageSansViande || {});
-    s.temoins = copie(semaine.temoins || {});
+    Object.keys(semaine.salaries || {}).forEach(function (pid) { s.salaries[pid] = garder(semaine.salaries[pid]); });
+    ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].forEach(function (k) { s[k] = garder(semaine[k]); });
     return s;
   }
 
@@ -205,7 +226,7 @@
   var CONVERSIONS = {};
 
   // Services d'un fichier : services de base imposés (manquants remis à leur place, ordre petit déjeuner, midi, soir),
-  // services additionnels gardés dans l'ordre du fichier (au moins un jour ; aucun jour coché : tous).
+  // services additionnels gardés dans l'ordre du fichier (au moins un jour ; aucun jour coché : tous ; permanent par défaut).
   function normaliserServices(liste) {
     var sortie = [], vus = {};
     var bases = {};
@@ -217,7 +238,7 @@
       if (bases[id]) { sortie.push(serviceBase(bases[id])); return; }
       var jours = IDS_JOURS.filter(function (j) { return tableau(s.jours).indexOf(j) >= 0; });
       sortie.push({ id: id, nom: s.nom || id, court: s.court || s.nom || id, base: false, presenceSeule: !!s.presenceSeule,
-        jours: jours.length ? jours : IDS_JOURS.slice(), archive: !!s.archive });
+        permanent: s.permanent !== false, jours: jours.length ? jours : IDS_JOURS.slice(), archive: !!s.archive });
     });
     SERVICES_BASE.forEach(function (b, i) {
       if (vus[b.id]) return;
@@ -254,6 +275,7 @@
     d.referentiels.services = normaliserServices(d.referentiels.services);
     // Identifiants des services de ce fichier (archivés compris), dans l'ordre : pas ceux en vigueur avant lui.
     var ids = d.referentiels.services.map(function (s) { return s.id; });
+    var additionnels = d.referentiels.services.filter(function (s) { return !s.base; }).map(function (s) { return s.id; });
     function servicesConnus(liste) { return ids.filter(function (x) { return tableau(liste).indexOf(x) >= 0; }); }
     d.referentiels.regimes = tableau(d.referentiels.regimes).map(function (g) {
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
@@ -288,8 +310,13 @@
             participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
         salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {},
-        alertesTraitees: tableau(s.alertesTraitees)
+        alertesTraitees: tableau(s.alertesTraitees), servicesSemaine: {}
       };
+      // Jours de cette semaine d'un service additionnel (liste vide gardée : service retiré cette semaine).
+      Object.keys(objet(s.servicesSemaine)).forEach(function (id) {
+        if (additionnels.indexOf(id) < 0 || !Array.isArray(s.servicesSemaine[id])) return;
+        n.servicesSemaine[id] = IDS_JOURS.filter(function (j) { return s.servicesSemaine[id].indexOf(j) >= 0; });
+      });
       // Sodexo : pas de saisie « sans porc » (sansPorc toujours 0).
       Object.keys(objet(s.sodexo)).forEach(function (c) {
         n.sodexo[c] = { standard: nombre(objet(s.sodexo[c]).standard), sansPorc: 0 };
@@ -415,14 +442,15 @@
   }
 
   // Ce qui utilise le service serviceId (page Services : suppression refusée tant que l'un d'eux n'est pas à 0).
-  // semaines : semaines avec une saisie sur ce service (présences, salariés, Sodexo, direction, nettoyage, témoins).
+  // semaines : semaines avec une saisie sur ce service (présences, salariés, Sodexo, direction, nettoyage, témoins)
+  // ou des jours réglés pour la semaine (service ponctuel ajouté, ou jours d'un permanent changés).
   function utilisationsService(donnees, serviceId) {
     function surService(table) {
       return Object.keys(table || {}).some(function (c) { return decoupeCreneau(c).service === serviceId; });
     }
     var u = { semaines: 0, activites: 0, presets: 0, absences: 0 };
     donnees.semaines.forEach(function (s) {
-      var saisie = ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].some(function (k) { return surService(s[k]); }) ||
+      var saisie = Array.isArray(s.servicesSemaine[serviceId]) || ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].some(function (k) { return surService(s[k]); }) ||
         Object.keys(s.presences).some(function (rid) { return surService(s.presences[rid]); }) ||
         Object.keys(s.salaries).some(function (pid) { return surService(s.salaries[pid]); });
       if (saisie) u.semaines++;
@@ -443,8 +471,9 @@
 
   R.Modele = {
     VERSION: VERSION, APP: APP, JOURS: JOURS, IDS_JOURS: IDS_JOURS, SERVICES_BASE: SERVICES_BASE, TOUS_SERVICES: TOUS_SERVICES,
-    SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, CRENEAUX: CRENEAUX,
-    appliquerServices: appliquerServices, estActif: estActif, servicesDuJour: servicesDuJour,
+    SERVICES: SERVICES, IDS_SERVICES: IDS_SERVICES, creneaux: creneaux,
+    appliquerServices: appliquerServices, estActif: estActif, servicesDuJour: servicesDuJour, servicesDeLaSemaine: servicesDeLaSemaine,
+    joursDuService: joursDuService, joursHabituels: joursHabituels,
     TEXTURE_DEFAUT: TEXTURE_DEFAUT, REGIME_SANS_PORC: REGIME_SANS_PORC, REGIME_NETTOYAGE: REGIME_NETTOYAGE, COULEUR_ACTIVITE: COULEUR_ACTIVITE,
     PALETTE_ACTIVITES: PALETTE_ACTIVITES, couleurActiviteLibre: couleurActiviteLibre,
     SERVICES_REGIME_DEFAUT: SERVICES_REGIME_DEFAUT, REGIMES_DEFAUT: REGIMES_DEFAUT,

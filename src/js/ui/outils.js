@@ -90,9 +90,16 @@
     };
   }
 
+  // Jours d'un service : « Tous les jours », « lun. mar. mer. », « Aucun jour ».
+  function libelleJours(jours) {
+    if (jours.length === R.Modele.JOURS.length) return 'Tous les jours';
+    if (!jours.length) return 'Aucun jour';
+    return jours.map(function (j) { return R.Modele.jour(j).court; }).join(' ');
+  }
+
   R.h = h;
   R.Outils = {
-    iconeCrayon: iconeCrayon, texteSur: texteSur, dateLongue: dateLongue, dateCourte: dateCourte,
+    iconeCrayon: iconeCrayon, texteSur: texteSur, dateLongue: dateLongue, dateCourte: dateCourte, libelleJours: libelleJours,
     titreSemaine: titreSemaine, heure: heure, pluriel: pluriel, sansAccents: sansAccents, resumeDonnees: resumeDonnees, MOIS: MOIS, colonnesGroupees: colonnesGroupees
   };
 })(window.Recueil = window.Recueil || {});

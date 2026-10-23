@@ -37,7 +37,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   etablissement: "MAS La Fontaine",                       // ajouté par la normalisation si absent
   referentiels: {
     parcs:   [{ id, nom, couleur, ordre }],
-    services: [{ id, nom, court, base, presenceSeule, jours: ["lun",…], archive }],  // ordre de la journée ; voir ci-dessous
+    services: [{ id, nom, court, base, presenceSeule, permanent, jours: ["lun",…], archive }],  // ordre de la journée ; voir ci-dessous
     regimes: [{ id, nom, abrege?, nature: "texture"|"regime"|"option", couleur,
                 affecte?: "plat"|"",                          // options seulement : +1 plat chaud ou sur l'assiette
                 services: ["midi","soir"],                    // services concernés (absent = midi + soir)
@@ -54,12 +54,13 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
     sodexo:     { <créneau>: { standard, sansPorc } },
     direction:  { <créneau>: n },  nettoyage: { <créneau>: n },  nettoyageSansViande: { <créneau>: n },
     temoins:    { <créneau>: n },                         // plats témoins (nombre donné par le client)
+    servicesSemaine: { <service additionnel>: ["ven",…] },  // jours de cette semaine ([] = retiré) ; absent = jours habituels
     alertesTraitees: [{ cle, statut: "voulu"|"ignore" }]
   }]
 }
 ```
-Services : 3 **services de base** (`base: true`, `petitdej midi soir`, tous les jours, fixes : imposés par la normalisation) + **services additionnels** (page Services : nom, abrégé `court`, type, jours actifs, ordre parmi les services de base, archivage ; identifiant sans `_`).
-Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim` × services non archivés actifs ce jour-là (`Modele.CRENEAUX` ; 21 sans service additionnel). Service « présence seulement » (`presenceSeule` : petit déjeuner, ou un service additionnel de ce type) : on compte les présents, sans plat en plus ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
+Services : 3 **services de base** (`base: true`, `petitdej midi soir`, tous les jours, fixes : imposés par la normalisation) + **services additionnels** (page Services : nom, abrégé `court`, type, jours, ordre parmi les services de base, archivage ; identifiant sans `_`). Additionnel **permanent** (« Toutes les semaines ») : ses jours chaque semaine ; **ponctuel** (« Certaines semaines ») : seulement dans les semaines où on l'ajoute (page Semaine, `servicesSemaine`), ses jours étant proposés. Les jours d'un additionnel se règlent aussi pour une seule semaine (`servicesSemaine`).
+Créneau = `<jour>_<service>` : jours `lun mar mer jeu ven sam dim` × services non archivés servis ce jour-là **cette semaine** (`Modele.creneaux(semaine)` ; 21 sans service additionnel). Service « présence seulement » (`presenceSeule` : petit déjeuner, ou un service additionnel de ce type) : on compte les présents, sans plat en plus ; textures, régimes et options seulement s'ils sont cochés pour ce service (comme midi et soir).
 
 ## Règles de calcul (résumé, détail dans `calc.md`)
 - Présence effective : valeur saisie sinon 0 si absence dans la fiche, sinon 1 (service de base) ou, service additionnel, 1 si le service voisin le plus proche (avant ou après, même jour) est à 1.

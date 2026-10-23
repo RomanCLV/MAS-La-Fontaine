@@ -79,8 +79,8 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 
   groupe('Dates et créneaux', function () {
     M.appliquerServices(null);
-    egal(M.CRENEAUX.length, 21, '21 créneaux par semaine (petit déjeuner, midi, soir)');
-    egal(M.CRENEAUX.slice(0, 3), ['lun_petitdej', 'lun_midi', 'lun_soir'], 'Ordre des services : petit déjeuner, midi, soir');
+    egal(M.creneaux(M.semaineVide('2026-10-12')).length, 21, '21 créneaux par semaine (petit déjeuner, midi, soir)');
+    egal(M.creneaux(M.semaineVide('2026-10-12')).slice(0, 3), ['lun_petitdej', 'lun_midi', 'lun_soir'], 'Ordre des services : petit déjeuner, midi, soir');
     egal(M.idSemaine('2026-10-12'), '2026-S42', 'Semaine ISO du 12/10/2026');
     egal(M.idSemaine('2027-01-01'), '2026-S53', '1er janvier 2027 = semaine 53 de 2026');
     egal(M.lundiDe('2026-10-18'), '2026-10-12', 'Lundi de la semaine du dimanche 18/10');
@@ -193,7 +193,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(C.alertesVisibles(d, s).length, 1, 'Nouvelle contradiction → l\'alerte revient');
     var Cr = d.residents[2];
     s.presences.C = {};
-    M.CRENEAUX.forEach(function (c) { s.presences.C[c] = 0; });
+    M.creneaux(s).forEach(function (c) { s.presences.C[c] = 0; });
     egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence' && a.residentId === 'C'; }), true, 'Aucune présence sans absence → alerte');
     Cr.absences.push({ debut: '2026-10-01', fin: '2026-10-30', services: ['midi', 'soir'] });
     egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence'; }), false, 'Absence enregistrée → pas d\'alerte');
@@ -322,21 +322,48 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       'Petit déjeuner manquant remis en tête, ordre des services de base imposé, id avec « _ » ou en double ignoré');
     var soir = m.referentiels.services[3], nuit = m.referentiels.services[1];
     egal([soir.nom, soir.presenceSeule, soir.jours.length], ['Soir', false, 7], 'Service de base : nom, type et jours fixes');
-    egal([nuit.court, nuit.jours.length, nuit.presenceSeule, nuit.archive], ['Collation de nuit', 7, false, false],
-      'Service ajouté : abrégé = nom, aucun jour coché = tous, repas, non archivé');
+    egal([nuit.court, nuit.jours.length, nuit.presenceSeule, nuit.permanent, nuit.archive], ['Collation de nuit', 7, false, true, false],
+      'Service ajouté : abrégé = nom, aucun jour coché = tous, repas, toutes les semaines, non archivé');
 
     d = jeuGouter();
-    egal([M.CRENEAUX.length, M.CRENEAUX.slice(0, 4)], [26, ['lun_petitdej', 'lun_midi', 'lun_gouter', 'lun_soir']],
+    var s = d.semaines[0], cr = M.creneaux(s);
+    egal([cr.length, cr.slice(0, 4)], [26, ['lun_petitdej', 'lun_midi', 'lun_gouter', 'lun_soir']],
       'Goûter 5 jours : 26 créneaux, entre midi et soir');
-    egal([M.estActif('ven', 'gouter'), M.estActif('sam', 'gouter'), M.servicesDuJour('sam').length], [true, false, 3], 'Pas de goûter le week-end');
+    egal([M.estActif(s, 'ven', 'gouter'), M.estActif(s, 'sam', 'gouter'), M.servicesDuJour(s, 'sam').length], [true, false, 3], 'Pas de goûter le week-end');
     egal(M.service('gouter').nom, 'Goûter', 'Libellé du service ajouté');
     d.referentiels.services[2].archive = true;
     M.appliquerServices(d);
-    egal([M.CRENEAUX.length, M.SERVICES.length, M.service('gouter').nom], [21, 3, 'Goûter'],
+    egal([M.creneaux(s).length, M.SERVICES.length, M.service('gouter').nom], [21, 3, 'Goûter'],
       'Service archivé : plus de créneau, libellé gardé');
     d.referentiels.services[2].archive = false;
     M.appliquerServices(d);
     egal(M.migrer(M.copie(d)).referentiels.services.length, 4, 'Services relus à l’identique');
+  });
+
+  groupe('Services de certaines semaines et jours d’une semaine', function () {
+    var d = jeu();
+    d.referentiels.services.push({ id: 'noel', nom: 'Repas de Noël', jours: ['jeu', 'ven'], permanent: false });
+    d.semaines.push(M.semaineVide('2026-10-19'));
+    d.semaines[0].servicesSemaine = { noel: ['mer', 'jeu', 'zz'], inconnu: ['lun'], midi: ['lun'] };
+    d = M.migrer(d);
+    var s42 = d.semaines[0], s43 = d.semaines[1];
+    egal(s42.servicesSemaine, { noel: ['mer', 'jeu'] }, 'Jours de la semaine : services additionnels connus seulement, jours nettoyés');
+    egal([M.creneaux(s42).length, M.creneaux(s43).length], [23, 21], 'Repas de Noël : seulement la semaine où il est ajouté (ses jours à elle)');
+    egal(M.creneaux(s42).indexOf('mer_noel') > M.creneaux(s42).indexOf('mer_soir'), true, 'Après le soir (ordre des services)');
+    egal(M.servicesDeLaSemaine(s43).map(function (x) { return x.id; }), ['petitdej', 'midi', 'soir'], 'Semaine sans le service : il n’est pas proposé');
+    egal(M.joursHabituels(M.service('noel')), [], 'Service de certaines semaines : aucun jour par défaut');
+    egal(M.utilisationsService(d, 'noel').semaines, 1, 'Semaine où il est ajouté = utilisation (suppression refusée)');
+
+    var g = jeuGouter(), s = g.semaines[0];
+    s.servicesSemaine.gouter = [];
+    egal(M.creneaux(s).length, 21, 'Goûter (toutes les semaines) retiré pour une semaine');
+    s.servicesSemaine.gouter = ['sam'];
+    egal(M.creneaux(s).filter(function (c) { return c.indexOf('gouter') > 0; }), ['sam_gouter'], 'Jours du goûter changés pour une semaine');
+    s.salaries.p1 = { sam_gouter: { standard: 1, sansPorc: 0 }, lun_midi: { standard: 2, sansPorc: 0 } };
+    s.presences.A = { sam_gouter: 0, lun_midi: 0 };
+    var n = M.semaineSuivante(s);
+    egal([n.servicesSemaine, n.salaries.p1, n.presences.A], [{}, { lun_midi: { standard: 2, sansPorc: 0 } }, { lun_midi: 0 }],
+      'Semaine suivante : jours habituels, rien de repris sur les créneaux qui n’y sont pas servis');
   });
 
   groupe('Présence à un service additionnel (services voisins)', function () {
@@ -362,7 +389,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     s.presences.A.lun_gouter = 1;
     egal(C.presence(s, A, 'lun_collation').valeur, 1, 'Goûter saisi à 1 : la collation qui suit vaut 1');
     s.presences.C = {};
-    M.CRENEAUX.forEach(function (c) { if (c.indexOf('gouter') < 0 && c.indexOf('collation') < 0) s.presences.C[c] = 0; });
+    M.creneaux(s).forEach(function (c) { if (c.indexOf('gouter') < 0 && c.indexOf('collation') < 0) s.presences.C[c] = 0; });
     egal(C.alertes(d, s).some(function (a) { return a.type === 'aucunePresence' && a.residentId === 'C'; }), true,
       'Absent à tous les services de base : aussi aux services ajoutés (alerte « Aucune présence »)');
   });

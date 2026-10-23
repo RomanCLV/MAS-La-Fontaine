@@ -4,7 +4,7 @@ Fonctions pures : entrées = données + semaine + créneau ; aucune lecture du D
 
 ## Présence
 - `estAbsentFiche(resident, semaine, creneau)` : date du créneau dans une absence de la fiche (bornes incluses, service coché).
-- `presence(semaine, resident, creneau)` → `{valeur: 0|1, source: "saisie"|"absence"|"defaut"|"voisins"}` : 1. saisie ; 2. absence de la fiche → 0 ; 3. service de base → 1 (`defaut`) ; service additionnel → 1 si le service « connu » le plus proche avant **ou** après, le même jour, est à 1, sinon 0 (`voisins`). Connu = service de base, ou additionnel saisi / couvert par une absence de la fiche (deux additionnels côte à côte : on saute celui qui n'est pas connu). Ex. p.-déj. 1, midi 0, soir 0 → goûter (entre midi et soir) 0.
+- `presence(semaine, resident, creneau)` → `{valeur: 0|1, source: "saisie"|"absence"|"defaut"|"voisins"}` : 1. saisie ; 2. absence de la fiche → 0 ; 3. service de base → 1 (`defaut`) ; service additionnel → 1 si le service « connu » le plus proche avant **ou** après, le même jour (parmi les services servis cette semaine), est à 1, sinon 0 (`voisins`). Connu = service de base, ou additionnel saisi / couvert par une absence de la fiche (deux additionnels côte à côte : on saute celui qui n'est pas connu). Ex. p.-déj. 1, midi 0, soir 0 → goûter (entre midi et soir) 0.
 - `presenceParDefaut(semaine, resident, creneau)` : même calcul sans la saisie de ce créneau (une saisie égale est effacée par la grille).
 - `activiteDe(semaine, residentId, creneau)` : 1re activité du créneau contenant le résident.
 
@@ -30,5 +30,5 @@ Liste « sur N plats » : textures hors défaut, régimes, options d'assiette (p
 
 ## Alertes — `alertes(donnees, semaine)` puis `alertesVisibles(...)`
 1. **Présent alors qu'absent** : présence saisie à 1 sur un créneau d'absence de la fiche (une alerte par résident, créneaux regroupés).
-2. **Aucune présence** : 0 sur tous les créneaux de la semaine (`Modele.CRENEAUX`) sans absence dans la fiche cette semaine.
+2. **Aucune présence** : 0 sur tous les créneaux de la semaine (`Modele.creneaux(semaine)`) sans absence dans la fiche cette semaine.
 Clé stable (`type:resident:créneaux`) ; une alerte traitée (« C'est voulu » / « Ignorer ») est masquée tant que sa clé est identique.

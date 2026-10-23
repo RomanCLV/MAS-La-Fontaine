@@ -4,17 +4,21 @@
   var M = R.Modele, C = R.Calc, h = R.h, O = R.Outils, App = R.App;
 
   // Créneaux affichés (services cochés dans le filtre, jours actifs de chaque service) ; les autres sont seulement masqués.
-  function creneauxVisibles() {
-    var vis = App.servicesVisibles();
-    return M.CRENEAUX.filter(function (c) { return vis.indexOf(M.decoupeCreneau(c).service) >= 0; });
+  function creneauxVisibles(s) {
+    var vis = App.servicesVisibles(), tous = M.creneaux(s);
+    var liste = tous.filter(function (c) { return vis.indexOf(M.decoupeCreneau(c).service) >= 0; });
+    return liste.length ? liste : tous;  // seuls des services absents de cette semaine sont affichés : tout montrer
   }
 
-  function filtreServices() {
+  // Services servis cette semaine (un service de certaines semaines n'apparaît que là où il est ajouté).
+  function filtreServices(s) {
     var vis = App.servicesVisibles();
+    var semaine = M.servicesDeLaSemaine(s);
+    var affiches = semaine.filter(function (x) { return vis.indexOf(x.id) >= 0; });
     return h('div', { class: 'filtre-services' },
       h('span', { class: 'gras' }, 'Services affichés :'),
-      M.SERVICES.map(function (x) {
-        var on = vis.indexOf(x.id) >= 0, seul = on && vis.length === 1;
+      semaine.map(function (x) {
+        var on = vis.indexOf(x.id) >= 0, seul = on && affiches.length === 1;
         return h('label', { class: 'choix' + (on ? ' on' : ''), title: seul ? 'Au moins un service reste affiché' : null },
           h('input', { type: 'checkbox', checked: on, disabled: seul, onchange: function () {
             var m = App.ui.servicesMasques.filter(function (id) { return id !== x.id; });
@@ -23,7 +27,7 @@
             App.rendre();
           } }), x.nom);
       }),
-      vis.length < M.SERVICES.length ? h('span', { class: 'petit' }, 'Les services masqués gardent leurs saisies.') : null);
+      affiches.length < semaine.length ? h('span', { class: 'petit' }, 'Les services masqués gardent leurs saisies.') : null);
   }
 
   // Bandeau affiché seulement s'il y a des alertes (ou des alertes masquées à réafficher).
@@ -57,6 +61,70 @@
           h('b', null, a.nom), ' · ' + M.jour(a.jour).nom.toLowerCase() + ' ' + M.service(a.service).court + ' · ' + O.pluriel(a.participantIds.length, 'participant'));
       }),
       h('button', { class: 'btn', onclick: function () { R.PageActivites.nouvelle(); } }, '+ Ajouter une activité'));
+  }
+
+  // Services additionnels servis cette semaine (cliquer = régler leurs jours pour cette semaine seulement) ;
+  // « + Ajouter un service à cette semaine » pour un service qui ne l'est pas (ponctuel, ou permanent retiré).
+  // Bandeau absent tant qu'aucun service n'a été ajouté dans la page Services.
+  function servicesAjoutes(s) {
+    var additionnels = M.SERVICES.filter(function (x) { return !x.base; });
+    if (!additionnels.length) return null;
+    var servis = additionnels.filter(function (x) { return M.joursDuService(s, x).length; });
+    var autres = additionnels.filter(function (x) { return !M.joursDuService(s, x).length; });
+    return h('div', { class: 'bandeau bandeau-activites' },
+      h('span', { class: 'bandeau-titre' }, 'Services ajoutés cette semaine'),
+      servis.length ? null : h('span', { class: 'petit' }, 'Aucun.'),
+      servis.map(function (x) {
+        var special = x.permanent && Array.isArray(s.servicesSemaine[x.id]);
+        return h('button', { class: 'puce-activite', title: 'Régler les jours de ' + x.nom + ' pour cette semaine', onclick: function () { reglerService(s, x); } },
+          h('b', null, x.nom), ' · ' + O.libelleJours(M.joursDuService(s, x)) + (special ? ' (cette semaine)' : ''));
+      }),
+      autres.length ? h('button', { class: 'btn', onclick: function () { reglerService(s, null, autres); } }, '+ Ajouter un service à cette semaine') : null);
+  }
+
+  // Fenêtre : jours du service x pour la semaine s ; x null = choix parmi candidats (ajout).
+  // Jours égaux aux jours habituels (permanent : jours cochés ; ponctuel : aucun) → réglage effacé.
+  function reglerService(s, x, candidats) {
+    var choisi = x || candidats[0];
+    var jours = x ? M.joursDuService(s, x) : choisi.jours.slice();
+    var zoneJours = h('div', { class: 'rangee' });
+    var note = h('div', { class: 'petit' });
+    function dessiner() {
+      zoneJours.replaceChildren.apply(zoneJours, M.JOURS.map(function (j) {
+        var on = jours.indexOf(j.id) >= 0;
+        return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () {
+          jours = M.IDS_JOURS.filter(function (y) { return y === j.id ? !on : jours.indexOf(y) >= 0; });
+          dessiner();
+        } }), j.nom + ' ' + O.dateCourte(M.dateDuJour(s, j.id)).slice(0, 5));
+      }));
+      note.textContent = (choisi.permanent ? 'Toutes les semaines : ' + O.libelleJours(choisi.jours) + '. Ce réglage ne concerne que cette semaine.'
+        : 'Service de certaines semaines : seulement celles où on l’ajoute.') + ' Les saisies des jours retirés sont gardées.';
+    }
+    dessiner();
+    var contenu = h('div', { class: 'absence-saisie' },
+      h('div', { class: 'gras grand' }, (x ? x.nom : 'Ajouter un service') + ' · ' + O.titreSemaine(s)),
+      x ? null : h('div', { class: 'champ' }, h('label', { for: 'sv-choix' }, 'Service'),
+        h('select', { id: 'sv-choix', onchange: function (e) {
+          choisi = candidats.filter(function (c) { return c.id === e.target.value; })[0];
+          jours = choisi.jours.slice();
+          dessiner();
+        } }, candidats.map(function (c) { return h('option', { value: c.id }, c.nom); }))),
+      h('div', { class: 'gras' }, 'Jours servis cette semaine'),
+      zoneJours, note);
+    function enregistrer(liste) {
+      App.modifier(function () {
+        if (liste.join() === M.joursHabituels(choisi).join()) delete s.servicesSemaine[choisi.id];
+        else s.servicesSemaine[choisi.id] = liste;
+      });
+    }
+    App.fenetre(contenu, [
+      { texte: 'Annuler', valeur: '' },
+      x ? { texte: 'Retirer de cette semaine', valeur: 'retirer', classe: 'btn-danger' } : null,
+      { texte: x ? 'Enregistrer' : '+ Ajouter à cette semaine', valeur: 'ok', classe: 'btn-principal' }
+    ].filter(Boolean), function (v) {
+      if (v === 'ok') enregistrer(jours);
+      if (v === 'retirer') enregistrer([]);
+    });
   }
 
   // Mots cherchés (sans accents ni majuscules).
@@ -117,7 +185,7 @@
       return g.id !== M.textureDefaut(d) && M.colonneAffichee(g, residents);
     }));
     var cols = groupes.colonnes;
-    var vis = creneauxVisibles();
+    var vis = creneauxVisibles(s);
     // Trait marqué au début de chaque jour : sur son premier créneau affiché.
     function bord(c) {
       var k = vis.indexOf(c);
@@ -283,7 +351,7 @@
     // Cases en alerte (alertes visibles seulement) : créneaux contradictoires, ou toute la semaine si aucune présence.
     var enAlerte = {};
     C.alertesVisibles(d, s).forEach(function (a) {
-      (a.type === 'aucunePresence' ? M.CRENEAUX : a.creneaux).forEach(function (c) {
+      (a.type === 'aucunePresence' ? M.creneaux(s) : a.creneaux).forEach(function (c) {
         enAlerte[a.residentId + ':' + c] = a.titre;
       });
     });
@@ -470,7 +538,8 @@
           d.semaines.length > 1 ? h('button', { class: 'btn btn-danger', onclick: function () { supprimer(d, s); } }, 'Supprimer cette semaine') : null),
         alertes(d, s),
         activites(s),
-        filtreServices(),
+        servicesAjoutes(s),
+        filtreServices(s),
         parc ? [
           h('div', { class: 'onglets-parcs', role: 'tablist' }, parcs.map(function (p) {
             var actif = !recherche && p.id === parc.id;
