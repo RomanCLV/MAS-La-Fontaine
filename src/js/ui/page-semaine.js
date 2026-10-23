@@ -395,25 +395,16 @@
         }));
     });
 
+    // Salariés : sélection et saisie « façon Excel » (selection-nombres.js), à part des cases de présence.
+    var nombres;
     function ligneNombres(libelle, note, fond, lire, ecrire) {
+      var i = nombres.ligne(libelle, lire, ecrire);
       return h('div', { class: 'g g-sal', style: gabarit + ';background:' + fond },
         h('div', { class: 'gc colle0', style: 'background:' + fond }),
         h('div', { class: 'gc gauche gras colle1 etiquette', style: 'background:' + fond, title: libelle }, libelle),
         h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + 1) }, note),
         h('div'),
-        vis.map(function (c) {
-          var v = lire(c);
-          return h('div', { class: 'gc ' + bord(c) }, h('input', {
-            class: 'nb', type: 'number', min: '0', step: '1', inputmode: 'numeric', value: v ? String(v) : '',
-            'aria-label': libelle + ' · ' + C.libelleCreneaux([c]),
-            onchange: function (e) {
-              var n = Math.max(0, Math.floor(+e.target.value || 0));
-              e.target.value = n ? String(n) : '';
-              App.modifier(function () { ecrire(c, n); }, { sansRendu: true });
-              majCarres();
-            }
-          }));
-        }));
+        vis.map(function (c, k) { return nombres.cellule(i, k, bord(c)); }));
     }
     function salarie(cleChamp) {
       return {
@@ -432,6 +423,7 @@
           h('div', { class: 'grille' }, bandeaux, entete, lignes))
           : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
     }
+    nombres = R.SelectionNombres.grille({ cle: 'parc:' + parc.id + ':' + s.id + ':' + vis.join(), creneaux: vis, apres: majCarres });
     var a = salarie('standard'), b = salarie('sansPorc');
     var lignesSal = [
       ligneNombres('Salariés standard (' + parc.nom + ')', '', '#f0ede4', a.lire, a.ecrire),

@@ -23,6 +23,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 <script src="js/data/modele.js"></script>
 <script src="js/calc/calc.js"></script>
 <script src="js/ui/outils.js"></script>
+<script src="js/ui/selection-nombres.js"></script>
 <script src="js/aide/contenu.js"></script>
 <script src="js/aide/illustrations.js"></script>
 <script>
@@ -479,6 +480,18 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
       'Couleur du preset gardée si libre, sinon couleur libre');
     s.activites = P.map(function (c, i) { return { id: 'b' + i, couleur: c }; });
     egal(M.couleurActiviteLibre(s, 'x'), P[0], 'Palette épuisée : on reprend en boucle');
+  });
+
+  groupe('Sélection des cases de quantité (logique)', function () {
+    var L = Recueil.SelectionNombres.logique;
+    var r = L.rectangle({ i: 3, k: 5 }, { i: 1, k: 2 });
+    egal(r, { i0: 1, i1: 3, k0: 2, k1: 5 }, 'Rectangle : coins dans n’importe quel ordre');
+    egal([L.contient(r, 1, 2), L.contient(r, 3, 5), L.contient(r, 0, 3), L.contient(r, 2, 6)], [true, true, false, false],
+      'Rectangle : bords compris, cases hors du rectangle exclues');
+    egal(L.cases(L.rectangle({ i: 0, k: 1 }, { i: 1, k: 2 })), [{ i: 0, k: 1 }, { i: 0, k: 2 }, { i: 1, k: 1 }, { i: 1, k: 2 }],
+      'Cases du rectangle, ligne par ligne');
+    egal(L.cases(L.rectangle({ i: 2, k: 4 }, { i: 2, k: 4 })).length, 1, 'Une seule case');
+    egal(['7', '3.8', '-2', '', 'abc', '012'].map(L.nettoyer), [7, 3, 0, 0, 0, 12], 'Valeur saisie : entier ≥ 0 (0 = case vide)');
   });
 
   groupe('Aide à l’utilisation (contenu)', function () {

@@ -59,7 +59,7 @@ Chaque fenêtre : phrase « À quoi sert cette page » · points clés · illust
 - Les cases rouges hachurées viennent d'une absence prévue dans la fiche du résident.
 - Une case **jaune** est une alerte : à vérifier, ou à classer avec « C'est voulu » / « Ignorer ».
 - Les carrés en haut donnent le nombre de plats par repas pour le parc affiché.
-- Sous la grille : les salariés du parc. Sodexo, direction, nettoyage et plats témoins sont dans l'onglet **Hors parc**, à droite des onglets de parc.
+- Sous la grille : les salariés du parc (cliquez une case, tapez le nombre, Entrée ; glissez pour en sélectionner plusieurs). Sodexo, direction, nettoyage et plats témoins sont dans l'onglet **Hors parc**.
 - Les boutons du bas : créer la semaine suivante, imprimer, supprimer cette semaine.
 [Illustration : mini-grille avec la légende]
 

@@ -189,3 +189,11 @@
 - Sodexo, Direction, Nettoyage (avec/sans viande) et Plats témoins + leur total quittent les onglets de parc pour un onglet « Hors parc » à droite des parcs, **toujours dans la page Semaine** (pas une page du menu : première version écartée sur retour de l'utilisateur). Les salariés du parc restent dans chaque onglet de parc.
 - **Raison** : la page Semaine était trop chargée ; ces lignes ne dépendent d'aucun parc et se répétaient sous chaque onglet de parc.
 - Données, calcul, feuilles imprimées et « Créer la semaine suivante » inchangés (format toujours en version 1).
+
+## 2026-10-23 — Saisie des cases numériques : sélection multiple
+- **Périmètre** : uniquement les cases de **quantité** (onglet « Hors parc » + lignes de salariés des onglets de parc). Les cases de **présence** des parcs gardent leur comportement actuel (appui = inverse, glisser = rectangle provisoire, `Échap` annule) : deux gestions séparées, ne pas y toucher.
+- **Sélection persistante** par glissement de souris (rectangle lignes × créneaux) ; `Suppr` vide, `Échap` désélectionne, nouvelle sélection par la souris remplace. Copier / couper / coller **interne à l'appli** ; **pas** de lien avec Excel pour l'instant.
+- **Pas de Ctrl+Z** pour l'instant.
+- **Clavier** : écouté **seulement si une sélection est active** (jamais dans une recherche ou une fenêtre de dialogue).
+- **Modèle Excel (choix utilisateur)** : un clic **sélectionne** la case ; on passe en écriture en tapant un chiffre, en double-cliquant ou avec `Entrée`. Taper un nombre puis `Entrée` l'écrit dans **toutes** les cases sélectionnées ; `Échap` annule la saisie. Flèches = déplacent la sélection, `Maj`+flèches / `Maj`+clic = l'étendent ; pas de `Ctrl`+clic multi-rectangles. Lignes « Total » non sélectionnables. Un seul enregistrement par action ; valeurs nettoyées comme aujourd'hui (entier ≥ 0, 0 = entrée supprimée).
+- Réalisation prévue en 3 livraisons : (1) sélection + `Suppr` / `Échap` ; (2) saisie sur la sélection + flèches ; (3) copier / couper / coller internes. Défilement automatique de la grille pendant le glisser près du bord.

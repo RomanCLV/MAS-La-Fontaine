@@ -481,6 +481,8 @@
         if (v) el.scrollLeft = v;
       });
     }
+    // Sélection des cases de quantité (page Semaine) : retirée si sa grille n'est plus affichée.
+    if (R.SelectionNombres) R.SelectionNombres.apresRendu();
   };
 
   R.App = App;

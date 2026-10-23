@@ -39,24 +39,15 @@
           M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + M.service(sc.service).court));
       }));
 
+    // Cases de quantité : sélection et saisie « façon Excel » (selection-nombres.js) ; la ligne Total n'en fait pas partie.
+    var nombres = R.SelectionNombres.grille({ cle: 'horsparc:' + s.id + ':' + vis.join(), creneaux: vis, apres: majTotal });
     // lire(c) / ecrire(c, n) : accès au champ de la semaine.
     function ligneNombres(libelle, note, lire, ecrire) {
+      var i = nombres.ligne(libelle, lire, ecrire);
       return h('div', { class: 'g g-sal', style: gabarit + ';background:' + FOND },
         h('div', { class: 'gc gauche gras colle0 etiquette', style: 'background:' + FOND, title: libelle }, libelle),
         h('div', { class: 'gnote' }, note),
-        vis.map(function (c) {
-          var v = lire(c);
-          return h('div', { class: 'gc ' + bord(c) }, h('input', {
-            class: 'nb', type: 'number', min: '0', step: '1', inputmode: 'numeric', value: v ? String(v) : '',
-            'aria-label': libelle + ' · ' + C.libelleCreneaux([c]),
-            onchange: function (e) {
-              var n = Math.max(0, Math.floor(+e.target.value || 0));
-              e.target.value = n ? String(n) : '';
-              App.modifier(function () { ecrire(c, n); }, { sansRendu: true });
-              majTotal();
-            }
-          }));
-        }));
+        vis.map(function (c, k) { return nombres.cellule(i, k, bord(c)); }));
     }
     function simple(table) {
       return {

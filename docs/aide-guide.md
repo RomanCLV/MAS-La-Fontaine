@@ -103,6 +103,13 @@ Deux lignes de nombres sous la grille, par repas : salariés du parc, avec ou sa
 ## Hors parc : Sodexo, direction, nettoyage, témoins
 Onglet **Hors parc**, à droite des onglets de parc (même page Semaine, mêmes services affichés). Lignes par repas : Sodexo, direction, nettoyage, nettoyage sans viande, plats témoins, puis **Total hors parcs**. Ils s'ajoutent au total à produire de la feuille cuisine.
 
+## Saisir les nombres (salariés, hors parc)
+Comme dans Excel (les cases de présence gardent leur fonctionnement : un clic inverse).
+- **Un clic** sélectionne la case. Tapez le nombre puis **Entrée**. **Double-clic** ou **Entrée** : modifier le nombre déjà saisi. **Échap** annule la saisie.
+- **Glisser** sélectionne plusieurs cases (la grille défile près du bord) ; **Maj + clic** agrandit la sélection.
+- **Suppr** / Retour arrière vide les cases sélectionnées (pas de retour en arrière ; message « N cases vidées »).
+- **Échap** ou clic ailleurs : plus de sélection. Le clavier n'agit sur les cases que si une sélection est visible.
+
 ## Alertes
 Au-dessus de la grille : « présent alors qu'absent » (une saisie contredit une absence prévue) et « aucune présence » (un résident à 0 toute la semaine). Chaque alerte : **C'est voulu** ou **Ignorer** (elle disparaît, réaffichage possible). Elles n'apparaissent **jamais** sur les feuilles imprimées.
 

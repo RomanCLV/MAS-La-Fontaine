@@ -186,6 +186,12 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .gc.etiquette{display:block;line-height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gnote{border-bottom:1px solid #ccc;font-size:11px;color:#555;display:flex;align-items:center;padding-left:6px}
 .nb{width:100%;height:100%;border:0;text-align:center;font-weight:700;background:#fff;padding:0;-moz-appearance:textfield;appearance:textfield}
+/* Cases de quantité (selection-nombres.js) : sélection façon Excel, cadre autour du rectangle, case active en blanc */
+.gc.nbc{position:relative;font-weight:700;background:#fff;cursor:cell;user-select:none;touch-action:none;outline:none}
+.gc.nbc.sel{background:#d6e4f7;box-shadow:inset 0 calc(var(--h,0) * 2px) 0 var(--bleu),inset calc(var(--d,0) * -2px) 0 0 var(--bleu),inset 0 calc(var(--b,0) * -2px) 0 var(--bleu),inset calc(var(--g,0) * 2px) 0 0 var(--bleu)}
+.gc.nbc.sel.ancre{background:#fff}
+.nbc.sel-h{--h:1}.nbc.sel-b{--b:1}.nbc.sel-g{--g:1}.nbc.sel-d{--d:1}
+.nbc .nb-edition{position:absolute;inset:2px;width:auto;height:auto;outline:none;cursor:text}
 .nb::-webkit-outer-spin-button,.nb::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .legende{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px;color:var(--gris)}
 .pc-ex{width:24px;height:18px;border:1px solid #ccc;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#eef6ec}
