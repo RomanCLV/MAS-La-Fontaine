@@ -51,6 +51,12 @@ h1{font-size:22px;margin:0}
 .onglets{background:var(--onglets);padding:6px 16px 0;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end}
 .onglet{display:flex;align-items:center;min-height:40px;border:1px solid #bbb;border-bottom:0;border-radius:6px 6px 0 0;background:var(--onglet)}
 .onglet.actif{background:#fff;font-weight:700}
+/* Glisser-déposer des onglets : onglet déplacé estompé, trait bleu à l'endroit où il sera posé. */
+.onglet{user-select:none;touch-action:none}
+.onglet.glisse{opacity:.45}
+.onglet.depot-avant{box-shadow:-4px 0 0 var(--bleu)}
+.onglet.depot-apres{box-shadow:4px 0 0 var(--bleu)}
+body.glisse-onglet,body.glisse-onglet *{cursor:grabbing !important}
 .onglet-titre{border:0;background:transparent;padding:0 4px 0 12px;min-height:38px;cursor:pointer;font-weight:inherit;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .onglet-fermer{border:0;background:transparent;font-size:18px;color:#555;min-width:30px;min-height:38px;cursor:pointer;border-radius:4px}
 .onglet-fermer:hover{background:rgba(0,0,0,.08)}

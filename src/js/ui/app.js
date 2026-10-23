@@ -334,7 +334,7 @@
     return h('div', { class: 'onglets', role: 'tablist' },
       App.ui.onglets.map(function (o) {
         var k = cle(o), actif = k === App.ui.actif;
-        return h('div', { class: 'onglet' + (actif ? ' actif' : '') },
+        return h('div', { class: 'onglet' + (actif ? ' actif' : ''), 'data-cle': k, onpointerdown: function (e) { glisserOnglet(e, k); } },
           h('button', { class: 'onglet-titre', role: 'tab', 'aria-selected': actif ? 'true' : 'false', onclick: function () { App.activer(k); } },
             titreOnglet(o) + (App.modifieOnglet(o) ? ' •' : '')),
           h('button', { class: 'onglet-fermer', 'aria-label': 'Fermer l’onglet ' + titreOnglet(o), onclick: function () { App.fermer(k); } }, '×'));
@@ -345,6 +345,62 @@
           'aria-expanded': App.menuOuvert === 'plus' ? 'true' : 'false',
           onclick: function () { App.menuOuvert = App.menuOuvert === 'plus' ? false : 'plus'; App.rendre(); } }, '+'),
         App.menuOuvert === 'plus' ? menuPages() : null));
+  }
+
+  // Glisser-déposer d'un onglet pour changer l'ordre : le glissement commence après quelques pixels
+  // (un simple clic active toujours l'onglet) ; un trait bleu montre où il sera posé ; Échap annule.
+  function glisserOnglet(e, k) {
+    if (e.button !== 0 || e.target.closest('.onglet-fermer')) return;
+    var x0 = e.clientX, y0 = e.clientY, source = e.currentTarget, glisse = false, cible = null, apres = false;
+    function effacerTrait() {
+      document.querySelectorAll('.onglet.depot-avant, .onglet.depot-apres').forEach(function (el) {
+        el.classList.remove('depot-avant', 'depot-apres');
+      });
+    }
+    function bouger(ev) {
+      if (!glisse) {
+        if (Math.abs(ev.clientX - x0) + Math.abs(ev.clientY - y0) < 6) return;
+        glisse = true;
+        source.classList.add('glisse');
+        document.body.classList.add('glisse-onglet');
+      }
+      var el = document.elementFromPoint(ev.clientX, ev.clientY);
+      var o = el && el.closest('.onglet');
+      if (!o) return;
+      var r = o.getBoundingClientRect();
+      cible = o.getAttribute('data-cle');
+      apres = ev.clientX > r.left + r.width / 2;
+      effacerTrait();
+      if (o !== source) o.classList.add(apres ? 'depot-apres' : 'depot-avant');
+    }
+    function arreter(annule) {
+      document.removeEventListener('pointermove', bouger);
+      document.removeEventListener('pointerup', relacher);
+      document.removeEventListener('pointercancel', annuler);
+      document.removeEventListener('keydown', echap);
+      if (!glisse) return;
+      effacerTrait();
+      source.classList.remove('glisse');
+      document.body.classList.remove('glisse-onglet');
+      // Le clic qui suit le relâchement ne doit pas activer un onglet.
+      window.addEventListener('click', bloquerClic, true);
+      setTimeout(function () { window.removeEventListener('click', bloquerClic, true); }, 0);
+      if (annule || !cible || cible === k) return;
+      var liste = App.ui.onglets, i = liste.findIndex(function (o) { return cle(o) === k; });
+      var deplace = liste.splice(i, 1)[0];
+      var j = liste.findIndex(function (o) { return cle(o) === cible; });
+      liste.splice(apres ? j + 1 : j, 0, deplace);
+      App.sauverUi();
+      App.rendreOnglets();
+    }
+    function bloquerClic(ev) { ev.stopPropagation(); ev.preventDefault(); }
+    function relacher() { arreter(false); }
+    function annuler() { arreter(true); }
+    function echap(ev) { if (ev.key === 'Escape') arreter(true); }
+    document.addEventListener('pointermove', bouger);
+    document.addEventListener('pointerup', relacher);
+    document.addEventListener('pointercancel', annuler);
+    document.addEventListener('keydown', echap);
   }
 
   App.rendreOnglets = function () {
