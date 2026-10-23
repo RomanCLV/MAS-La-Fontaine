@@ -117,6 +117,7 @@
       f.modifs = {};
     });
     App.toast(O.pluriel(ids.length, 'résident enregistré', 'résidents enregistrés'));
+    App.apresEnregistrement('residents');
   }
 
   function vueTableau(d, f) {

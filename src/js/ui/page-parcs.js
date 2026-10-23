@@ -44,6 +44,7 @@
           App.etat.parcEdit = null;
         });
         App.toast('Parc ' + ed.nom.trim() + ' enregistré');
+        App.apresEnregistrement('parcs');
       }
       function supprimer(p) {
         var n = nbTous(p.id);

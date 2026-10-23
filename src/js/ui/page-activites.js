@@ -97,6 +97,7 @@
           e.selection = b.id; e.erreur = ''; e.info = '';
         });
         App.toast('Activité ' + b.nom + ' enregistrée');
+        App.apresEnregistrement('activites');
       }
       function retirer() {
         App.confirmer('Retirer l’activité « ' + b.nom + ' » de cette semaine ? Les participants reviennent dans leur parc.', function () {

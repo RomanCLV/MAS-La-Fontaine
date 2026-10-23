@@ -222,6 +222,7 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .fiche-tete h1{margin-right:auto}
 .groupe-choix{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
 .groupe-choix legend{font-size:13px;font-weight:700;color:#333;padding:0;margin-bottom:6px}
+.groupe-choix.colonne{flex-direction:column;align-items:stretch}
 .choix{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--trait);border-radius:6px;padding:0 12px;min-height:44px;font-size:14px;background:#fff;cursor:pointer}
 .choix.on{background:#dfe9f5;border-color:var(--bleu)}
 .choix-info{min-height:32px;background:var(--bleu-clair);cursor:default}

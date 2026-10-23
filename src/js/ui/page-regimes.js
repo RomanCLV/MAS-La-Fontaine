@@ -101,6 +101,7 @@
         });
         App.toast({ texture: 'Texture ', regime: 'Régime ', option: 'Option ' }[ed.nature] + ed.nom.trim() +
           (ed.nature === 'regime' ? ' enregistré' : ' enregistrée'));
+        App.apresEnregistrement('regimes');
       }
       function supprimer(g) {
         if (PROTEGES.indexOf(g.id) >= 0) { App.alerte('« ' + g.nom + ' » est utilisé par les calculs : il peut être renommé mais pas supprimé.'); return; }

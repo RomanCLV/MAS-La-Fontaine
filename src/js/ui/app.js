@@ -66,7 +66,8 @@
       parcActif: ui.parcActif || '',
       residentsVue: ui.residentsVue || 'liste',
       servicesVisibles: servicesVisibles(ui.servicesVisibles),
-      impression: ui.impression || null
+      impression: ui.impression || null,
+      fermerApres: Array.isArray(ui.fermerApres) ? ui.fermerApres : []   // types de page à fermer après « Enregistrer »
     };
   }
 
@@ -128,6 +129,8 @@
     }
     fermerSansQuestion(o, k);
   };
+  // Après un bouton « Enregistrer » réussi : ferme l'onglet si son type de page est coché dans Options.
+  App.apresEnregistrement = function (k) { if (App.ui.fermerApres.indexOf(k.split(':')[0]) >= 0) App.fermer(k); };
   function fermerSansQuestion(o, k) {
     var i = -1;
     App.ui.onglets.forEach(function (x, n) { if (cle(x) === k) i = n; });

@@ -55,6 +55,7 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Grille Semaine : ligne **« En activité »** sous les carrés (plats des résidents du parc partis en activité, retirés de « Plats <parc> »). 119 tests verts ; vérifié dans le navigateur intégré.
 - Grille Semaine : pas de ligne de texture quand seule la texture par défaut (Normal) a des plats (doublon de « Plats <parc> »).
 - Grille Semaine : ligne **« Total hors parcs »** (Sodexo + Direction + Nettoyage + Plats témoins) sous les lignes « tous parcs ». Vérifié dans le navigateur intégré.
+- Options : **« Fermer la page après avoir enregistré »**, une case par page (Fiche résident, Résidents, Parcs, Régimes, Activités ; aucune cochée par défaut) : l’onglet coché se ferme après chaque « Enregistrer » réussi. Vérifié dans le navigateur intégré.
 
 ## Non vérifié (à faire par l'utilisateur)
 1. Ouvrir `src/index.html` par **double-clic dans Firefox** (Edge/Chrome non installés sur ce poste de développement) : ouvrir un fichier ou base vide, saisir, fermer, rouvrir → données et onglets restaurés.

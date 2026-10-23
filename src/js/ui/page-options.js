@@ -12,6 +12,23 @@
     return ts ? O.dateCourte(new Date(ts - new Date(ts).getTimezoneOffset() * 60000).toISOString().slice(0, 10)) + ' à ' + O.heure(ts) : 'inconnu';
   }
 
+  // Pages qui ont un bouton « Enregistrer » (type d'onglet → libellé, ce qui est enregistré).
+  var PAGES_FERMABLES = [
+    { type: 'resident', nom: 'Fiche résident', detail: 'la fiche d’un résident' },
+    { type: 'residents', nom: 'Résidents', detail: 'le tableau des résidents' },
+    { type: 'parcs', nom: 'Parcs', detail: 'un parc' },
+    { type: 'regimes', nom: 'Régimes', detail: 'une texture, un régime ou une option' },
+    { type: 'activites', nom: 'Activités', detail: 'une activité' }
+  ];
+
+  function basculerFermeture(type, on) {
+    var liste = App.ui.fermerApres.filter(function (t) { return t !== type; });
+    if (on) liste.push(type);
+    App.ui.fermerApres = PAGES_FERMABLES.map(function (p) { return p.type; }).filter(function (t) { return liste.indexOf(t) >= 0; });
+    App.sauverUi();
+    App.rendre();
+  }
+
   function vider() {
     var m = App.meta;
     var texte = 'Vider le cache local ?\n\nLa copie de travail est effacée de ce navigateur (semaines, résidents, parcs, activités), ' +
@@ -33,6 +50,18 @@
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' }, h('h1', null, 'Options')),
         h('div', { class: 'cartes' },
+          h('div', { class: 'carte carte-etape' },
+            h('span', { class: 'etape' }, 'Enregistrement'),
+            h('div', { class: 'grand gras' }, 'Fermer la page après avoir enregistré'),
+            h('div', { class: 'petit' }, 'Cochez les pages dont l’onglet doit se fermer dès qu’un bouton « Enregistrer » a réussi. ' +
+              'Pages non cochées (par défaut) : la page reste ouverte.'),
+            h('fieldset', { class: 'groupe-choix colonne' }, h('legend', null, 'Pages'),
+              PAGES_FERMABLES.map(function (p) {
+                var on = App.ui.fermerApres.indexOf(p.type) >= 0;
+                return h('label', { class: 'choix' + (on ? ' on' : '') },
+                  h('input', { type: 'checkbox', checked: on, onchange: function (ev) { basculerFermeture(p.type, ev.target.checked); } }),
+                  h('span', { class: 'gras' }, p.nom), h('span', { class: 'petit' }, '— après avoir enregistré ' + p.detail));
+              }))),
           h('div', { class: 'carte carte-etape' },
             h('span', { class: 'etape' }, 'Données en cache'),
             h('div', { class: 'grand gras' }, 'Copie de travail gardée dans ce navigateur'),

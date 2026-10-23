@@ -83,6 +83,7 @@
         delete App.brouillons[k];
         App.rendre();
         App.toast('Fiche de ' + M.nomAffiche(copie) + ' enregistrée');
+        App.apresEnregistrement(k);
       }
       function annuler() {
         if (b.nouveau) { b.modifie = false; App.fermer(k); return; }
