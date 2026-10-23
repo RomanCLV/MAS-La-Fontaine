@@ -17,6 +17,7 @@
 
 <div class="guide-corps">
 <nav class="guide-nav" aria-label="Sommaire">
+  <div class="guide-progres" aria-hidden="true"><div class="guide-progres-barre"><div class="guide-progres-rempli"></div></div><span class="guide-progres-texte">0 %</span></div>
   <ol>
     <li><a class="niv1" href="#demarrer">1. Pour commencer</a>
       <ul><li><a href="#donnees">Où sont mes données ?</a></li><li><a href="#ecran">Vue d’ensemble de l’écran</a></li><li><a href="#accueil">L’écran d’accueil</a></li></ul></li>
@@ -358,6 +359,40 @@
   var manquantes = R.Aide.SECTIONS.filter(function (id) { return !document.getElementById(id); });
   if (manquantes.length) console.error('Sections du guide manquantes : ' + manquantes.join(', '));
   document.body.setAttribute('data-sections-manquantes', manquantes.join(','));
+
+  // Sommaire : la section en cours de lecture est surlignée et une barre indique l'avancement dans toute la page.
+  var nav = document.querySelector('.guide-nav');
+  var liens = [].slice.call(nav.querySelectorAll('a[href^="#"]')).map(function (a) {
+    return { a: a, titre: document.getElementById(a.getAttribute('href').slice(1)) };
+  }).filter(function (l) { return l.titre; });
+  var rempli = nav.querySelector('.guide-progres-rempli'), texte = nav.querySelector('.guide-progres-texte');
+  var courant = null, attente = false;
+  function maj() {
+    attente = false;
+    var haut = document.documentElement, reste = haut.scrollHeight - window.innerHeight;
+    var pct = reste > 0 ? Math.min(100, Math.max(0, Math.round(window.scrollY / reste * 100))) : 100;
+    rempli.style.width = pct + '%';
+    texte.textContent = pct + ' %';
+    // Dernière section dont le titre a atteint le haut de l'écran ; en bas de page, la dernière.
+    var actif = liens[0];
+    liens.forEach(function (l) { if (l.titre.getBoundingClientRect().top <= 120) actif = l; });
+    if (reste > 0 && window.scrollY >= reste - 2) actif = liens[liens.length - 1];
+    if (actif === courant) return;
+    courant = actif;
+    liens.forEach(function (l) { l.a.classList.remove('actif', 'parent-actif'); l.a.removeAttribute('aria-current'); });
+    actif.a.classList.add('actif');
+    actif.a.setAttribute('aria-current', 'location');
+    var parent = actif.a.closest('ol > li');
+    if (parent) parent.querySelector('a.niv1').classList.add('parent-actif');
+    // Garde le lien visible dans le sommaire s'il est long (sans faire défiler la page).
+    var r = actif.a.getBoundingClientRect(), n = nav.getBoundingClientRect();
+    if (r.top < n.top + 40) nav.scrollTop -= n.top + 40 - r.top;
+    else if (r.bottom > n.bottom - 10) nav.scrollTop += r.bottom - n.bottom + 10;
+  }
+  function demander() { if (!attente) { attente = true; window.requestAnimationFrame(maj); } }
+  window.addEventListener('scroll', demander, { passive: true });
+  window.addEventListener('resize', demander);
+  maj();
 })(window.Recueil);
 </script>
 </body>

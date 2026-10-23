@@ -11,6 +11,15 @@ body.guide{background:var(--fond);font-size:16px;line-height:1.55}
 .guide-nav a:hover{background:var(--clair)}
 .guide-nav .niv1{font-weight:700}
 .guide-nav ul a{padding-left:20px;font-weight:400}
+/* Lecture en cours : trait bleu à gauche du lien actif ; son chapitre est souligné. */
+.guide-nav a{border-left:4px solid transparent}
+.guide-nav a.actif{border-left-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu);font-weight:700}
+.guide-nav a.parent-actif:not(.actif){color:var(--bleu)}
+/* Avancement dans toute la page */
+.guide-progres{display:flex;align-items:center;gap:8px;margin:0 0 6px;position:sticky;top:0;z-index:1}
+.guide-progres-barre{flex:1;height:8px;border-radius:4px;background:#d8d4c9;overflow:hidden}
+.guide-progres-rempli{height:100%;width:0;background:var(--bleu);border-radius:4px;transition:width .1s}
+.guide-progres-texte{font-size:12px;font-weight:700;color:#555;min-width:36px;text-align:right}
 .guide-texte{padding-top:12px;min-width:0}
 .guide-texte section{scroll-margin-top:12px}
 .guide-texte h2{font-size:26px;margin:40px 0 10px;padding-top:12px;border-top:3px solid var(--encre);scroll-margin-top:12px}
@@ -41,7 +50,7 @@ body.guide{background:var(--fond);font-size:16px;line-height:1.55}
   body.guide{background:#fff;font-size:12pt}
   .guide-haut{background:#fff;color:#000;border-bottom:2px solid #000;padding:0 0 8px}
   .guide-haut h1{color:#000}
-  .guide-nav,.guide-fermer{display:none}
+  .guide-nav,.guide-fermer,.guide-progres{display:none}
   .guide-corps{display:block;padding:0}
   .guide-texte h2{break-after:avoid;break-before:page}
   .guide-texte h3,.guide-texte h4{break-after:avoid}

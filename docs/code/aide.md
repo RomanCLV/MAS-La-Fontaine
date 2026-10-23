@@ -10,6 +10,8 @@ Définition fonctionnelle : `docs/aide.md`. Textes sources relus : `docs/aide-te
 | `css/aide.css` | Bouton « ? », menu Aide, fenêtres d'aide et de présentation, maquettes (`.illu-*`). Chargé après `app.css`. |
 | `guide.html` + `css/guide.css` | Guide complet (HTML écrit à la main, sommaire fixe, impression). Les `<div data-illu="nom">` sont remplacés par les maquettes ; contrôle au chargement que chaque section de `Aide.SECTIONS` existe (`console.error` + `body[data-sections-manquantes]`). |
 
+- **Suivi de lecture** (script de fin de `guide.html`) : le lien du sommaire dont le titre a atteint le haut de l'écran est surligné (`.actif`, trait bleu), son chapitre est coloré (`.parent-actif`) ; en bas de page, le dernier lien. Une barre « n % » en haut du sommaire (`.guide-progres`) donne l'avancement dans toute la page. Le sommaire défile seul pour garder le lien actif visible. Mise à jour sur `scroll` / `resize` (une fois par image).
+
 ## Branchements dans l'application
 - **Bandeau noir** : bouton « ? Aide » toujours présent (`App.menuOuvert === 'aide'`) → `AideUi.menu()` : Aide sur cette page (si la page a une aide), Guide d'utilisation (lien `target=_blank`), Revoir la présentation (si des données), version.
 - **« ? » à côté du titre** : `App.rendre` appelle `AideUi.boutonTitre` après le rendu de la page ; le `h1` de `.page-tete` / `.fiche-tete` est enveloppé dans `.titre-aide` avec le bouton (aucune page n'a à s'en occuper). Une page sans entrée dans `Aide.PAGES` n'a pas de bouton.
