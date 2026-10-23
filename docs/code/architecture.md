@@ -38,7 +38,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
   referentiels: {
     parcs:   [{ id, nom, couleur, ordre }],
     regimes: [{ id, nom, abrege?, nature: "texture"|"regime"|"option", couleur,
-                affecte?: "plat"|"legumes"|"information",     // options seulement
+                affecte?: "plat"|"",                          // options seulement : +1 plat chaud ou sur l'assiette
                 services: ["midi","soir"],                    // services concernés ; v≤3 : midi+soir (pots gourmands : petitdej)
                 toujoursVisible: true }]                      // colonne toujours dans la grille Semaine (absent = true) ; sinon si un résident du parc l'a
   },

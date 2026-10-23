@@ -41,7 +41,7 @@
   var SERVICES_POTS_GOURMANDS = ['petitdej']; // alternative du petit déjeuner (retour utilisateur 2026-10-20)
 
   // Textures / régimes / options par défaut d'une base vide (remise à zéro) ; modifiables ensuite dans la page Régimes.
-  // Ordre = ordre des colonnes. abrege : libellé court de colonne. affecte (options) : plat, legumes ou information.
+  // Ordre = ordre des colonnes. abrege : libellé court de colonne. affecte (options) : 'plat' (+1 plat chaud) ou '' (sur l'assiette).
   // toujoursVisible : colonne toujours présente dans la grille Semaine ; sinon seulement si un résident du parc l'a.
   var MS = SERVICES_REGIME_DEFAUT;
   var REGIMES_DEFAUT = [
@@ -66,11 +66,11 @@
     { id: 'allergie_arachides', nom: 'Allergie arachides', abrege: 'All. arachides', nature: 'regime', couleur: '#e0b98a', toujoursVisible: false, services: MS },
     { id: 'allergie_fruits_coque', nom: 'Allergie fruits à coque', abrege: 'All. fruits à coque', nature: 'regime', couleur: '#c8a27a', toujoursVisible: false, services: MS },
     { id: 'double_plat', nom: 'Double plat', nature: 'option', affecte: 'plat', couleur: '#f4a460', toujoursVisible: true, services: MS },
-    { id: 'double_legumes_vert', nom: 'Double légumes vert', abrege: 'Dbl légumes vert', nature: 'option', affecte: 'legumes', couleur: '#a9d18e', toujoursVisible: true, services: MS },
+    { id: 'double_legumes_vert', nom: 'Double légumes vert', abrege: 'Dbl légumes vert', nature: 'option', affecte: '', couleur: '#a9d18e', toujoursVisible: true, services: MS },
     { id: 'demi_portion', nom: 'Demi-portion', nature: 'option', affecte: '', couleur: '#c6d8ee', toujoursVisible: false, services: MS },
     { id: 'enrichi', nom: 'Enrichi', nature: 'option', affecte: '', couleur: '#f2d27a', toujoursVisible: true, services: MS },
     { id: 'pane_pate_riz_frite', nom: 'Poisson/viande panée + pâtes/riz/frites', abrege: 'Pané + féculent', nature: 'option', affecte: '', couleur: '#d9c29c', toujoursVisible: true, services: MS },
-    { id: 'pots_gourmands', nom: 'Pots gourmands', nature: 'option', affecte: 'information', couleur: '#e8e8e8', toujoursVisible: true, services: SERVICES_POTS_GOURMANDS }
+    { id: 'pots_gourmands', nom: 'Pots gourmands', nature: 'option', affecte: '', couleur: '#e8e8e8', toujoursVisible: true, services: SERVICES_POTS_GOURMANDS }
   ];
 
   function creneau(jour, service) { return jour + '_' + service; }
@@ -189,7 +189,8 @@
     d.referentiels.regimes = tableau(d.referentiels.regimes).map(function (g) {
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
       n.nature = (g.nature === 'texture' || g.nature === 'option') ? g.nature : 'regime';
-      if (n.nature === 'option') n.affecte = g.affecte || '';
+      // Options : +1 plat chaud ou rien (les anciens effets « portion à part » et « information » sont retirés, 2026-10-23).
+      if (n.nature === 'option') n.affecte = g.affecte === 'plat' ? 'plat' : '';
       n.toujoursVisible = g.toujoursVisible !== false; // absent (fichiers d'avant) : toujours affiché
       // Avant la version 4 : tout concernait midi et soir (petit déjeuner sans régimes), sauf les pots gourmands.
       n.services = sansServicesRegimes

@@ -109,7 +109,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(p1.reg.diabetique, 2, 'Régime diabétique compté sur les 2 plats');
     egal(p1.opt.double_plat, 1, 'Ligne double plat = 1 personne');
     egal(p1.opt.enrichi, 2, 'Enrichi compté sur les 2 plats');
-    egal(col(f, 'p2').c.opt.double_legumes_vert, 1, 'Double légumes = 1 portion à part');
+    egal(col(f, 'p2').c.opt.double_legumes_vert, 1, 'Double légumes (D, un seul plat) = 1');
     var t = f.total;
     egal((t.tex.normal || 0) + (t.tex.hache || 0) + (t.tex.mixe || 0), t.total, 'Normal + Haché + Mixé = total');
   });
@@ -229,12 +229,19 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(v3.referentiels.regimes[0].services, ['petitdej'], 'Version 3 : pots gourmands → petit déjeuner seulement');
     var v4 = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: [{ id: 'x', nature: 'regime', services: ['soir', 'petitdej', 'zzz'] }, { id: 'y', nature: 'regime', services: [] }] } });
     egal(v4.referentiels.regimes.map(function (g) { return g.services; }), [['petitdej', 'soir'], []], 'Version 4 : services conservés (ordre et valeurs nettoyés)');
+    var effets = M.migrer({ app: M.APP, version: 4, referentiels: { regimes: ['plat', 'legumes', 'information', ''].map(function (a, i) {
+      return { id: 'o' + i, nature: 'option', affecte: a, services: ['midi'] }; }) } });
+    egal(effets.referentiels.regimes.map(function (g) { return g.affecte; }), ['plat', '', '', ''],
+      'Anciens effets « portion à part » et « information » → sur l’assiette');
 
-    // Option « information » au petit déjeuner seulement (pots gourmands).
-    d.referentiels.regimes.push({ id: 'pots', nom: 'Pots gourmands', nature: 'option', affecte: 'information', couleur: '#eee', services: ['petitdej'] });
+    // Pots gourmands : alternative du petit déjeuner (option d'assiette), petit déjeuner seulement.
+    d.referentiels.regimes.push({ id: 'pots', nom: 'Pots gourmands', nature: 'option', affecte: '', couleur: '#eee', services: ['petitdej'] });
     d.residents[0].optionIds.push('pots');
     var pd = C.feuilleJour(d, s, 'lun_petitdej'), mi = C.feuilleJour(d, s, 'lun_midi');
     egal([col(pd, 'p1').c.opt.pots, pd.total.opt.pots, mi.total.opt.pots], [1, 1, undefined], 'Pots gourmands comptés au petit déjeuner (par parc), pas à midi');
+    egal(col(pd, 'p1').c.residents, 3, 'Le résident au pot gourmand reste compté dans les présents');
+    egal(C.ventilation(d, pd.total, 'petitdej').filter(function (v) { return v.id === 'pots'; }).map(function (v) { return v.valeur; }), [1],
+      'Pots gourmands dans « Sur ces N » du petit déjeuner');
     egal(C.particularites(d, 'lun_petitdej', col(pd, 'p1')).map(function (x) { return [x.regime.id, x.noms]; }), [['pots', ['A']]],
       'Chariot du petit déjeuner : pots gourmands, avec le nom');
     egal(C.chariot(d, s, 'lun_midi', col(mi, 'p1')).normauxSimples, 1, 'À midi, A reste un normal simple (pots non concernés)');

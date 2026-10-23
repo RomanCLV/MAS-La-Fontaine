@@ -79,9 +79,9 @@
     var t = textureDu(resident, refs, service, texDef);
     if (t) plus(cpt.tex, t, w);
     regimesDu(resident, refs, service).forEach(function (id) { plus(cpt.reg, id, w); });
+    // Option « +1 plat » : comptée en personnes ; option d'assiette : sur chacun de ses plats.
     optionsDu(resident, refs, service).forEach(function (id) {
-      var a = refs[id] ? refs[id].affecte : '';
-      plus(cpt.opt, id, (a === 'plat' || a === 'legumes' || a === 'information') ? 1 : w);
+      plus(cpt.opt, id, refs[id] && refs[id].affecte === 'plat' ? 1 : w);
     });
   }
 
@@ -189,7 +189,7 @@
     };
   }
 
-  // « Sur ces N plats : … » — textures hors défaut, régimes, options d'assiette (sans « affecte ») qui concernent le service.
+  // « Sur ces N plats : … » — textures hors défaut, régimes, options d'assiette (pas « +1 plat ») qui concernent le service.
   function ventilation(donnees, cpt, service) {
     var texDef = M.textureDefaut(donnees);
     return donnees.referentiels.regimes.filter(function (g) {
@@ -208,7 +208,7 @@
     var refs = M.refs(donnees);
     var texDef = M.textureDefaut(donnees);
     var sv = M.decoupeCreneau(c).service;
-    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], platsEnPlus: 0, legumes: 0 };
+    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], platsEnPlus: 0 };
     col.residents.forEach(function (r) {
       var opts = optionsDu(r, refs, sv).filter(function (id) { return refs[id]; });
       var regs = regimesDu(r, refs, sv).filter(function (id) { return refs[id]; });
@@ -227,7 +227,6 @@
       }
       var n = platsEnPlus(r, refs, sv);
       if (n) { res.doubles.push({ nom: M.nomAffiche(r), n: n }); res.platsEnPlus += n; }
-      opts.forEach(function (id) { if (refs[id].affecte === 'legumes') res.legumes += 1; });
     });
     res.salaries = col.salaries || { standard: 0, sansPorc: 0 };
     res.volume = col.c.total;

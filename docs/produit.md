@@ -19,8 +19,8 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 - **Régimes / textures / options** : liste éditable (ajout/retrait sans toucher à rien d'autre), nom + couleur + nature :
   - *Régime* (contrainte) : sans porc, sans résidus, diabétique, hypocalorique, sans produit de la mer, sans viande (halal : œufs/poisson, pas de viande).
   - *Texture* : normal, haché, mixé (même grammage ; un mixé/haché peut aussi être sans résidus).
-  - *Option* : double plat (+1 plat chaud seulement), double légumes vert (compté à part), enrichi, poisson/viande panée + pâtes/riz/frites, pots gourmands (information seulement, voir plus bas).
-  - Chaque option précise ce qu'elle affecte (ex. double plat → plat uniquement).
+  - *Option* : double plat (+1 plat chaud seulement), double légumes vert, enrichi, demi-portion, poisson/viande panée + pâtes/riz/frites, pots gourmands (alternative du petit déjeuner).
+  - Chaque option est soit « +1 plat chaud » (double plat), soit « sur l'assiette » (toutes les autres).
   - Page Régimes : une phrase sous chaque tableau rappelle la différence (texture = consistance, une seule ; régime = contrainte impérative ; option = ajout/changement sur l'assiette). La nature est fixée à la création (plus de passage régime ↔ option).
 - Le **Lude** : "mixé tout le froid" = assiette dressée à part (mention d'affichage, pas une texture à part).
 
@@ -72,7 +72,7 @@ Remplacer la chaîne Excel fragile (Effectif MCH → SEMAINE2 → RECAP → MATF
 
 ## Hors périmètre V1 (plus tard)
 - Lecture du menu (`menu 26.xls`, extrait du logiciel SOL de Sodexo) : règle métier future = si porc au menu, prévoir sans porc ; **tous les jours** prévoir sans viande (halal) et sans produit de la mer. Pas d'analyse des recettes/ingrédients (ex. "sauté Marengo" ambigu).
-- Pots gourmands : information (quantité par zone), **pas dans l'outil de production** ; emplacement à définir (note séparée / encart).
+- Pots gourmands : alternative au petit déjeuner classique, préparée par la cuisine (option du petit déjeuner, décision 2026-10-23).
 - Comparaison entre semaines, archives, âge/sexe, chambre, chiffrement.
 
 ## Contraintes

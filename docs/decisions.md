@@ -4,9 +4,9 @@
 |---|---|---|
 | 2026-10-19 | Outils 100 % gratuits, sans limite ni partie payante | Exigence utilisateur |
 | 2026-10-19 | Établissement = **MAS La Fontaine** (pas EHPAD) ; nom provisoire "Recueil Alimentation MAS La Fontaine" | Réponse utilisateur |
-| 2026-10-19 | Double plat = +1 plat chaud seulement ; double légumes compté à part | Réponses 1-2 |
+| 2026-10-19 | Double plat = +1 plat chaud seulement ; double légumes compté à part (simplifié le 2026-10-23, voir plus bas) | Réponses 1-2 |
 | 2026-10-19 | Texture (normal/haché/mixé) distincte des régimes ; mixé/haché combinable avec sans résidus | Réponse 3 |
-| 2026-10-19 | Pots gourmands = information hors outil de production | Réponse 4 |
+| 2026-10-19 | ~~Pots gourmands = information hors outil de production~~ → remplacé le 2026-10-23 (alternative du petit déjeuner, préparée par la cuisine) | Réponse 4 |
 | 2026-10-19 | Menu hors V1 (règle future : sans porc, sans viande, sans produit de la mer quotidiens) | Réponses 6, 24 |
 | 2026-10-19 | Sport : jeudi midi uniquement, repas retiré du parc d'origine, texture suit le résident | Réponses 8-10 |
 | 2026-10-19 | Nettoyage "sans viande" (halal : œufs/poisson) ; direction lun-ven midi | Réponses 11-12 |
@@ -161,3 +161,8 @@
 
 ## 2026-10-22 — Semaine : recherche élargie
 - Un seul champ cherche dans le nom, les textures / régimes / options du résident (nom ou abréviation) et l'observation. Plusieurs mots : **tous** doivent être trouvés, n'importe où. Ce qui a été trouvé est surligné (mots dans le nom / l'observation, cases cochées encadrées), sinon on ne comprend pas pourquoi un résident apparaît. Pas de menu « chercher dans » : plus simple. Raison : demande utilisateur (retrouver tous les résidents d'un régime ou d'une consigne).
+
+## 2026-10-23 — Options : deux effets seulement
+- Effet d'une option = **« +1 plat chaud »** (case à cocher, page Régimes) ou **« sur l'assiette »** (compté sur chacun des plats du résident). Effets « Portion comptée à part » et « Information (hors production) » retirés : sans intérêt concret pour l'utilisateur (l'étiquette du chariot suffit). Fichiers existants : ces effets deviennent « sur l'assiette » au chargement (pas de changement de version).
+- **Pots gourmands** : ce n'est pas une information mais une **alternative au petit déjeuner classique** (yaourt, riz au lait, crème pâtissière + brioche… pour qui ne peut pas mâcher), préparée par la cuisine. Option « sur l'assiette », petit déjeuner seulement : ligne OPTIONS de la feuille cuisine et « Sur ces N ». Plus de groupe « INFORMATIONS (hors production) ».
+- Double légumes vert : « sur l'assiette » (compté sur chaque plat) ; plus de mention « portions de légumes verts à part » sur le chariot.

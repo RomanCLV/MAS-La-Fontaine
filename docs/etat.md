@@ -90,3 +90,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - Semaine : recherche élargie — nom, textures / régimes / options (nom ou abréviation) et observation ; plusieurs mots = tous trouvés (« haché porc ») ; mots surlignés et cases trouvées encadrées, légende « Trouvé par la recherche ». « oeufs » trouve « œufs » (aussi sur la page Activités). Vérifié dans le navigateur intégré.
 - Défilement **à l’intérieur de la page de l’onglet** : la barre du haut (Pages, Importer, Exporter) et les onglets ouverts restent toujours visibles. Vérifié dans le navigateur intégré.
 - Onglets ouverts : **glisser-déposer** pour changer leur ordre (trait bleu à l’endroit de dépose ; ordre gardé à la réouverture). Vérifié dans le navigateur intégré.
+
+## Retours V1 (11e lot, 2026-10-23)
+- Options : deux effets seulement, « +1 plat chaud » (case à cocher) ou « sur l'assiette ». « Portion comptée à part » et « Information (hors production) » retirés ; pots gourmands = alternative du petit déjeuner, comptés dans la production. 128 tests verts ; vérifié dans le navigateur intégré.

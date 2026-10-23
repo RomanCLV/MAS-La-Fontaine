@@ -5,7 +5,7 @@
 - `Feuilles.construire(donnees, semaine, {cuisine, chariot, jours, services})` → fragment avec toutes les feuilles dans l'ordre jour × service.
 - Impression : `#impression` (hors de l'application) reçoit les feuilles puis `window.print()`. CSS : `@page { size: A4 landscape; margin: 0 }`, saut de page entre feuilles, couleurs forcées (`print-color-adjust: exact`).
 - Ajustement à la page : le tableau prend la place restante (`container-type: size`) ; `--n` = nombre de lignes (total/textures 1,4, bandeau 0,9) ; hauteur et texte des lignes réduits proportionnellement s'ils ne tiennent pas (sinon 20 px / 14 px comme la maquette).
-- Lignes textures / régimes / options : seulement celles qui concernent le service **et dont le total n'est pas 0** (idem pour les pastilles « Sur ces N plats », masquées si aucune) ; groupe vide non affiché. Options « information » (pots gourmands) : groupe « INFORMATIONS (hors production) », quantité par zone.
+- Lignes textures / régimes / options : seulement celles qui concernent le service **et dont le total n'est pas 0** (idem pour les pastilles « Sur ces N plats », masquées si aucune) ; groupe vide non affiché.
 - Petit déjeuner (présence seulement) : section REPAS (sans plats en plus ni pastilles « Sur ces N plats ») + éléments cochés pour ce service, total en « petits déj. » ; feuille chariot simple (`chariotSimple`) : bacs Salariés et Résidents (mêmes couleurs, masqués à 0), encadré « Particularités » (élément, nombre, noms), pas d'étiquettes.
 - Aucune alerte, aucun texte « manager » sur les feuilles.
-- Pots gourmands : petit déjeuner seulement (par défaut) ; groupe INFORMATIONS de la feuille cuisine et encadré Particularités du chariot.
+- Pots gourmands : petit déjeuner seulement (par défaut) ; ligne OPTIONS de la feuille cuisine et encadré Particularités du chariot.

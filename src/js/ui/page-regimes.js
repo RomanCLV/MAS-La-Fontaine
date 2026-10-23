@@ -9,14 +9,12 @@
     { nature: 'regime', titre: 'Régimes & Allergies', ajout: '+ Ajouter un régime',
       description: 'Contraintes alimentaires impératives : ce que le résident ne doit pas manger (sans porc, diabétique, allergies…). Plusieurs possibles.' },
     { nature: 'option', titre: 'Options', ajout: '+ Ajouter une option',
-      description: 'Ajouts ou changements sur l’assiette (double plat, enrichi, pots gourmands…), parfois des plats en plus. Plusieurs possibles.' }
+      description: 'Changements sur l’assiette (enrichi, demi-portion, pots gourmands…) ou plat chaud en plus (double plat). Plusieurs possibles.' }
   ];
-  var EFFETS = [
-    { v: '', nom: 'Assiette individuelle (compté sur les plats)' },
-    { v: 'plat', nom: '+1 plat chaud (EQ +1)' },
-    { v: 'legumes', nom: 'Portion comptée à part' },
-    { v: 'information', nom: 'Information : quantité par zone (hors production)' }
-  ];
+  // Options : deux effets seulement (affecte = 'plat' ou '').
+  var EFFET_PLAT = '+1 plat chaud (EQ +1)', EFFET_ASSIETTE = 'Sur l’assiette (compté sur les plats)';
+  var AIDE_PLAT = 'Coché : le résident reçoit un plat chaud entier en plus (ex. double plat). ' +
+    'Décoché : l’option change seulement son assiette (ex. enrichi, demi-portion).';
   var PROTEGES = [M.TEXTURE_DEFAUT, M.REGIME_SANS_PORC, M.REGIME_NETTOYAGE];
   var AIDE_AFFICHE = 'Coché : la colonne est toujours présente dans la grille Semaine. ' +
     'Décoché : elle n’apparaît que si un résident du parc affiché a cet élément.';
@@ -29,7 +27,7 @@
       if (g.id === M.REGIME_NETTOYAGE) t += ' ; inclut la ligne « Nettoyage sans viande »';
       return t;
     }
-    return (EFFETS.filter(function (e) { return e.v === (g.affecte || ''); })[0] || EFFETS[0]).nom;
+    return g.affecte === 'plat' ? EFFET_PLAT : EFFET_ASSIETTE;
   }
 
   function utilisations(d, g) {
@@ -130,8 +128,10 @@
           ed.id === M.textureDefaut(d) ? sansColonne()
             : caseAffiche(ed.visible, function () { ed.visible = !ed.visible; App.rendre(); }),
           ed.nature === 'option'
-            ? h('select', { 'aria-label': 'Effet sur la production', onchange: function (e) { ed.affecte = e.target.value; App.signalerModif(); } },
-              EFFETS.map(function (x) { return h('option', { value: x.v, selected: x.v === ed.affecte }, x.nom); }))
+            ? h('label', { class: 'choix' + (ed.affecte === 'plat' ? ' on' : ''), title: AIDE_PLAT },
+              h('input', { type: 'checkbox', checked: ed.affecte === 'plat', 'aria-label': '+1 plat chaud',
+                onchange: function () { ed.affecte = ed.affecte === 'plat' ? '' : 'plat'; App.rendre(); } }),
+              EFFET_PLAT)
             : h('span', { class: 'petit' }, effet({ id: ed.id, nature: ed.nature })),
           h('span', { class: 'actions-visibles' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),

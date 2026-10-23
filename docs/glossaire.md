@@ -16,7 +16,7 @@
 | Sport | Bloc temporaire du jeudi midi, regroupe des résidents de plusieurs parcs, chariot distinct. |
 | MCH | Nom de la feuille de saisie client ("Effectif MCH"). |
 | MATFER | Nom de la feuille de récap chariots (matériel de transport). |
-| Pots gourmands | Substitut/collation enrichie (ex. à la place d'un croissant). |
+| Pots gourmands | Alternative au petit déjeuner classique pour qui ne peut pas mâcher (yaourt, riz au lait, crème pâtissière + brioche…). Préparée par la cuisine, à la place du petit déjeuner (pas en plus). |
 | Sans résidus | Régime pauvre en fibres. |
 | Enrichi | Plat enrichi en calories/protéines. |
 

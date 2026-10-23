@@ -95,18 +95,10 @@
         lignes.push(ligne(nomCourt(g), function (x) { return x.reg[g.id] || 0; }));
       });
     }
-    var options = lignesNature('option', function (g) { return g.affecte !== 'plat' && g.affecte !== 'information'; });
+    var options = lignesNature('option', function (g) { return g.affecte !== 'plat'; });
     if (options.length) {
       lignes.push(groupe('OPTIONS'));
       options.forEach(function (g) {
-        lignes.push(ligne(nomCourt(g) + (g.affecte === 'legumes' ? ' (à part)' : ''), function (x) { return x.opt[g.id] || 0; }));
-      });
-    }
-    // Options « information » (ex. pots gourmands) : quantité par zone, hors production.
-    var infos = lignesNature('option', function (g) { return g.affecte === 'information'; });
-    if (infos.length) {
-      lignes.push(groupe('INFORMATIONS (hors production)'));
-      infos.forEach(function (g) {
         lignes.push(ligne(nomCourt(g), function (x) { return x.opt[g.id] || 0; }));
       });
     }
@@ -267,7 +259,6 @@
         enPlus.push(O.pluriel(ch.platsEnPlus, 'plat chaud', 'plats chauds') + ' en plus (étiquette ' +
           ch.doubles.map(function (x) { return x.nom + (x.n > 1 ? ' ×' + (x.n + 1) : ''); }).join(', ') + ')');
       }
-      if (ch.legumes) enPlus.push(O.pluriel(ch.legumes, 'portion') + ' de légumes verts à part');
       return h('div', { class: 'ch-collectif' },
         h('div', { class: 'ch-bandeau' }, 'COLLECTIF · bacs à charger'),
         h('div', { class: 'ch-bacs' },
