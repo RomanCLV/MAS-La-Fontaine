@@ -26,7 +26,8 @@
     brouillons: {},   // brouillons non enregistrés, par clé d'onglet
     etat: {},         // états d'écran temporaires (filtres, éditions en ligne…)
     menuOuvert: false,   // false, 'pages' (bouton ☰ Pages) ou 'plus' (bouton + de la barre d'onglets)
-    erreurSauvegarde: false
+    erreurSauvegarde: false,
+    copieIllisible: null // { erreur, texte } : cache présent mais illisible, gardé tant qu'on ne le remplace pas
   };
 
   function cle(o) { return o.type + (o.id ? ':' + o.id : ''); }
@@ -37,7 +38,9 @@
 
   // ---------- Démarrage ----------
   App.demarrer = function () {
-    App.donnees = S.chargerCopie();
+    var copie = S.chargerCopie();
+    App.donnees = copie.donnees;
+    App.copieIllisible = copie.erreur ? { erreur: copie.erreur, texte: copie.texte } : null;
     App.meta = S.meta();
     App.ui = etatUi(S.lireUi());
     if (App.donnees) App.nettoyerOnglets();
@@ -248,6 +251,14 @@
   };
 
   App.remplacerDonnees = function (donnees, origine) {
+    // Cache illisible : on ne l'écrase qu'après confirmation (l'accueil propose de le télécharger avant).
+    if (App.copieIllisible) {
+      App.confirmer('Remplacer les données illisibles de ce navigateur ?\n\nElles seront effacées. ' +
+        'Si vous ne l’avez pas encore fait, annulez et cliquez d’abord sur « Télécharger les données illisibles » : ' +
+        'ce fichier permettra peut-être de les récupérer.',
+        function () { App.copieIllisible = null; App.remplacerDonnees(donnees, origine); }, { ok: 'Remplacer', danger: true });
+      return;
+    }
     App.donnees = donnees;
     App.brouillons = {};
     App.etat = {};
@@ -272,6 +283,7 @@
     App.etat = {};
     App.menuOuvert = false;
     App.erreurSauvegarde = false;
+    App.copieIllisible = null;
     App.ui = etatUi({});
     App.rendre(true);
     return true;

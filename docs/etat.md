@@ -93,3 +93,4 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 
 ## Retours V1 (11e lot, 2026-10-23)
 - Options : deux effets seulement, « +1 plat chaud » (case à cocher) ou « sur l'assiette ». « Portion comptée à part » et « Information (hors production) » retirés ; pots gourmands = alternative du petit déjeuner, comptés dans la production. 128 tests verts ; vérifié dans le navigateur intégré.
+- **Version du format de données** (règle dans `code/data.md`) : `migrer` = conversions enchaînées (V1 → V2 → V3 → V4) puis normalisation. Cache illisible (JSON abîmé, version trop récente, bug de migration) : gardé, message sur l'accueil + « Télécharger les données illisibles », confirmation avant de le remplacer. Cache d'une ancienne version : copie de l'original gardée avant migration (page Options, « Télécharger cette copie »). 133 tests verts ; vérifié dans le navigateur intégré (cache V3 migré + copie, version 99, JSON abîmé).

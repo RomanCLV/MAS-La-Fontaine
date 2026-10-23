@@ -301,6 +301,23 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
     try { M.migrer({ app: M.APP, version: 99 }); } catch (e) { refus++; }
     egal(refus, 2, 'Fichier étranger ou trop récent refusé');
+
+    // Conversions enchaînées : un fichier V1 passe par 1 → 2 → 3 → 4, puis une seule normalisation.
+    var brut = { app: M.APP, version: 1,
+      referentiels: { regimes: [{ id: 'hache', nature: 'texture' }, { id: 'pots_gourmands', nature: 'option' }] },
+      residents: [{ id: 'Z', absences: [{ debut: '2026-10-12', fin: '2026-10-12', services: ['midi', 'soir'] }] }],
+      semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 4 } }] };
+    var avant = JSON.stringify(brut);
+    var ch = M.migrer(brut);
+    egal([ch.version, ch.semaines[0].nettoyage, ch.semaines[0].nettoyageSansViande, ch.residents[0].absences[0].services,
+      ch.referentiels.regimes.map(function (g) { return g.services; })],
+      [M.VERSION, {}, { lun_midi: 4 }, ['petitdej', 'midi', 'soir'], [['midi', 'soir'], ['petitdej']]],
+      'Version 1 : les trois conversions appliquées dans l’ordre');
+    egal(JSON.stringify(brut) === avant, true, 'Le fichier d’origine n’est pas modifié (copie)');
+    egal(JSON.stringify(M.migrer(ch)) === JSON.stringify(ch), true, 'Normalisation rejouable : relire un fichier à jour ne change rien');
+    var j = jeu();
+    egal(JSON.stringify(M.migrer(M.copie(j))) === JSON.stringify(j), true, 'Jeu d’essai relu à l’identique');
+    egal(M.migrer({ app: M.APP }).version, M.VERSION, 'Sans numéro de version : traité comme version 1');
   });
 
   groupe('Colonnes affichées dans la grille', function () {

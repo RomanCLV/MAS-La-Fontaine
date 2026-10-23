@@ -29,7 +29,7 @@
   R.Pages.options = {
     titre: function () { return 'Options'; },
     rendu: function () {
-      var m = App.meta, e = App.etat.options || {};
+      var m = App.meta, e = App.etat.options || {}, avant = S.avantMigration();
       return h('div', { class: 'page' },
         h('div', { class: 'page-tete' }, h('h1', null, 'Options')),
         h('div', { class: 'cartes' },
@@ -48,6 +48,11 @@
               'Attention : la copie actuelle a des modifications non exportées. Exportez-la d’abord si vous voulez les garder. ',
               h('button', { class: 'btn', onclick: function () { App.ouvrir('export'); } }, 'Exporter…')) : null,
             e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.erreur) : null,
+            avant ? h('div', { class: 'petit' },
+              'Copie gardée avant la dernière mise à jour du format des données (version ' + avant.version + ', le ' + quand(avant.le) + '). ',
+              h('button', { class: 'btn', onclick: function () {
+                S.telechargerTexte(JSON.stringify(avant.donnees, null, 1), 'Recueil avant mise à jour (version ' + avant.version + ').json');
+              } }, 'Télécharger cette copie')) : null,
             h('div', { class: 'rangee' },
               h('button', { class: 'btn btn-danger', onclick: vider }, 'Vider le cache local')),
             h('div', { class: 'petit' }, 'Utile pour repartir d’une application propre, ou avant de laisser le poste à quelqu’un d’autre. ' +

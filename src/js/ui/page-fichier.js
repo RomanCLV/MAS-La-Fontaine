@@ -48,11 +48,19 @@
     rendu: function () {
       var e = App.etat.import || {};
       var fichier = champFichier(lire);
+      var illisible = App.copieIllisible;
       // Deux familles : reprendre des données existantes (plus tard : depuis Excel) / créer une base neuve.
       return h('div', { class: 'page' },
         h('div', { class: 'carte accueil' },
           h('h1', null, 'Bienvenue'),
-          h('p', null, 'Aucune donnée dans ce navigateur pour l’instant. Pour commencer :'),
+          illisible ? h('div', { class: 'message message-ko', role: 'alert' },
+            h('div', { class: 'gras' }, 'Les données enregistrées dans ce navigateur n’ont pas pu être lues : ' + illisible.erreur),
+            h('div', null, 'Elles sont gardées telles quelles. Téléchargez-les pour pouvoir les faire récupérer, ' +
+              'puis ouvrez votre dernier fichier exporté ou commencez une nouvelle base.'),
+            h('div', { class: 'rangee' }, h('button', { class: 'btn', onclick: function () {
+              S.telechargerTexte(illisible.texte, 'Recueil données illisibles ' + M.aujourdhui() + '.json');
+            } }, 'Télécharger les données illisibles'))) : null,
+          h('p', null, illisible ? 'Pour continuer :' : 'Aucune donnée dans ce navigateur pour l’instant. Pour commencer :'),
           e.lecture ? h('div', { class: 'message', role: 'status' }, 'Lecture de ' + e.nom + '…') : null,
           e.erreur ? h('div', { class: 'message message-ko', role: 'alert' }, e.nom + ' : ' + e.erreur) : null,
           h('section', { class: 'accueil-groupe', 'aria-labelledby': 'acc-reprendre' },

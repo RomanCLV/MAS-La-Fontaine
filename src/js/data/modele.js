@@ -164,10 +164,39 @@
 
   function copie(o) { return JSON.parse(JSON.stringify(o)); }
 
-  // ---- Migration / normalisation d'un fichier importé ----
+  // ---- Migration d'un fichier importé ou du cache : conversions de version, puis normalisation ----
+  // Règle (docs/code/data.md) : VERSION augmente seulement si un vieux fichier, lu tel quel, changerait de sens.
   function tableau(v) { return Array.isArray(v) ? v : []; }
   function objet(v) { return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; }
   function nombre(v) { v = +v; return isFinite(v) && v > 0 ? Math.floor(v) : 0; }
+
+  // CONVERSIONS[n] fait passer les données de la version n à n + 1 (sur place). Un fichier V1 les enchaîne toutes.
+  // Chacune est écrite pour le format de sa version et ne change plus jamais ; la normalisation passe après.
+  var CONVERSIONS = {
+    // 1 → 2 : tout le nettoyage était « sans viande » → nettoyageSansViande ; nettoyage (standard) vide.
+    1: function (d) {
+      tableau(d.semaines).forEach(function (s) {
+        if (!s) return;
+        s.nettoyageSansViande = s.nettoyage;
+        s.nettoyage = {};
+      });
+    },
+    // 2 → 3 : petit déjeuner ajouté ; une absence « midi et soir » couvre aussi le petit déjeuner.
+    2: function (d) {
+      tableau(d.residents).forEach(function (r) {
+        tableau(r && r.absences).forEach(function (a) {
+          var sv = a && a.services;
+          if (Array.isArray(sv) && sv.indexOf('midi') >= 0 && sv.indexOf('soir') >= 0 && sv.indexOf('petitdej') < 0) sv.unshift('petitdej');
+        });
+      });
+    },
+    // 3 → 4 : services concernés par chaque texture / régime / option = midi et soir (pots gourmands : petit déjeuner).
+    3: function (d) {
+      tableau(objet(d.referentiels).regimes).forEach(function (g) {
+        if (g) g.services = (String(g.id) === 'pots_gourmands' ? SERVICES_POTS_GOURMANDS : SERVICES_REGIME_DEFAUT).slice();
+      });
+    }
+  };
 
   function migrer(entree) {
     if (!entree || typeof entree !== 'object') throw new Error('Ce fichier ne contient pas de données lisibles.');
@@ -175,10 +204,13 @@
     if (+entree.version > VERSION) {
       throw new Error('Ce fichier vient d\'une version plus récente de l\'application (version ' + entree.version + ').');
     }
-    var ancienne = (+entree.version || 1) < 2;
-    var sansPetitDej = (+entree.version || 1) < 3;
-    var sansServicesRegimes = (+entree.version || 1) < 4;
     var d = copie(entree);
+    for (var v = Math.max(1, Math.floor(+entree.version) || 1); v < VERSION; v++) {
+      if (!CONVERSIONS[v]) throw new Error('Conversion de la version ' + v + ' à ' + (v + 1) + ' manquante.');
+      CONVERSIONS[v](d);
+    }
+    // Normalisation (à chaque chargement, rejouable) : valeurs par défaut, types, champs inconnus retirés.
+    // Tout champ des résidents, parcs, régimes… doit figurer ici, sinon il est effacé au rechargement.
     d.version = VERSION;
     d.etablissement = d.etablissement || 'MAS La Fontaine';
     d.referentiels = objet(d.referentiels);
@@ -192,10 +224,7 @@
       // Options : +1 plat chaud ou rien (les anciens effets « portion à part » et « information » sont retirés, 2026-10-23).
       if (n.nature === 'option') n.affecte = g.affecte === 'plat' ? 'plat' : '';
       n.toujoursVisible = g.toujoursVisible !== false; // absent (fichiers d'avant) : toujours affiché
-      // Avant la version 4 : tout concernait midi et soir (petit déjeuner sans régimes), sauf les pots gourmands.
-      n.services = sansServicesRegimes
-        ? (n.id === 'pots_gourmands' ? SERVICES_POTS_GOURMANDS : SERVICES_REGIME_DEFAUT).slice()
-        : IDS_SERVICES.filter(function (x) { return tableau(g.services).indexOf(x) >= 0; });
+      n.services = IDS_SERVICES.filter(function (x) { return tableau(g.services).indexOf(x) >= 0; });
       return n;
     });
     d.residents = tableau(d.residents).map(function (r) {
@@ -206,8 +235,6 @@
         consigne: r.consigne || '', archive: !!r.archive,
         absences: tableau(r.absences).filter(function (a) { return a && a.debut && a.fin; }).map(function (a) {
           var sv = IDS_SERVICES.filter(function (x) { return tableau(a.services).indexOf(x) >= 0; });
-          // Avant la version 3 : une absence « midi et soir » couvre aussi le petit déjeuner.
-          if (sansPetitDej && sv.indexOf('midi') >= 0 && sv.indexOf('soir') >= 0 && sv.indexOf('petitdej') < 0) sv.unshift('petitdej');
           return { debut: a.debut, fin: a.fin, services: sv.length ? sv : IDS_SERVICES.slice() };
         })
       };
@@ -231,12 +258,9 @@
         var v = s.sodexo[c];
         n.sodexo[c] = typeof v === 'object' && v ? { standard: nombre(v.standard) + nombre(v.sansPorc), sansPorc: 0 } : { standard: nombre(v), sansPorc: 0 };
       });
-      Object.keys(objet(s.direction)).forEach(function (c) { n.direction[c] = nombre(s.direction[c]); });
-      // Version 1 : tout le nettoyage était « sans viande » → passe dans nettoyageSansViande.
-      var nettoyageSV = ancienne ? s.nettoyage : s.nettoyageSansViande;
-      if (!ancienne) Object.keys(objet(s.nettoyage)).forEach(function (c) { n.nettoyage[c] = nombre(s.nettoyage[c]); });
-      Object.keys(objet(nettoyageSV)).forEach(function (c) { n.nettoyageSansViande[c] = nombre(nettoyageSV[c]); });
-      Object.keys(objet(s.temoins)).forEach(function (c) { n.temoins[c] = nombre(s.temoins[c]); });
+      ['direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].forEach(function (k) {
+        Object.keys(objet(s[k])).forEach(function (c) { n[k][c] = nombre(s[k][c]); });
+      });
       return n;
     });
     d.semaines.sort(function (a, b) { return a.debut < b.debut ? -1 : 1; });
