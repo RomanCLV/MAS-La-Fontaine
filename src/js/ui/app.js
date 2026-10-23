@@ -222,8 +222,9 @@
   // Remplacent window.confirm / window.alert : le navigateur propose de les bloquer (« Ne plus autoriser ce site
   // à vous solliciter ») et confirm() répond alors toujours « non » sans rien afficher. Une page ne peut pas lire
   // ce réglage : on affiche donc nos propres fenêtres, que le navigateur ne bloque jamais.
-  // Le texte passe par textContent ; les \n font des retours à la ligne.
-  function dialogue(texte, boutons, surFin) {
+  // Le texte passe par textContent ; les \n font des retours à la ligne. contenu : texte ou élément (formulaire).
+  // Bouton { avant: fn } : fn() renvoie false pour garder la fenêtre ouverte (saisie à corriger).
+  function dialogue(contenu, boutons, surFin) {
     var fini = false;
     function finir(choix) {
       if (fini) return;
@@ -234,13 +235,17 @@
     }
     // Échap ferme la fenêtre (événement close) : vaut « Annuler ».
     var d = h('dialog', { class: 'dialogue', onclose: function () { finir(''); } },
-      h('p', { class: 'dialogue-texte' }, texte),
+      typeof contenu === 'string' ? h('p', { class: 'dialogue-texte' }, contenu) : contenu,
       h('div', { class: 'dialogue-boutons' }, boutons.map(function (b) {
-        return h('button', { class: 'btn ' + (b.classe || ''), autofocus: b.focus, onclick: function () { finir(b.valeur); } }, b.texte);
+        return h('button', { class: 'btn ' + (b.classe || ''), autofocus: b.focus, onclick: function () {
+          if (b.avant && b.avant() === false) return;
+          finir(b.valeur);
+        } }, b.texte);
       })));
     document.body.appendChild(d);
     d.showModal();
   }
+  App.fenetre = dialogue;
   // suite() n'est appelée que si l'utilisateur confirme. opts : { ok: 'Supprimer', danger: true }.
   App.confirmer = function (texte, suite, opts) {
     opts = opts || {};

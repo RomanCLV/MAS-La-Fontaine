@@ -12,7 +12,7 @@
     var k = App.cle(o);
     if (!App.brouillons[k]) {
       var r = M.resident(App.donnees, o.id);
-      App.brouillons[k] = { r: M.copie(r), nouveau: false, modifie: false, erreur: '', abs: absenceVide() };
+      App.brouillons[k] = { r: M.copie(r), nouveau: false, modifie: false, erreur: '' };
     }
     return App.brouillons[k];
   }
@@ -24,7 +24,7 @@
       : App.ui.parcActif && M.parc(d, App.ui.parcActif) ? App.ui.parcActif : (d.referentiels.parcs[0] || {}).id;
     var r = M.residentVide(parcId);
     r.textureId = M.textureDefaut(d);
-    App.brouillons['resident:' + r.id] = { r: r, nouveau: true, modifie: false, erreur: '', abs: absenceVide() };
+    App.brouillons['resident:' + r.id] = { r: r, nouveau: true, modifie: false, erreur: '' };
     App.ouvrir('resident', r.id);
   }
 
@@ -90,16 +90,45 @@
         delete App.brouillons[k];
         App.rendre();
       }
+      // Fenêtre de saisie : l'absence n'existe qu'après « Ajouter l'absence » (pas de dates oubliées dans la fiche).
       function ajouterAbsence() {
-        var a = b.abs;
-        if (!a.debut || !a.fin) { b.erreur = 'Indiquez les deux dates de l’absence.'; App.rendre(); return; }
-        if (a.fin < a.debut) { b.erreur = 'La date de fin est avant la date de début.'; App.rendre(); return; }
-        if (!a.services.length) { b.erreur = 'Cochez au moins un service.'; App.rendre(); return; }
-        r.absences.push({ debut: a.debut, fin: a.fin, services: a.services.slice() });
-        r.absences.sort(function (x, y) { return x.debut < y.debut ? -1 : 1; });
-        b.abs = absenceVide();
-        b.erreur = ''; b.modifie = true;
-        App.rendre();
+        var a = absenceVide();
+        var zoneErreur = h('div', { class: 'message message-ko', role: 'alert', hidden: true });
+        var champAu = h('input', { id: 'f-au', type: 'date', onchange: function (e) { a.fin = e.target.value; } });
+        function erreur(texte) { zoneErreur.textContent = texte; zoneErreur.hidden = false; return false; }
+        var formulaire = h('div', { class: 'absence-saisie' },
+          h('div', { class: 'gras grand' }, 'Nouvelle absence'),
+          zoneErreur,
+          h('div', { class: 'rangee bas' },
+            h('div', { class: 'champ' }, h('label', { for: 'f-du' }, 'Du'),
+              h('input', { id: 'f-du', type: 'date', autofocus: true, onchange: function (e) {
+                a.debut = e.target.value;
+                // Absence d'un jour : la fin reprend le début tant qu'elle est vide ou avant.
+                if (a.debut && (!a.fin || a.fin < a.debut)) { a.fin = a.debut; champAu.value = a.debut; }
+              } })),
+            h('div', { class: 'champ' }, h('label', { for: 'f-au' }, 'Au (inclus)'), champAu)),
+          h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Services'),
+            M.SERVICES.map(function (x) {
+              return h('label', { class: 'choix on' }, h('input', { type: 'checkbox', checked: true, onchange: function (e) {
+                e.target.parentNode.classList.toggle('on', e.target.checked);
+                var liste = e.target.checked ? a.services.concat([x.id]) : a.services.filter(function (id) { return id !== x.id; });
+                a.services = M.IDS_SERVICES.filter(function (id) { return liste.indexOf(id) >= 0; });
+              } }), x.nom);
+            })));
+        App.fenetre(formulaire, [
+          { texte: 'Annuler', valeur: '' },
+          { texte: '+ Ajouter l’absence', valeur: 'ok', classe: 'btn-principal', avant: function () {
+            if (!a.debut || !a.fin) return erreur('Indiquez les deux dates de l’absence.');
+            if (a.fin < a.debut) return erreur('La date de fin est avant la date de début.');
+            if (!a.services.length) return erreur('Cochez au moins un service.');
+          } }
+        ], function (choix) {
+          if (choix !== 'ok') return;
+          r.absences.push({ debut: a.debut, fin: a.fin, services: a.services.slice() });
+          r.absences.sort(function (x, y) { return x.debut < y.debut ? -1 : 1; });
+          b.modifie = true;
+          App.rendre();
+        });
       }
 
       return h('div', { class: 'page' },
@@ -138,21 +167,7 @@
                   r.absences.splice(i, 1); b.modifie = true; App.rendre();
                 } }, 'Retirer'));
             }),
-            h('div', { class: 'rangee bas' },
-              h('div', { class: 'champ' }, h('label', { for: 'f-du' }, 'Du'),
-                h('input', { id: 'f-du', type: 'date', value: b.abs.debut, onchange: function (e) { b.abs.debut = e.target.value; } })),
-              h('div', { class: 'champ' }, h('label', { for: 'f-au' }, 'Au (inclus)'),
-                h('input', { id: 'f-au', type: 'date', value: b.abs.fin, onchange: function (e) { b.abs.fin = e.target.value; } })),
-              h('fieldset', { class: 'groupe-choix' }, h('legend', null, 'Services'),
-                M.SERVICES.map(function (x) {
-                  var on = b.abs.services.indexOf(x.id) >= 0;
-                  return h('label', { class: 'choix' + (on ? ' on' : '') }, h('input', { type: 'checkbox', checked: on, onchange: function () {
-                    var liste = on ? b.abs.services.filter(function (id) { return id !== x.id; }) : b.abs.services.concat([x.id]);
-                    b.abs.services = M.IDS_SERVICES.filter(function (id) { return liste.indexOf(id) >= 0; });
-                    App.rendre();
-                  } }), x.nom);
-                })),
-              h('button', { class: 'btn gras', onclick: ajouterAbsence }, '+ Ajouter l’absence'))),
+            h('div', null, h('button', { class: 'btn gras', onclick: ajouterAbsence }, '+ Ajouter une absence'))),
           h('div', { class: 'rangee boutons' },
             h('button', { class: 'btn btn-principal', onclick: enregistrer }, 'Enregistrer'),
             h('button', { class: 'btn', onclick: annuler }, b.nouveau ? 'Annuler' : 'Annuler les modifications'),

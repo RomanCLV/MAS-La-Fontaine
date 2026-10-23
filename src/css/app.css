@@ -228,6 +228,8 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .choix-info{min-height:32px;background:var(--bleu-clair);cursor:default}
 .absences{border:2px solid var(--gris);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;background:#faf9f5}
 .absence{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:8px}
+.absence-saisie{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.absence-saisie [hidden]{display:none}
 
 /* Référentiels */
 .ligne-ref{display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd;padding:6px 0;font-size:15px}
