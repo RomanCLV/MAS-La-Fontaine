@@ -25,6 +25,21 @@ a.menu-item{text-decoration:none;color:inherit}
 .lien-guide{font-weight:700;color:var(--bleu)}
 .aide-pied{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 
+/* Nouveautés (fenêtre d'annonce, historique ; aussi dans guide.html) */
+.nouv-version{margin:0 0 14px}
+.nouv-version h3{margin:0 0 8px;font-size:16px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.nouv-date{font-size:13px;font-weight:400;color:#555}
+.nouv-points{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45}
+.nouv-points li{display:flex;align-items:flex-start;gap:10px}
+.nouv-points .btn-petit{margin-left:8px;vertical-align:baseline}
+.nouv-lien{margin-left:8px;font-weight:400;white-space:nowrap}
+.nouv-type{flex:none;min-width:70px;text-align:center;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#fff;background:#666;margin-top:1px}
+.nouv-nouveau{background:#2e7d32}
+.nouv-deplace{background:#b45309}
+.nouv-modifie{background:#2d6cb5}
+.nouv-retire{background:#b3261e}
+.nouv-corrige{background:#666}
+
 /* Présentation de démarrage */
 .dialogue.dialogue-presentation{width:min(640px,calc(100vw - 32px));max-width:none;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto}
 .presentation{display:flex;flex-direction:column;gap:14px}

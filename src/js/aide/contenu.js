@@ -7,7 +7,7 @@
   // Sections du guide (identifiants des ancres de guide.html). Vérifiées par guide.html au chargement et par tests.html.
   var SECTIONS = ['demarrer', 'donnees', 'ecran', 'accueil', 'mise-en-route', 'semaine', 'residents', 'fiche-resident', 'parcs',
     'services', 'regimes', 'activites', 'importer', 'exporter', 'imprimer', 'options', 'feuilles', 'calculs', 'recettes',
-    'problemes', 'glossaire'];
+    'problemes', 'glossaire', 'horsparc', 'nombres', 'nouveautes'];
 
   // Une aide par type de page : quoi (à quoi sert la page), points (3 à 6), illustration, section du guide.
   var PAGES = {

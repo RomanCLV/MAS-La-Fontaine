@@ -82,6 +82,7 @@
                 h('span', { class: 'tuile-titre' }, 'Guide d’utilisation'),
                 h('span', { class: 'tuile-detail' }, 'Comment fonctionne l’application, page par page (s’ouvre dans un nouvel onglet).')))),
           h('p', { class: 'petit accueil-version' }, 'Version ' + M.VERSION_APP + ' · ',
+            h('button', { class: 'lien', onclick: function () { R.AideUi.nouveautes(); } }, 'Nouveautés'), ' · ',
             h('a', { href: R.Aide.lienGuide(), target: '_blank', rel: 'noopener' }, 'Guide d’utilisation'))));
     }
   };

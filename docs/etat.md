@@ -2,7 +2,7 @@
 
 **Phase courante** : 5 Code — **V1 écrite, à tester par l'utilisateur** (2026-10-19).
 Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techniques dans `technique.md`).
-**Dernière MAJ** : 2026-10-23
+**Dernière MAJ** : 2026-10-24
 
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
@@ -102,3 +102,6 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - **Sélection multiple des cases de quantité** (14e lot, 2026-10-23, `selection-nombres.js`) : livraison 1 = clic / glisser (rectangle, défilement auto) / Maj+clic, saisie (chiffre, Entrée, double-clic), Suppr (toast), Échap, clavier écouté seulement pendant une sélection ; livraison 2 = nombre écrit dans toutes les cases sélectionnées (aperçu bleu), flèches / Maj+flèches ; livraison 3 = Ctrl+C / X / V internes (pointillés, collage vers un autre parc, couper vidé au collage). 187 tests verts ; vérifié dans le navigateur intégré (Chromium). **À tester par l'utilisateur dans Firefox.**
 - **Ctrl+Z / Ctrl+Y** sur la page Semaine (`historique.js`) : un historique par semaine pour présences et quantités (100 actions, mémoire seulement), retour sur l'onglet concerné + message. 195 tests verts ; vérifié dans le navigateur intégré (présences, Suppr, couper-coller qui se chevauche, retour depuis Hors parc). À tester dans Firefox.
 - **Onglet « Hors parc »** (13e lot, 2026-10-23) : Sodexo, Direction, Nettoyage, Nettoyage sans viande, Plats témoins et « Total hors parcs » déplacés des onglets de parc vers un onglet « Hors parc » à droite des parcs, dans la page Semaine (même semaine, mêmes services affichés). Les onglets de parc gardent les salariés du parc. Guide et aide mis à jour. 174 tests verts ; vérifié dans le navigateur intégré (saisie, total, retour sur un parc).
+
+## Retours V1 (15e lot, 2026-10-24)
+- **Nouveautés** (`js/aide/nouveautes.js`) : fenêtre « Quoi de neuf ? » une fois par navigateur après une mise à jour annoncée, bouton « Voir » (ex. ouvre l'onglet Hors parc), liens vers le guide ; historique dans « ? Aide › Nouveautés », Options, accueil, guide (section 10). **Version 1.1**. 210 tests verts ; vérifié dans le navigateur intégré (premier démarrage sans fenêtre, base 1.0 → fenêtre, « Voir », pas de 2e affichage, historique, guide). Règle de mise à jour : `docs/aide.md` § 5.

@@ -23,7 +23,7 @@ Textes à relire : `aide-textes.md` (présentation + aides par page), `aide-guid
 - Pages couvertes : Semaine, Résidents (liste / tableau), Fiche résident, Parcs, Services, Régimes, Activités, Importer, Exporter, Imprimer, Options.
 
 ## 4. Accueil et version
-- Nouveau groupe « Besoin d'aide ? » avec la tuile « Guide d'utilisation » ; pied de page **« Version 1.0 · Guide d'utilisation »**.
+- Nouveau groupe « Besoin d'aide ? » avec la tuile « Guide d'utilisation » ; pied de page **« Version 1.1 · Nouveautés · Guide d'utilisation »**.
 - Version de l'application = **une constante unique** (distincte de la version du format de données), affichée aussi dans le menu Aide et la page Options.
 
 ## Ordre de réalisation
@@ -34,3 +34,8 @@ Textes à relire : `aide-textes.md` (présentation + aides par page), `aide-guid
 - [x] Contenu rédigé (brouillon dans `aide-textes.md` et `aide-guide.md`) — **à relire par l'utilisateur** (points « à confirmer » inclus).
 - [x] `guide.html` · [x] menu Aide + fenêtres · [x] présentation · [x] accueil + version · [x] docs de code (`code/aide.md`) + tests (174 verts). Fait le 2026-10-23, à tester par l'utilisateur dans Firefox.
 - Écart avec la définition : le **guide** est du HTML écrit à la main (long texte, lisible avec Ctrl+F) ; le contenu partagé (`contenu.js`) couvre la présentation et les aides par page, et les **maquettes** sont communes aux trois. `guide.html` contrôle lui-même ses ancres au chargement.
+
+## 5. Nouveautés (annonce de mise à jour, 2026-10-24)
+- Liste unique : `src/js/aide/nouveautes.js` (une entrée par version : date, `annoncer`, points typés Nouveau / Déplacé / Modifié / Retiré / Corrigé, bouton « Voir » vers la page, lien « En savoir plus » vers le guide).
+- **Fenêtre « Quoi de neuf ? »** au démarrage, **une fois par navigateur**, si une version `annoncer: true` est sortie depuis la dernière vue (versions sautées regroupées). Pas au premier démarrage (présentation). Relue par « ? Aide › Nouveautés », Options › À propos, accueil, guide (section 10).
+- **Règle** : tout changement visible (élément déplacé, renommé, retiré, nouvelle fonction) = une ligne dans `nouveautes.js`, écrite avec le changement (version suivante, invisible tant que `VERSION_APP` ne l'atteint pas). Correction seule = version x.y.z, `annoncer: false` ou rien. Avant un déploiement : monter `Modele.VERSION_APP`, dater l'entrée, relire les phrases avec l'utilisateur. `tests.html` échoue si la version n'a pas d'entrée.

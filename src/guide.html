@@ -32,6 +32,7 @@
     <li><a class="niv1" href="#recettes">7. Je veux…</a></li>
     <li><a class="niv1" href="#problemes">8. Problèmes courants</a></li>
     <li><a class="niv1" href="#glossaire">9. Glossaire</a></li>
+    <li><a class="niv1" href="#nouveautes">10. Nouveautés</a></li>
   </ol>
 </nav>
 
@@ -354,12 +355,18 @@
   <dt>Texture</dt><dd>Consistance du plat : normal, haché, mixé…</dd>
 </dl>
 
+<!-- ================= 10. NOUVEAUTÉS ================= -->
+<h2 id="nouveautes">10. Nouveautés</h2>
+<p>Ce qui a changé à chaque version, la plus récente d’abord (version actuelle : <span data-version></span>). Après une mise à jour importante, ces changements s’affichent aussi <strong>une fois</strong> dans l’application ; on les relit par « ? Aide » › Nouveautés.</p>
+<div data-nouveautes></div>
+
 </main>
 </div>
 
 <script src="js/data/modele.js"></script>
 <script src="js/ui/outils.js"></script>
 <script src="js/aide/contenu.js"></script>
+<script src="js/aide/nouveautes.js"></script>
 <script src="js/aide/illustrations.js"></script>
 <script>
 (function (R) {
@@ -370,6 +377,18 @@
     if (m) el.replaceWith(m); else console.error('Maquette inconnue : ' + el.getAttribute('data-illu'));
   });
   document.querySelectorAll('[data-version]').forEach(function (el) { el.textContent = R.Modele.VERSION_APP; });
+  // Historique des versions (même liste que la fenêtre « Nouveautés » de l'application).
+  var N = R.Nouveautes, h = R.h;
+  document.querySelectorAll('[data-nouveautes]').forEach(function (el) {
+    el.replaceWith(h('div', null, N.publiees(R.Modele.VERSION_APP).map(function (v) {
+      return h('section', { class: 'nouv-version' },
+        h('h3', null, 'Version ' + v.version, h('span', { class: 'nouv-date' }, N.dateLongue(v.date))),
+        h('ul', { class: 'nouv-points' }, v.points.map(function (p) {
+          return h('li', null, h('span', { class: 'nouv-type nouv-' + p.type }, N.TYPES[p.type]),
+            h('span', null, R.Illustrations.texte(p.texte), p.guide ? h('a', { class: 'nouv-lien', href: '#' + p.guide }, 'En savoir plus') : null));
+        })));
+    })));
+  });
   // Contrôle : chaque section citée par l'aide de l'application existe dans ce guide.
   var manquantes = R.Aide.SECTIONS.filter(function (id) { return !document.getElementById(id); });
   if (manquantes.length) console.error('Sections du guide manquantes : ' + manquantes.join(', '));

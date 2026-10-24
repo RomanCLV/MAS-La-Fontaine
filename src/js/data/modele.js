@@ -5,7 +5,7 @@
 
   var VERSION = 1; // format de la version 1.0 (2026-10-23) ; les formats d'essai d'avant ne sont plus lus
   var APP = 'recueil-alimentation-mas-la-fontaine';
-  var VERSION_APP = '1.0'; // version de l'application affichée à l'utilisateur (accueil, menu Aide, Options, guide) ; distincte de VERSION (format des données)
+  var VERSION_APP = '1.1'; // version de l'application affichée à l'utilisateur (accueil, menu Aide, Options, guide) ; distincte de VERSION (format des données)
 
   var JOURS = [
     { id: 'lun', nom: 'Lundi', court: 'lun.' },

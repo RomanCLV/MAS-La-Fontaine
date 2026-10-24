@@ -57,6 +57,7 @@
       if (App.donnees && App.ui.onglets.some(function (o) { return App.modifieOnglet(o); })) { e.preventDefault(); e.returnValue = ''; }
     });
     App.rendre();
+    if (R.AideUi) R.AideUi.annoncer();
   };
 
   function etatUi(ui) {

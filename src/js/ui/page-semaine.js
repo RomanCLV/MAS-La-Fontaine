@@ -484,6 +484,7 @@
   }
 
   R.Pages.semaine = {
+    ID_HORS_PARC: ID_HORS_PARC,   // lu par la fenêtre des nouveautés (bouton « Voir » vers l'onglet Hors parc)
     titre: function (o) {
       var s = M.semaine(App.donnees, o.id);
       return s ? 'Semaine ' + M.numeroSemaine(s.debut).numero : 'Semaine';

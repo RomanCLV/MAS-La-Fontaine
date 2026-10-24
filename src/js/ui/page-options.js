@@ -69,6 +69,7 @@
             h('div', null, 'Version ' + M.VERSION_APP),
             h('div', { class: 'rangee' },
               h('a', { class: 'btn', href: R.Aide.lienGuide(), target: '_blank', rel: 'noopener' }, 'Guide d’utilisation'),
+              h('button', { class: 'btn', onclick: function () { R.AideUi.nouveautes(); } }, 'Nouveautés'),
               h('button', { class: 'btn', onclick: function () { R.AideUi.presentation('revue'); } }, 'Revoir la présentation'))),
           h('div', { class: 'carte carte-etape' },
             h('span', { class: 'etape' }, 'Données en cache'),

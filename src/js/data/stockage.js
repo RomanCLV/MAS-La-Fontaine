@@ -7,6 +7,9 @@
   var CLE_UI = 'recueil.ui';
   var CLE_AVANT_MIGRATION = 'recueil.donnees.avant-migration'; // { le, version, donnees } : cache d'avant la dernière migration
   var CLES = [CLE_DONNEES, CLE_META, CLE_UI, CLE_AVANT_MIGRATION];
+  // Dernière version de l'application vue dans ce navigateur (fenêtre des nouveautés). Hors de CLES : vider le cache
+  // ne refait pas apparaître des nouveautés déjà lues.
+  var CLE_VERSION_VUE = 'recueil.versionVue';
   var fichierLie = null; // bonus File System Access (Chrome/Edge), gardé pour la session
 
   function lireTexte(cle) {
@@ -52,6 +55,8 @@
   function meta() { return lire(CLE_META) || {}; }
   function lireUi() { return lire(CLE_UI) || {}; }
   function sauverUi(ui) { ecrire(CLE_UI, ui); }
+  function versionVue() { return lire(CLE_VERSION_VUE) || ''; }
+  function sauverVersionVue(v) { ecrire(CLE_VERSION_VUE, v); }
 
   // Cache local = tout ce que l'application garde dans ce navigateur (copie de travail, infos, affichage,
   // copie d'avant migration). Taille approximative en caractères (≈ octets) ; vider() efface tout.
@@ -127,6 +132,7 @@
 
   R.Stockage = {
     chargerCopie: chargerCopie, avantMigration: avantMigration, sauverCopie: sauverCopie, meta: meta, lireUi: lireUi, sauverUi: sauverUi,
+    versionVue: versionVue, sauverVersionVue: sauverVersionVue,
     tailleCache: tailleCache, vider: vider,
     lireFichier: lireFichier, texteExport: texteExport, nomExport: nomExport, telecharger: telecharger, telechargerTexte: telechargerTexte,
     fichierLieDisponible: fichierLieDisponible, nomFichierLie: nomFichierLie,

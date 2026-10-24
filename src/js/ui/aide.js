@@ -1,8 +1,9 @@
-/* Aide à l'utilisation : menu « ? Aide », bouton « ? » des pages, fenêtre d'aide, touche F1, présentation de démarrage.
-   Contenu : Recueil.Aide (js/aide/contenu.js) ; maquettes : Recueil.Illustrations. Voir docs/aide.md. */
+/* Aide à l'utilisation : menu « ? Aide », bouton « ? » des pages, fenêtre d'aide, touche F1, présentation de démarrage,
+   fenêtre des nouveautés. Contenu : Recueil.Aide (js/aide/contenu.js), Recueil.Nouveautes ; maquettes : Recueil.Illustrations.
+   Voir docs/aide.md. */
 (function (R) {
   'use strict';
-  var h = R.h, M = R.Modele, A = R.Aide, I = R.Illustrations, App = R.App;
+  var h = R.h, M = R.Modele, S = R.Stockage, A = R.Aide, N = R.Nouveautes, I = R.Illustrations, App = R.App;
 
   function lienGuide(section, texte, classe) {
     return h('a', { class: classe || 'lien-guide', href: A.lienGuide(section), target: '_blank', rel: 'noopener' }, texte);
@@ -32,6 +33,7 @@
       h('a', { class: 'menu-item', role: 'menuitem', href: A.lienGuide(), target: '_blank', rel: 'noopener',
         onclick: function () { setTimeout(fermer, 0); } }, 'Guide d’utilisation', h('span', { class: 'menu-note' }, 'nouvel onglet')),
       App.donnees ? h('button', { class: 'menu-item', role: 'menuitem', onclick: function () { fermer(); presentation('revue'); } }, 'Revoir la présentation') : null,
+      h('button', { class: 'menu-item', role: 'menuitem', onclick: function () { fermer(); historique(); } }, 'Nouveautés', h('span', { class: 'menu-note' }, 'ce qui a changé')),
       h('div', { class: 'menu-version' }, 'Version ' + M.VERSION_APP));
   }
 
@@ -76,6 +78,46 @@
     rendre();
   }
 
+  // Fenêtre des nouveautés. annonce = true : après une mise à jour (« Quoi de neuf ? », versions données) ;
+  // sinon historique de toutes les versions sorties. surFin : après la fermeture (Échap compris).
+  function nouveautes(versions, annonce, surFin) {
+    var racine;
+    function voir(p) {
+      var d = racine.closest('dialog');
+      if (d) d.close();
+      if (p.onglet === 'horsparc') App.ui.parcActif = R.Pages.semaine.ID_HORS_PARC;
+      App.ouvrir(p.page);
+    }
+    racine = h('div', { class: 'aide-fen nouveautes' },
+      h('h2', null, annonce ? 'Quoi de neuf ?' : 'Nouveautés'),
+      annonce ? h('p', { class: 'aide-quoi' }, 'L’application a été mise à jour. Voici ce qui change pour vous :') : null,
+      versions.map(function (v) {
+        return h('section', { class: 'nouv-version' },
+          h('h3', null, 'Version ' + v.version, h('span', { class: 'nouv-date' }, N.dateLongue(v.date))),
+          h('ul', { class: 'nouv-points' }, v.points.map(function (p) {
+            return h('li', null,
+              h('span', { class: 'nouv-type nouv-' + p.type }, N.TYPES[p.type]),
+              h('span', null, I.texte(p.texte),
+                p.page && App.donnees ? h('button', { class: 'btn btn-petit', onclick: function () { voir(p); } }, 'Voir') : null,
+                p.guide ? lienGuide(p.guide, 'En savoir plus', 'lien-guide nouv-lien') : null));
+          })));
+      }),
+      annonce ? h('p', { class: 'petit' }, 'À relire quand vous voulez : bouton « ? Aide » › Nouveautés.') : null);
+    App.fenetre(racine, [{ texte: annonce ? 'J’ai compris' : 'Fermer', valeur: 'ok', classe: 'btn-principal', focus: true }],
+      surFin || function () {}, 'dialogue-aide');
+  }
+  function historique() { nouveautes(N.publiees(M.VERSION_APP), false); }
+
+  // Au démarrage : annonce une seule fois, dans ce navigateur, les versions sorties depuis la dernière vue.
+  // Rien de noté : base déjà présente = utilisée avant la 1.1 (pas encore de fenêtre) ; sinon premier démarrage, rien à annoncer.
+  function annoncer() {
+    var vue = S.versionVue() || (App.donnees ? '1.0' : M.VERSION_APP);
+    var liste = N.aAnnoncer(vue, M.VERSION_APP);
+    function vu() { S.sauverVersionVue(M.VERSION_APP); }
+    if (liste.length && App.donnees) nouveautes(liste, true, vu);
+    else vu();
+  }
+
   // Touche F1 = aide de la page affichée (pas pendant qu'une fenêtre est ouverte).
   function init() {
     document.addEventListener('keydown', function (e) {
@@ -85,5 +127,6 @@
     });
   }
 
-  R.AideUi = { aidePage: aidePage, menu: menu, boutonTitre: boutonTitre, presentation: presentation, init: init, lienGuide: lienGuide };
+  R.AideUi = { aidePage: aidePage, menu: menu, boutonTitre: boutonTitre, presentation: presentation, init: init, lienGuide: lienGuide,
+    nouveautes: historique, annoncer: annoncer };
 })(window.Recueil = window.Recueil || {});

@@ -26,6 +26,7 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
 <script src="js/ui/selection-nombres.js"></script>
 <script src="js/ui/historique.js"></script>
 <script src="js/aide/contenu.js"></script>
+<script src="js/aide/nouveautes.js"></script>
 <script src="js/aide/illustrations.js"></script>
 <script>
 (function () {
@@ -558,6 +559,27 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(n.length, 2, 'Texte d’aide : un retour à la ligne = 2 lignes');
     var div = document.createElement('div'); n.flat(2).forEach(function (x) { if (x) div.appendChild(x instanceof Node ? x : document.createTextNode(x)); });
     egal(div.querySelectorAll('strong').length + '/' + div.querySelectorAll('br').length, '1/1', 'Texte d’aide : **gras** et retour à la ligne');
+  });
+
+  groupe('Nouveautés', function () {
+    var N = Recueil.Nouveautes, A = Recueil.Aide, V = N.VERSIONS;
+    egal([N.comparer('1.0.1', '1.1') < 0, N.comparer('1.10', '1.9') > 0, N.comparer('1.1', '1.1.0')], [true, true, 0], 'Comparer des numéros de version');
+    egal(V.some(function (v) { return v.version === M.VERSION_APP; }), true, 'La version ' + M.VERSION_APP + ' a son entrée dans les nouveautés');
+    egal(V.filter(function (v, i) { return i && N.comparer(V[i - 1].version, v.version) <= 0; }).length, 0, 'Nouveautés : la plus récente d’abord, sans doublon');
+    var points = [].concat.apply([], V.map(function (v) { return v.points; }));
+    egal(V.filter(function (v) { return !/^\d{4}-\d\d-\d\d$/.test(v.date) || !v.points.length; }).length, 0, 'Chaque version : une date et au moins un point');
+    egal(points.filter(function (p) { return !N.TYPES[p.type] || !p.texte; }).length, 0, 'Chaque point : un type connu et un texte');
+    egal(points.filter(function (p) { return (p.page && !A.PAGES[p.page]) || (p.guide && A.SECTIONS.indexOf(p.guide) < 0); }).length, 0,
+      'Boutons « Voir » et liens du guide valides');
+    var essai = [{ version: '1.2', annoncer: true }, { version: '1.1.1', annoncer: false }, { version: '1.1', annoncer: true }, { version: '1.0', annoncer: false }];
+    var garde = N.VERSIONS.splice(0, N.VERSIONS.length);
+    N.VERSIONS.push.apply(N.VERSIONS, essai);
+    egal(N.aAnnoncer('1.0', '1.1.1').map(function (v) { return v.version; }), ['1.1'], 'Annonce : version plus récente pas encore sortie ignorée');
+    egal(N.aAnnoncer('1.0', '1.2').map(function (v) { return v.version; }), ['1.2', '1.1'], 'Annonce : versions sautées regroupées');
+    egal(N.aAnnoncer('1.1', '1.1.1').length, 0, 'Annonce : simple correction, rien à annoncer');
+    egal(N.publiees('1.1.1').length, 3, 'Historique : versions sorties seulement');
+    N.VERSIONS.splice(0, N.VERSIONS.length);
+    N.VERSIONS.push.apply(N.VERSIONS, garde);
   });
 
   var r = document.getElementById('resume');
