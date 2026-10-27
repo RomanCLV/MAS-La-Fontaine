@@ -75,7 +75,8 @@
     var lignes = [
       groupe('REPAS'),
       ligne('Résidents présents', function (x) { return x.residents; }),
-      f.presenceSeule ? null : ligne('+ Plats en plus (options)', function (x) { return x.platsEnPlus; }),
+      // Options « +1 plat chaud (EQ +1) » (double plat…) : ligne en gras.
+      f.presenceSeule ? null : ligne('+ Plats en plus (options)', function (x) { return x.platsEnPlus; }, { classe: 'fc-gras' }),
       // Menu sans porc : une seule ligne de salariés (le calcul a déjà tout compté en standard).
       ligne(f.menuSansPorc ? 'Salariés' : 'Salariés standard', function (x) { return x.salStd; }),
       f.menuSansPorc ? null : ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),

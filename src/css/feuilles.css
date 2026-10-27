@@ -34,6 +34,7 @@
 .fc-cel.vide{color:#767676}
 .fc-ligne{height:var(--u)}
 .fc-ligne.fc-total{height:calc(var(--u) * 1.4);font-weight:700}
+.fc-ligne.fc-gras{font-weight:700}
 .fc-ligne.fc-total .fc-lab,.fc-ligne.fc-total .fc-cel{font-size:calc(var(--u) * .8)}
 .fc-ligne.fc-texture{height:calc(var(--u) * 1.4);font-weight:700}
 .fc-ligne.fc-texture .fc-lab,.fc-ligne.fc-texture .fc-cel{font-size:calc(var(--u) * .85)}
