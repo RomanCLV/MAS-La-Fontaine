@@ -42,9 +42,10 @@
 
   // Texte noir ou blanc selon la couleur de fond (lisibilité des couleurs administrées).
   function texteSur(fond) {
-    var m = /^#?([0-9a-f]{6})$/i.exec(fond || '');
+    var m = /^#?([0-9a-f]{6}|[0-9a-f]{3})$/i.exec(fond || '');
     if (!m) return '#111';
-    var n = parseInt(m[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    var hex = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1]; // #111 → #111111
+    var n = parseInt(hex, 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
     return (0.299 * r + 0.587 * g + 0.114 * b) > 140 ? '#111' : '#fff';
   }
 
