@@ -85,7 +85,7 @@
         }));
       }
       return h('div', { class: 'illu-rangee' },
-        col('Textures', [['Normal', '#e0e0e0'], ['Haché', '#f3c98b'], ['Mixé', '#d9a0c8']]),
+        col('Textures', [['Normal', '#cde4fa'], ['Haché', '#f3c98b'], ['Mixé', '#d9a0c8']]),
         col('Régimes et allergies', [['Sans porc', '#b9dcae'], ['Sans sel', '#a8c8e8'], ['Sans gluten', '#f0d58a']]),
         col('Options', [['Double plat', '#a8c8e8'], ['Enrichi', '#f0d58a'], ['Pots gourmands', '#e8a0a0']]));
     },

@@ -40,6 +40,7 @@
 
   // Identifiants du référentiel utilisés par les calculs.
   var TEXTURE_DEFAUT = 'normal';
+  var COULEUR_NORMAL = '#cde4fa';       // bleu léger de la texture par défaut (avant 1.2 : blanc, remplacé à la normalisation)
   var REGIME_SANS_PORC = 'sans_porc';   // salariés « sans porc »
   var REGIME_NETTOYAGE = 'sans_viande'; // ligne « Nettoyage sans viande » (halal : œufs/poisson)
   var COULEUR_ACTIVITE = '#2d6cb5';     // couleur par défaut d'une activité (bleu de l'interface)
@@ -54,7 +55,7 @@
   // toujoursVisible : colonne toujours présente dans la grille Semaine ; sinon seulement si un résident du parc l'a.
   var MS = SERVICES_REGIME_DEFAUT;
   var REGIMES_DEFAUT = [
-    { id: 'normal', nom: 'Normal', nature: 'texture', couleur: '#ffffff', toujoursVisible: true, services: MS },
+    { id: 'normal', nom: 'Normal', nature: 'texture', couleur: COULEUR_NORMAL, toujoursVisible: true, services: MS },
     { id: 'hache', nom: 'Haché', nature: 'texture', couleur: '#f6c9a8', toujoursVisible: true, services: MS },
     { id: 'tendre', nom: 'Tendre', nature: 'texture', couleur: '#f0b48a', toujoursVisible: false, services: MS },
     { id: 'mouline', nom: 'Mouliné', nature: 'texture', couleur: '#ebaa95', toujoursVisible: false, services: MS },
@@ -298,6 +299,8 @@
     d.referentiels.regimes = tableau(d.referentiels.regimes).map(function (g) {
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
       n.nature = (g.nature === 'texture' || g.nature === 'option') ? g.nature : 'regime';
+      // Texture Normal encore blanche (ancien défaut) : bleu léger, mise en avant comme les autres textures.
+      if (n.id === TEXTURE_DEFAUT && /^#f{3}(f{3})?$/i.test(n.couleur)) n.couleur = COULEUR_NORMAL;
       // Options : +1 plat chaud ou rien (sur l'assiette).
       if (n.nature === 'option') n.affecte = g.affecte === 'plat' ? 'plat' : '';
       n.toujoursVisible = g.toujoursVisible !== false; // absent : toujours affiché

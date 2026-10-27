@@ -41,7 +41,6 @@
     var nParcs = f.parcs.length;                 // parcs + activités
     var iTotalParcs = nParcs, iTotal = cols.length - 1;
     var grille = 'grid-template-columns:210px repeat(' + cols.length + ',minmax(0,1fr))';
-    var texDef = M.textureDefaut(donnees);
     var total = f.total.total;
 
     function bord(i) { return i >= iTotalParcs ? '2px solid #111' : '1px solid #999'; }
@@ -88,9 +87,7 @@
     if (textures.length) {
       lignes.push(groupe('TEXTURES (tous convives)'));
       textures.forEach(function (g) {
-        var defaut = g.id === texDef;
-        lignes.push(ligne(defaut ? g.nom : g.nom.toUpperCase(), function (x) { return x.tex[g.id] || 0; },
-          defaut ? {} : { classe: 'fc-texture', fond: g.couleur }));
+        lignes.push(ligne(g.nom.toUpperCase(), function (x) { return x.tex[g.id] || 0; }, { classe: 'fc-texture', fond: g.couleur }));
       });
     }
     var regimes = lignesNature('regime');
@@ -243,7 +240,6 @@
   function chariot(donnees, semaine, c, col) {
     var ch = C.chariot(donnees, semaine, c, col);
     var refs = M.refs(donnees);
-    var texDef = M.textureDefaut(donnees);
     var cpt = col.c;
     var info = infoChariot(donnees, col);
 
@@ -256,7 +252,7 @@
       return enteteChariot(semaine, c, col, info, 'PLATS', ch.volume, [detail.join(' + '), h('br'),
         h('b', null, textures.map(function (g, i) {
           var t = g.nom + ' ' + cpt.tex[g.id];
-          return [i ? ' · ' : '', g.id === texDef ? t : h('span', { class: 'ch-tex', style: 'background:' + g.couleur }, t)];
+          return [i ? ' · ' : '', h('span', { class: 'ch-tex', style: 'background:' + g.couleur }, t)];
         }))]);
     }
 
