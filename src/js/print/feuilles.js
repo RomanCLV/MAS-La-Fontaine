@@ -72,11 +72,19 @@
       });
     }
 
+    // Options « +1 plat chaud (EQ +1) » (double plat…) : leurs noms en libellé (« + Double plat | Grosse faim »),
+    // celles qui ont des plats sur ce service, sinon toutes celles du service ; aucune : libellé générique.
+    var optionsPlat = donnees.referentiels.regimes.filter(function (g) {
+      return g.nature === 'option' && g.affecte === 'plat' && M.concerne(g, f.service);
+    });
+    var optionsPlatServies = optionsPlat.filter(totalDe);
+    if (optionsPlatServies.length) optionsPlat = optionsPlatServies;
+    var libellePlats = optionsPlat.length ? '+ ' + optionsPlat.map(nomCourt).join(' | ') : '+ Plats en plus (options)';
+
     var lignes = [
       groupe('REPAS'),
       ligne('Résidents présents', function (x) { return x.residents; }),
-      // Options « +1 plat chaud (EQ +1) » (double plat…) : ligne en gras.
-      f.presenceSeule ? null : ligne('+ Plats en plus (options)', function (x) { return x.platsEnPlus; }, { classe: 'fc-gras' }),
+      f.presenceSeule ? null : ligne(libellePlats, function (x) { return x.platsEnPlus; }, { classe: 'fc-gras' }),
       // Menu sans porc : une seule ligne de salariés (le calcul a déjà tout compté en standard).
       ligne(f.menuSansPorc ? 'Salariés' : 'Salariés standard', function (x) { return x.salStd; }),
       f.menuSansPorc ? null : ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
