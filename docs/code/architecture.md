@@ -13,7 +13,7 @@ src/js/data/modele.js     constantes, listes par défaut, dates, création, migr
 src/js/data/stockage.js   copie de travail (localStorage), import/export JSON → data.md
 src/js/calc/calc.js       calculs purs (présences, colonnes, chariots, alertes) → calc.md
 src/js/print/feuilles.js  feuille cuisine + feuille chariot (HTML imprimable)   → print.md
-src/js/ui/*.js            outils DOM, application à onglets, une page par fichier ; semaine-horsparc.js = onglet Hors parc de la Semaine → ui.md
+src/js/ui/*.js            outils DOM, application à onglets, une page par fichier ; semaine-horsparc.js = onglet Hors parc de la Semaine ; semaine-porc.js = ligne « Menu avec porc » → ui.md
 src/js/aide/*.js          contenu et maquettes de l'aide ; ui/aide.js = menu, fenêtres, présentation → aide.md
 src/guide.html            guide d'utilisation (second fichier, nouvel onglet) ; css/aide.css, css/guide.css
 ```
@@ -57,6 +57,7 @@ copie de travail ──export──▶ fichier .json (téléchargement ; ou fich
     direction:  { <créneau>: n },  nettoyage: { <créneau>: n },  nettoyageSansViande: { <créneau>: n },
     temoins:    { <créneau>: n },                         // plats témoins (nombre donné par le client)
     servicesSemaine: { <service additionnel>: ["ven",…] },  // jours de cette semaine ([] = retiré) ; absent = jours habituels
+    menuSansPorc: { <créneau>: true },                    // repas sans porc (services « repas » seulement) ; absent = avec porc
     alertesTraitees: [{ cle, statut: "voulu"|"ignore" }]
   }]
 }

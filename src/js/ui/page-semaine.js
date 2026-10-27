@@ -212,6 +212,14 @@
           M.jour(sc.jour).court.replace('.', '').toUpperCase() + ' ' + (+M.dateDuJour(s, sc.jour).slice(8)) + ' ' + M.service(sc.service).court));
       }));
 
+    // Ligne « Menu avec porc » (semaine-porc.js), commune à toute la MAS : en tête, sur chaque onglet.
+    var lignePorc = h('div', { class: 'g g-porc', style: gabarit },
+      h('div', { class: 'gc colle0' }),
+      h('div', { class: 'gc gauche gras colle1 etiquette', title: R.MenuPorc.LIBELLE }, R.MenuPorc.LIBELLE),
+      h('div', { class: 'gnote', style: 'grid-column:span ' + (cols.length + (recherche ? 2 : 1)) }, R.MenuPorc.NOTE),
+      h('div'),
+      R.MenuPorc.cellules(s, vis, bord, recherche ? null : parc.id));
+
     // Carrés sous les en-têtes : plats du parc par service = colonne du parc sur la feuille cuisine
     // (résidents présents hors partis en activité, plats en plus, salariés du parc).
     // Les champs numériques enregistrent sans re-rendu (focus gardé) : majCarres() met les carrés à jour sur place.
@@ -425,7 +433,7 @@
       return h('div', { class: 'carte-grille' },
         legende(s, Object.keys(enAlerte).length > 0, true),
         residents.length ? h('div', { class: 'defil', 'data-defil': 'grille' },
-          h('div', { class: 'grille' }, bandeaux, entete, lignes))
+          h('div', { class: 'grille' }, bandeaux, entete, lignePorc, lignes))
           : h('div', { class: 'message message-attention' }, 'Aucun résident actif ne correspond à « ' + recherche.trim() + ' ».'));
     }
     nombres = R.SelectionNombres.grille({ cle: 'parc:' + parc.id + ':' + s.id + ':' + vis.join(), semaine: s,
@@ -445,7 +453,7 @@
           h('button', { class: 'btn', onclick: function () { App.ouvrir('residents'); } }, 'Voir tous les résidents'),
           h('button', { class: 'btn btn-principal', onclick: function () { R.PageResident.nouveau(parc.id); } }, '+ Ajouter un résident à ' + parc.nom))),
       h('div', { class: 'defil', 'data-defil': 'grille' },
-        h('div', { class: 'grille' }, bandeaux, entete, carres, lignes, lignesSal)));
+        h('div', { class: 'grille' }, bandeaux, entete, lignePorc, carres, lignes, lignesSal)));
   }
 
   // alerte : au moins une case en alerte dans la semaine (entrée de légende ajoutée).
@@ -506,9 +514,12 @@
           h('button', { class: 'btn', onclick: function () {
             var derniere = d.semaines[d.semaines.length - 1];
             var suivante = M.semaineSuivante(derniere, M.debutSemaineACreer(derniere, M.aujourdhui()));
-            if (M.semaine(d, suivante.id)) return;
+            // Message : le choix « Semaine » change discrètement, on doit voir qu'on est passé à la nouvelle semaine.
+            var titre = 'Semaine ' + M.numeroSemaine(suivante.debut).numero;
+            if (M.semaine(d, suivante.id)) { App.ouvrir('semaine', suivante.id); App.toast(titre + ' déjà créée : affichée'); return; }
             App.modifier(function () { d.semaines.push(suivante); }, { sansRendu: true });
             App.ouvrir('semaine', suivante.id);
+            App.toast(O.titreSemaine(suivante) + ' créée (salariés, hors parc, absences et menus repris)');
           } }, 'Créer la semaine suivante'),
           h('button', { class: 'btn', onclick: function () { App.ui.semaine = s.id; App.ouvrir('imprimer'); } }, 'Imprimer cette semaine'),
           d.semaines.length > 1 ? h('button', { class: 'btn btn-danger', onclick: function () { supprimer(d, s); } }, 'Supprimer cette semaine') : null),

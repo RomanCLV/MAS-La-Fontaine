@@ -292,6 +292,28 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     egal(ch.volume, 7, 'Volume du chariot = total du parc');
   });
 
+  groupe('Menu sans porc', function () {
+    var d = jeu(), s = d.semaines[0];
+    egal(M.menuAvecPorc(s, 'lun_midi'), true, 'Par défaut : menu avec porc');
+    s.menuSansPorc.lun_midi = true; s.menuSansPorc.lun_petitdej = true;
+    egal([M.menuAvecPorc(s, 'lun_midi'), M.menuAvecPorc(s, 'lun_soir'), M.menuAvecPorc(s, 'lun_petitdej')], [false, true, true],
+      'Lundi midi sans porc ; lundi soir reste avec porc ; petit déjeuner (présence seule) jamais concerné');
+    var f = C.feuilleJour(d, s, 'lun_midi'), p1 = col(f, 'p1').c;
+    egal(f.menuSansPorc, true, 'Feuille cuisine marquée « menu sans porc »');
+    egal([p1.salStd, p1.salSansPorc, p1.total], [3, 0, 7], 'Parc 1 : salarié sans porc compté en standard, total inchangé');
+    egal(f.total.reg.sans_porc, undefined, 'Régime sans porc non compté (ni ligne ni pastille)');
+    egal(f.total.total, 22, 'Total à produire inchangé');
+    var ch = C.chariot(d, s, 'lun_midi', col(f, 'p1'));
+    egal([ch.menuSansPorc, ch.normauxSimples, ch.sansPorcSeuls, ch.salaries], [true, 2, 0, { standard: 3, sansPorc: 0 }],
+      'Chariot : C rejoint les résidents simples, un seul bac de salariés');
+    d.residents[2].textureId = 'hache';
+    f = C.feuilleJour(d, s, 'lun_midi');
+    ch = C.chariot(d, s, 'lun_midi', col(f, 'p1'));
+    egal(ch.etiquettes.filter(function (e) { return e.nom === 'C'; })[0].tags.map(function (g) { return g.id; }), ['sans_porc'],
+      'C en haché : son étiquette garde la pastille SANS PORC');
+    egal(C.feuilleJour(d, s, 'lun_soir').total.reg.sans_porc, 1, 'Lundi soir (avec porc) : sans porc compté comme avant');
+  });
+
   groupe('Normalisation des fichiers', function () {
     egal(M.VERSION, 1, 'Format de données : version 1 (application 1.0)');
     var m = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-14', sodexo: { lun_midi: { standard: 4 } } }] });
@@ -301,6 +323,12 @@ li.ko{list-style:'✗  '}li.ok{list-style:'✓  ';background:none;color:#1b5e20}
     var n = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12', nettoyage: { lun_midi: 2 }, nettoyageSansViande: { lun_midi: 3 } }] }).semaines[0];
     egal([n.nettoyage, n.nettoyageSansViande], [{ lun_midi: 2 }, { lun_midi: 3 }], 'Nettoyage et nettoyage sans viande conservés');
     egal(M.semaineSuivante(n).nettoyageSansViande, { lun_midi: 3 }, 'Semaine suivante : reprend le nettoyage sans viande');
+    var p = M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12',
+      menuSansPorc: { lun_midi: true, mar_soir: 1, lun_petitdej: true, xyz_midi: true, mer_midi: false, jeu_inconnu: true } }] }).semaines[0];
+    egal(p.menuSansPorc, { lun_midi: true, mar_soir: true }, 'Menus sans porc : repas connus seulement (ni petit déjeuner, ni jour ou service inconnu)');
+    egal(M.migrer({ app: M.APP, version: 1, semaines: [{ debut: '2026-10-12' }] }).semaines[0].menuSansPorc, {},
+      'Fichier sans menus sans porc : tout reste avec porc');
+    egal(M.semaineSuivante(p).menuSansPorc, { lun_midi: true, mar_soir: true }, 'Semaine suivante : reprend les menus sans porc');
     var refus = 0;
     try { M.migrer({ app: 'autre' }); } catch (e) { refus++; }
     try { M.migrer({ app: M.APP, version: 2 }); } catch (e) { refus++; }

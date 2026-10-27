@@ -183,6 +183,12 @@ mark.trouve{background:#fff3a0;color:inherit;padding:0;border-radius:2px}
 .g-carres.total-hors-parcs{background:#e4edf7}
 .g-carres.total-hors-parcs>div{border-top:2px solid var(--gris)}
 .g-carres.total-hors-parcs .colle0,.g-carres.total-hors-parcs .colle1{background:#e4edf7}
+/* Ligne « Menu avec porc » (semaine-porc.js) : case cochée = avec porc (défaut) ; décochée = repas sans porc, fond rose. */
+.g-porc>div{border-bottom:2px solid var(--gris)}
+.gc.sans-porc{background:#fbe3ea}
+.case-porc{width:20px;height:20px;padding:0;border:2px solid var(--encre);border-radius:4px;background:#fff;color:var(--encre);font-weight:700;font-size:13px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.sans-porc .case-porc{border-color:#b0607a}
+.case-porc:hover{filter:brightness(.94)}
 .gc.etiquette{display:block;line-height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gnote{border-bottom:1px solid #ccc;font-size:11px;color:#555;display:flex;align-items:center;padding-left:6px}
 .nb{width:100%;height:100%;border:0;text-align:center;font-weight:700;background:#fff;padding:0;-moz-appearance:textfield;appearance:textfield}

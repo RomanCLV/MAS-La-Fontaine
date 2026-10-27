@@ -96,13 +96,16 @@
   function poids(resident, refs, service) { return 1 + platsEnPlus(resident, refs, service); }
 
   // Seuls la texture, les régimes et les options qui concernent le service sont comptés.
-  function ajouterResident(cpt, resident, refs, service, texDef) {
+  // menuSansPorc : le régime « sans porc » n'est pas compté (tout le repas l'est déjà).
+  function ajouterResident(cpt, resident, refs, service, texDef, menuSansPorc) {
     cpt.residents += 1;
     var w = poids(resident, refs, service);
     cpt.platsEnPlus += w - 1;
     var t = textureDu(resident, refs, service, texDef);
     if (t) plus(cpt.tex, t, w);
-    regimesDu(resident, refs, service).forEach(function (id) { plus(cpt.reg, id, w); });
+    regimesDu(resident, refs, service).forEach(function (id) {
+      if (!menuSansPorc || id !== M.REGIME_SANS_PORC) plus(cpt.reg, id, w);
+    });
     // Option « +1 plat » : comptée en personnes ; option d'assiette : sur chacun de ses plats.
     optionsDu(resident, refs, service).forEach(function (id) {
       plus(cpt.opt, id, refs[id] && refs[id].affecte === 'plat' ? 1 : w);
@@ -137,10 +140,13 @@
   }
 
   // ---------- Feuille cuisine : colonnes d'un créneau ----------
+  // Menu sans porc (case « Menu avec porc » décochée) : salariés sans porc comptés en standard, régime « sans porc »
+  // des résidents non compté ; il reste sur leurs étiquettes de chariot.
   function feuilleJour(donnees, semaine, c) {
     var refs = M.refs(donnees);
     var sv = M.decoupeCreneau(c).service;
     var seul = !!M.service(sv).presenceSeule;
+    var sansPorc = !M.menuAvecPorc(semaine, c);
     var texDef = M.textureDefaut(donnees);
     var activites = activitesDuCreneau(semaine, c);
     var colParc = {}, colAct = {};
@@ -149,7 +155,8 @@
     donnees.referentiels.parcs.forEach(function (p) {
       var col = { id: p.id, type: 'parc', nom: p.nom, couleur: p.couleur, c: compteursVides(), residents: [], partis: [], platsPartis: 0 };
       var sal = ((semaine.salaries || {})[p.id] || {})[c] || {};
-      col.salaries = { standard: sal.standard || 0, sansPorc: sal.sansPorc || 0 };
+      col.salaries = sansPorc ? { standard: (sal.standard || 0) + (sal.sansPorc || 0), sansPorc: 0 }
+        : { standard: sal.standard || 0, sansPorc: sal.sansPorc || 0 };
       ajouterConvives(col.c, col.salaries.standard, col.salaries.sansPorc, refs, sv, texDef);
       colParc[p.id] = col;
       colonnes.push(col);
@@ -174,7 +181,7 @@
         colParc[r.parcId].partis.push({ resident: r, activite: act, plats: w });
         colParc[r.parcId].platsPartis += w;  // plats retirés du parc (comptés dans l'activité)
       }
-      ajouterResident(col.c, r, refs, sv, texDef);
+      ajouterResident(col.c, r, refs, sv, texDef, sansPorc);
       col.residents.push(r);
     });
     colonnes.forEach(function (col) { finir(col.c); });
@@ -206,7 +213,7 @@
       c: additionner([totalParcs.c, sodexo.c, direction.c, nettoyage.c, temoins.c]) };
 
     return {
-      creneau: c, service: sv, activites: activites, presenceSeule: seul,
+      creneau: c, service: sv, activites: activites, presenceSeule: seul, menuSansPorc: sansPorc,
       parcs: colonnes,                 // parcs puis activités
       colonnes: colonnes.concat([totalParcs, sodexo, direction, nettoyage, temoins, total]),
       total: total.c
@@ -232,14 +239,18 @@
     var refs = M.refs(donnees);
     var texDef = M.textureDefaut(donnees);
     var sv = M.decoupeCreneau(c).service;
-    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], platsEnPlus: 0 };
+    var sansPorc = !M.menuAvecPorc(semaine, c);
+    var res = { normauxSimples: 0, sansPorcSeuls: 0, etiquettes: [], doubles: [], platsEnPlus: 0, menuSansPorc: sansPorc };
     col.residents.forEach(function (r) {
       var opts = optionsDu(r, refs, sv).filter(function (id) { return refs[id]; });
       var regs = regimesDu(r, refs, sv).filter(function (id) { return refs[id]; });
+      // Menu sans porc : « sans porc » ne demande pas de bac à part (le résident qui n'a que lui est un normal simple),
+      // mais reste parmi les pastilles d'une étiquette faite pour une autre raison.
+      var autres = sansPorc ? regs.filter(function (id) { return id !== M.REGIME_SANS_PORC; }) : regs;
       var tex = textureDu(r, refs, sv, texDef) || texDef;
       var simple = tex === texDef && opts.length === 0 && !(r.consigne || '').trim();
-      if (simple && regs.length === 0) res.normauxSimples += 1;
-      else if (simple && regs.length === 1 && regs[0] === M.REGIME_SANS_PORC) res.sansPorcSeuls += 1;
+      if (simple && autres.length === 0) res.normauxSimples += 1;
+      else if (simple && autres.length === 1 && autres[0] === M.REGIME_SANS_PORC) res.sansPorcSeuls += 1;
       else {
         res.etiquettes.push({
           resident: r, nom: M.nomAffiche(r), qui: 'RÉSIDENT',

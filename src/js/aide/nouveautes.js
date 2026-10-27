@@ -15,6 +15,17 @@
   // La plus récente d'abord.
   var VERSIONS = [
     {
+      version: '1.2', date: '2026-10-27', annoncer: true,
+      points: [
+        { type: 'nouveau', page: 'semaine', guide: 'porc',
+          texte: '**Menu avec porc** : nouvelle ligne en haut de la page Semaine, une case par repas (cochée par défaut). ' +
+            'Décochez un repas dont le menu ne contient pas de porc : les feuilles cuisine et chariot n’affichent plus le détail « sans porc » ' +
+            '(les étiquettes des résidents gardent la mention).' },
+        { type: 'modifie', guide: 'semaine',
+          texte: '**Créer la semaine suivante** reprend aussi les repas sans porc, et un message confirme la semaine créée.' }
+      ]
+    },
+    {
       version: '1.1', date: '2026-10-24', annoncer: true,
       points: [
         { type: 'deplace', page: 'semaine', onglet: 'horsparc', guide: 'horsparc',

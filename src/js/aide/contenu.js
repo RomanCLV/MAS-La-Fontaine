@@ -7,7 +7,7 @@
   // Sections du guide (identifiants des ancres de guide.html). Vérifiées par guide.html au chargement et par tests.html.
   var SECTIONS = ['demarrer', 'donnees', 'ecran', 'accueil', 'mise-en-route', 'semaine', 'residents', 'fiche-resident', 'parcs',
     'services', 'regimes', 'activites', 'importer', 'exporter', 'imprimer', 'options', 'feuilles', 'calculs', 'recettes',
-    'problemes', 'glossaire', 'horsparc', 'nombres', 'nouveautes'];
+    'problemes', 'glossaire', 'horsparc', 'nombres', 'porc', 'nouveautes'];
 
   // Une aide par type de page : quoi (à quoi sert la page), points (3 à 6), illustration, section du guide.
   var PAGES = {
@@ -18,7 +18,7 @@
         'Un clic sur une case inverse sa valeur : **1** (vert) = présent, **0** (rouge) = absent. Glissez pour en changer plusieurs. **Ctrl+Z** annule une erreur.',
         'Les cases rouges hachurées viennent d’une **absence prévue** dans la fiche du résident.',
         'Une case **jaune** est une alerte : à vérifier, ou à classer avec « C’est voulu » / « Ignorer ».',
-        'Les carrés en haut donnent le nombre de plats par repas pour le parc affiché.',
+        'En haut : la ligne **Menu avec porc** (décochez un repas sans porc, les feuilles imprimées s’allègent), puis les carrés du nombre de plats par repas pour le parc affiché.',
         'Sous la grille : les salariés du parc (cliquez une case, tapez le nombre, Entrée ; glissez pour en remplir plusieurs d’un coup). Sodexo, direction, nettoyage et plats témoins sont dans l’onglet **Hors parc**.',
         'Les boutons du haut : créer la semaine suivante, imprimer, supprimer cette semaine.'
       ]

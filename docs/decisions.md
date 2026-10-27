@@ -208,3 +208,10 @@
 - Listes de semaines (Semaine, Imprimer, Activités, Fichier) : la plus récente en haut.
 ## 2026-10-24 — Annonce des mises à jour (Nouveautés)
 - Fenêtre « Quoi de neuf ? » montrée une fois par navigateur après une mise à jour marquée `annoncer` ; corrections sans annonce. Historique dans « ? Aide », Options, accueil et guide. Raison : prévenir quand un élément change de page. Première annonce : version **1.1** (onglet Hors parc, sélection multiple, Ctrl+Z).
+## 2026-10-27 — Menu avec / sans porc (validé, codé : version 1.2)
+- **Repas ou non** : déjà porté par le type de service (`presenceSeule`) ; base fixe (petit déjeuner = présence seule, midi / soir = repas), additionnels au choix. Rien à ajouter.
+- **Page Semaine** : ligne « Menu avec porc » en tête de grille (onglets de parc, Hors parc, Recherche), une case par créneau ; pas de case pour un service « présence seule ». Valeur commune à toute la MAS. **Cochée par défaut** (contient du porc) : un oubli laisse les feuilles comme avant (sûr). Ctrl+Z / Ctrl+Y inclus.
+- **Créer la semaine suivante** : recopie ces cases (créneaux servis seulement) + **toast** « Semaine N créée (dates) … » ; toast aussi si la semaine existe déjà (aujourd'hui : rien ne se passe).
+- **Repas sans porc** (case décochée), calculé dans `Calc` : feuille cuisine = une ligne « Salariés » (standard + sans porc), plus de ligne / pastille du régime « Sans porc », mention discrète « Menu sans porc » en en-tête ; chariot = bacs salariés fusionnés, « Résidents sans porc » seuls → « Résidents simples » (sans étiquette), plus la phrase de pied sur les sans porc. Les étiquettes existantes (autre raison) **gardent** la pastille SANS PORC. Saisie inchangée (ligne Salariés sans porc conservée).
+- **Données** : champ de semaine `menuSansPorc: { <créneau>: true }` (seulement les repas sans porc) ; absent = avec porc ⇒ **pas de nouvelle version** (règle `code/data.md`). Normalisation : entrées hors repas servis retirées.
+- Raison : demande utilisateur, alléger les feuilles quand le menu ne contient pas de porc. Risque accepté : la recopie peut ne pas suivre un cycle de menus (cases à revoir chaque semaine).

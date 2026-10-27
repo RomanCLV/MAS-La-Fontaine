@@ -187,6 +187,10 @@
   <tr><td>Fond jaune pâle et cadre</td><td>Trouvé par la recherche</td></tr>
 </table>
 
+<h3 id="porc">Menu avec porc</h3>
+<p>Première ligne sous les en-têtes, dans chaque onglet (parcs, Hors parc, Recherche) : une case par repas, <strong>cochée par défaut</strong> (le menu contient du porc). Décochez-la quand le menu de ce repas <strong>ne contient pas de porc</strong> : la case passe sur fond rose. C’est le même réglage pour toute la MAS, quel que soit l’onglet. Pas de case au petit déjeuner (ni pour un service « présence seule »). Ctrl + Z annule un clic.</p>
+<p>Repas sans porc : sur la feuille cuisine, une seule ligne « Salariés » et plus de ligne « Sans porc » ; sur le chariot, plus de bacs « sans porc » (tout le monde va dans les bacs simples). Les étiquettes des résidents gardent leur mention SANS PORC.</p>
+
 <h3>Les carrés de plats</h3>
 <p>Sous les en-têtes, pour chaque repas :</p>
 <ul>
@@ -236,7 +240,7 @@
 
 <h3>Semaine suivante, impression, suppression</h3>
 <ul>
-  <li><strong>Créer la semaine suivante</strong> : reprend salariés, Sodexo, direction, nettoyage, témoins et les cases mises à 0 ; pas les activités (utilisez les modèles). Corrigez ensuite ce qui change. Elle crée la semaine prochaine d’après la date du jour : si des semaines n’ont pas été faites, elles sont sautées (les réglages viennent de la dernière semaine existante).</li>
+  <li><strong>Créer la semaine suivante</strong> : reprend salariés, Sodexo, direction, nettoyage, témoins, les repas sans porc et les cases mises à 0 ; pas les activités (utilisez les modèles). Un message confirme la semaine créée. Corrigez ensuite ce qui change (les menus, surtout). Elle crée la semaine prochaine d’après la date du jour : si des semaines n’ont pas été faites, elles sont sautées (les réglages viennent de la dernière semaine existante).</li>
   <li><strong>Imprimer cette semaine</strong> : ouvre la page <a href="#imprimer">Imprimer</a> sur cette semaine.</li>
   <li><strong>Supprimer cette semaine</strong> : après confirmation ; impossible s’il ne reste qu’une semaine.</li>
 </ul>
@@ -252,12 +256,13 @@
   <li>Un tableau <strong>par zone</strong> : chaque parc, chaque activité, Total parcs, Sodexo, Direction, Autres (nettoyage), Témoins, Total.</li>
   <li>Puis les lignes <strong>Repas</strong>, <strong>Textures</strong> (haché et mixé en grand et en couleur), <strong>Régimes</strong>, <strong>Options</strong>. Une ligne à 0 n’est pas imprimée.</li>
   <li>Au petit déjeuner (et pour un service « présence seule ») : version simplifiée, on compte les présents.</li>
+  <li>Repas <a href="#porc">sans porc</a> : « Menu sans porc » sous le titre, une seule ligne « Salariés », pas de ligne « Sans porc ».</li>
 </ul>
 
 <h3>La feuille chariot</h3>
 <p>Une par parc et par activité (pas pour Sodexo, direction, nettoyage). L’en-tête est à la couleur du parc.</p>
 <ul>
-  <li><strong>Collectif</strong> : bacs Salariés standard / sans porc, Résidents simples / sans porc. Un bac à 0 n’est pas imprimé.</li>
+  <li><strong>Collectif</strong> : bacs Salariés standard / sans porc, Résidents simples / sans porc. Un bac à 0 n’est pas imprimé. Repas sans porc : seulement Salariés et Résidents simples.</li>
   <li><strong>Étiquettes</strong> (6 par page) : texture en grand, régimes, options, observation et <strong>EQ</strong> (équivalent portions : le nombre de plats de ce résident, « ×3 » pour 3 plats).</li>
   <li>Sur un chariot d’activité, chaque étiquette rappelle le parc du résident.</li>
   <li>Petit déjeuner : bacs et encadré « Particularités » (pots gourmands…), sans étiquettes.</li>
@@ -279,7 +284,7 @@
   <li><strong>Options « sur l’assiette »</strong> (enrichi, panée, pots gourmands…) : comptées sur chaque plat du résident.</li>
   <li><strong>Textures et régimes</strong> sont comptés <strong>en plats</strong> : un résident à 2 plats haché compte pour 2 hachés. Ainsi Normal + Haché + Mixé = total. <span class="confirmer">(règle à confirmer)</span></li>
   <li><strong>Activité</strong> : les participants présents sont retirés de leur parc et comptés dans l’activité.</li>
-  <li><strong>Salariés</strong> : texture normale ; « sans porc » les ajoute au régime sans porc. <strong>Nettoyage sans viande</strong> : régime sans viande. <strong>Plats témoins</strong> : texture normale, sans régime, ajoutés au total.</li>
+  <li><strong>Salariés</strong> : texture normale ; « sans porc » les ajoute au régime sans porc (repas sans porc : comptés comme les autres). <strong>Nettoyage sans viande</strong> : régime sans viande. <strong>Plats témoins</strong> : texture normale, sans régime, ajoutés au total.</li>
   <li><strong>Total à produire</strong> = parcs + activités + Sodexo + direction + nettoyage + témoins.</li>
   <li>Une texture, un régime ou une option <strong>non concerné par un repas</strong> n’y est ni compté ni affiché ; le résident est alors compté dans la texture par défaut.</li>
 </ul>

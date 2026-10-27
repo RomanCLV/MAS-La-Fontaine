@@ -5,7 +5,7 @@
 
   var VERSION = 1; // format de la version 1.0 (2026-10-23) ; les formats d'essai d'avant ne sont plus lus
   var APP = 'recueil-alimentation-mas-la-fontaine';
-  var VERSION_APP = '1.1'; // version de l'application affichée à l'utilisateur (accueil, menu Aide, Options, guide) ; distincte de VERSION (format des données)
+  var VERSION_APP = '1.2'; // version de l'application affichée à l'utilisateur (accueil, menu Aide, Options, guide) ; distincte de VERSION (format des données)
 
   var JOURS = [
     { id: 'lun', nom: 'Lundi', court: 'lun.' },
@@ -176,12 +176,19 @@
     return {
       id: idSemaine(lundi), debut: lundi, presences: {}, activites: [],
       salaries: {}, sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {}, alertesTraitees: [],
-      servicesSemaine: {}   // { <service additionnel>: [jours] } : réglage de cette semaine seulement
+      servicesSemaine: {},  // { <service additionnel>: [jours] } : réglage de cette semaine seulement
+      menuSansPorc: {}      // { <créneau>: true } : repas dont le menu ne contient pas de porc (absent = avec porc)
     };
   }
 
-  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins)
-  // et les absences cochées dans la grille (cases à 0), pas les activités (les presets servent à les recréer)
+  // Le menu de ce créneau contient-il du porc ? Oui par défaut ; non si la case « Menu avec porc » est décochée.
+  // Un service « présence seule » (petit déjeuner…) n'a pas de case : toujours oui (rien ne change pour lui).
+  function menuAvecPorc(semaine, c) {
+    return !((semaine && semaine.menuSansPorc) || {})[c] || !!service(decoupeCreneau(c).service).presenceSeule;
+  }
+
+  // Nouvelle semaine : reprend les effectifs fixes (salariés, Sodexo, direction, nettoyage, plats témoins),
+  // les repas sans porc (ligne « Menu avec porc ») et les absences cochées dans la grille (cases à 0), pas les activités (les presets servent à les recréer)
   // ni les services ponctuels ou jours réglés pour la semaine : seulement les créneaux servis la nouvelle semaine.
   // Les « présent » saisis (1) ne sont pas repris : ils contredisaient une absence de fiche de cette semaine-là
   // et masqueraient une nouvelle absence de fiche.
@@ -199,7 +206,7 @@
       if (Object.keys(zeros).length) s.presences[rid] = zeros;
     });
     Object.keys(semaine.salaries || {}).forEach(function (pid) { s.salaries[pid] = garder(semaine.salaries[pid]); });
-    ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins'].forEach(function (k) { s[k] = garder(semaine[k]); });
+    ['sodexo', 'direction', 'nettoyage', 'nettoyageSansViande', 'temoins', 'menuSansPorc'].forEach(function (k) { s[k] = garder(semaine[k]); });
     return s;
   }
 
@@ -286,6 +293,7 @@
     // Identifiants des services de ce fichier (archivés compris), dans l'ordre : pas ceux en vigueur avant lui.
     var ids = d.referentiels.services.map(function (s) { return s.id; });
     var additionnels = d.referentiels.services.filter(function (s) { return !s.base; }).map(function (s) { return s.id; });
+    var repas = d.referentiels.services.filter(function (s) { return !s.presenceSeule; }).map(function (s) { return s.id; });
     function servicesConnus(liste) { return ids.filter(function (x) { return tableau(liste).indexOf(x) >= 0; }); }
     d.referentiels.regimes = tableau(d.referentiels.regimes).map(function (g) {
       var n = { id: String(g.id), nom: g.nom || g.id, abrege: g.abrege || '', couleur: g.couleur || '#dddddd' };
@@ -320,8 +328,13 @@
             participantIds: tableau(a.participantIds), presetId: a.presetId || null, couleur: a.couleur || COULEUR_ACTIVITE };
         }),
         salaries: objet(s.salaries), sodexo: {}, direction: {}, nettoyage: {}, nettoyageSansViande: {}, temoins: {},
-        alertesTraitees: tableau(s.alertesTraitees), servicesSemaine: {}
+        alertesTraitees: tableau(s.alertesTraitees), servicesSemaine: {}, menuSansPorc: {}
       };
+      // Repas sans porc : seulement les créneaux d'un service « repas » du fichier (champ absent : tout avec porc).
+      Object.keys(objet(s.menuSansPorc)).forEach(function (c) {
+        var sc = decoupeCreneau(c);
+        if (s.menuSansPorc[c] && IDS_JOURS.indexOf(sc.jour) >= 0 && repas.indexOf(sc.service) >= 0) n.menuSansPorc[c] = true;
+      });
       // Jours de cette semaine d'un service additionnel (liste vide gardée : service retiré cette semaine).
       Object.keys(objet(s.servicesSemaine)).forEach(function (id) {
         if (additionnels.indexOf(id) < 0 || !Array.isArray(s.servicesSemaine[id])) return;
@@ -490,7 +503,7 @@
     creneau: creneau, decoupeCreneau: decoupeCreneau, indexJour: indexJour, jour: jour, service: service,
     ajouterJours: ajouterJours, lundiDe: lundiDe, dateDuJour: dateDuJour, dateDuCreneau: dateDuCreneau,
     numeroSemaine: numeroSemaine, idSemaine: idSemaine, aujourdhui: aujourdhui,
-    nouvelId: nouvelId, semaineVide: semaineVide, semaineSuivante: semaineSuivante, debutSemaineACreer: debutSemaineACreer, residentVide: residentVide,
+    nouvelId: nouvelId, semaineVide: semaineVide, menuAvecPorc: menuAvecPorc, semaineSuivante: semaineSuivante, debutSemaineACreer: debutSemaineACreer, residentVide: residentVide,
     nomAffiche: nomAffiche, copie: copie, migrer: migrer, baseVide: baseVide,
     PARCS_MAS_LA_FONTAINE: PARCS_MAS_LA_FONTAINE, parcsPresetManquants: parcsPresetManquants, ajouterParcsPreset: ajouterParcsPreset,
     PRESETS_ACTIVITES_MAS_LA_FONTAINE: PRESETS_ACTIVITES_MAS_LA_FONTAINE, presetsActivitesManquants: presetsActivitesManquants,

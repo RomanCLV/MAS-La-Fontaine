@@ -80,6 +80,11 @@
       h('div', { class: 'defil', 'data-defil': 'grille' },
         h('div', { class: 'grille' },
           entete,
+          // Ligne « Menu avec porc » (semaine-porc.js), la même que sur les onglets de parc.
+          h('div', { class: 'g g-porc', style: gabarit },
+            h('div', { class: 'gc gauche gras colle0 etiquette', title: R.MenuPorc.LIBELLE }, R.MenuPorc.LIBELLE),
+            h('div', { class: 'gnote' }, R.MenuPorc.NOTE),
+            R.MenuPorc.cellules(s, vis, bord, App.ui.parcActif)),
           ligneNombres('Salariés SODEXO', 'tous parcs', function (c) { return (s.sodexo[c] || {}).standard || 0; },
             function (c, n) { var v = s.sodexo[c] = s.sodexo[c] || { standard: 0, sansPorc: 0 }; v.standard = n; }),
           ligneNombres('Direction', 'tous parcs', di.lire, di.ecrire),

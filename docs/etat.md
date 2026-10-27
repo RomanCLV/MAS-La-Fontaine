@@ -2,7 +2,7 @@
 
 **Phase courante** : 5 Code — **V1 écrite, à tester par l'utilisateur** (2026-10-19).
 Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techniques dans `technique.md`).
-**Dernière MAJ** : 2026-10-24
+**Dernière MAJ** : 2026-10-27
 
 ## Fait (phase 5)
 - `docs/code/architecture.md` + `data.md`, `calc.md`, `ui.md`, `print.md`.
@@ -104,4 +104,5 @@ Phases 1 à 4 terminées (produit validé, maquettes v2.1 validées, choix techn
 - **Onglet « Hors parc »** (13e lot, 2026-10-23) : Sodexo, Direction, Nettoyage, Nettoyage sans viande, Plats témoins et « Total hors parcs » déplacés des onglets de parc vers un onglet « Hors parc » à droite des parcs, dans la page Semaine (même semaine, mêmes services affichés). Les onglets de parc gardent les salariés du parc. Guide et aide mis à jour. 174 tests verts ; vérifié dans le navigateur intégré (saisie, total, retour sur un parc).
 
 ## Retours V1 (15e lot, 2026-10-24)
+- **Menu avec porc** (16e lot, 2026-10-27, `semaine-porc.js`) : ligne en tête de grille (parcs, Hors parc, Recherche), case par repas, cochée par défaut, Ctrl+Z ; repas sans porc ⇒ feuille cuisine (« Menu sans porc », une ligne Salariés, plus de Sans porc) et chariot (plus de bacs sans porc ; étiquettes inchangées) allégés ; champ `menuSansPorc` (pas de nouvelle version de format), repris par « Créer la semaine suivante » + toast de confirmation. Guide, aide, nouveautés **version 1.2**. 222 tests verts ; vérifié dans le navigateur intégré (clic, Ctrl+Z/Y, 3 onglets, feuilles avec / sans porc, semaine suivante). À tester dans Firefox.
 - **Nouveautés** (`js/aide/nouveautes.js`) : fenêtre « Quoi de neuf ? » une fois par navigateur après une mise à jour annoncée, bouton « Voir » (ex. ouvre l'onglet Hors parc), liens vers le guide ; historique dans « ? Aide › Nouveautés », Options, accueil, guide (section 10). **Version 1.1**. 210 tests verts ; vérifié dans le navigateur intégré (premier démarrage sans fenêtre, base 1.0 → fenêtre, « Voir », pas de 2e affichage, historique, guide). Règle de mise à jour : `docs/aide.md` § 5.

@@ -77,8 +77,9 @@
       groupe('REPAS'),
       ligne('Résidents présents', function (x) { return x.residents; }),
       f.presenceSeule ? null : ligne('+ Plats en plus (options)', function (x) { return x.platsEnPlus; }),
-      ligne('Salariés standard', function (x) { return x.salStd; }),
-      ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
+      // Menu sans porc : une seule ligne de salariés (le calcul a déjà tout compté en standard).
+      ligne(f.menuSansPorc ? 'Salariés' : 'Salariés standard', function (x) { return x.salStd; }),
+      f.menuSansPorc ? null : ligne('Salariés sans porc', function (x) { return x.salSansPorc; }),
       ligne('Plats témoins', function (x) { return x.temoins; }),
       ligne('TOTAL', function (x) { return x.total; }, { classe: 'fc-total', fond: '#ececec' })
     ];
@@ -109,6 +110,7 @@
 
     var ventil = C.ventilation(donnees, f.total, f.service).filter(function (v) { return v.valeur; });
     var sousTitre = [donnees.etablissement, 'Semaine ' + M.numeroSemaine(semaine.debut).numero];
+    if (f.menuSansPorc) sousTitre.push('Menu sans porc');
     if (f.activites.length) {
       sousTitre.push('Activité : ' + f.activites.map(function (a) {
         return a.nom + ' (' + M.jour(a.jour).court + ' ' + M.service(a.service).court + ')';
@@ -264,11 +266,12 @@
         enPlus.push(O.pluriel(ch.platsEnPlus, 'plat chaud', 'plats chauds') + ' en plus (étiquette ' +
           ch.doubles.map(function (x) { return x.nom + (x.n > 1 ? ' ×' + (x.n + 1) : ''); }).join(', ') + ')');
       }
+      // Menu sans porc : pas de bac « sans porc » (salariés et résidents « sans porc » seul sont dans les bacs simples).
       return h('div', { class: 'ch-collectif' },
-        h('div', { class: 'ch-bandeau' }, 'COLLECTIF · bacs à charger'),
+        h('div', { class: 'ch-bandeau' }, 'COLLECTIF · bacs à charger' + (ch.menuSansPorc ? ' · menu sans porc' : '')),
         h('div', { class: 'ch-bacs' },
           bacsNonVides([
-            { qui: 'sal', lab: 'Salariés standard', n: ch.salaries.standard, desc: 'Bac standard, portions normales' },
+            { qui: 'sal', lab: ch.menuSansPorc ? 'Salariés' : 'Salariés standard', n: ch.salaries.standard, desc: 'Bac standard, portions normales' },
             { qui: 'sal', lab: 'Salariés sans porc', n: ch.salaries.sansPorc, desc: 'Bac « sans porc »' },
             { qui: 'res', lab: 'Résidents simples', n: ch.normauxSimples, desc: 'Sans texture, régime ni option' },
             { qui: 'res', lab: 'Résidents sans porc', n: ch.sansPorcSeuls, desc: 'Seul régime « sans porc » · bac « sans porc »' }
@@ -309,7 +312,7 @@
             h('div', { class: 'ch-indiv-haut' }, h('b', null, 'INDIVIDUEL · assiettes à identifier (étiquettes)'), h('span', null, 'EQ = équivalent portions')),
             h('div', { class: 'ch-grille' }, cases))),
         h('div', { class: 'ch-pied' },
-          h('span', null, 'Les résidents dont le seul régime est « sans porc » sont en collectif (bac Résidents sans porc), sans étiquette.'),
+          h('span', null, ch.menuSansPorc ? '' : 'Les résidents dont le seul régime est « sans porc » sont en collectif (bac Résidents sans porc), sans étiquette.'),
           h('span', null, libelleCourt(c) + (nPages > 1 ? ' · page ' + (p + 1) + '/' + nPages : '')))));
     }
     return pages;
